@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: avis-backend
+  r2dbc:
+    # URL de conexión local a H2 (almacenado en archivo)
+    url: r2dbc:h2:file:///./data/localdb
+    initialization-mode: always
+  
+avis:
+  catalog:
+    # URL del JSON vacio en la nube (el usuario pondrá el link real de Supabase Storage o S3)
+    url: "https://raw.githubusercontent.com/usuario/repo/main/JSONVacio.JSON"
+    # Habilitar la creación automática de tablas desde schema.sql
+    initialization-mode: always
+    redis:
+      # Redis para el Marketplace y Redisson Locks
+      host: localhost
+      port: 6379
+  rsocket:
+    server:
+      # Puerto para comunicación RSocket rápida y no bloqueante
+      port: 7000
+      mapping-path: /rsocket
+      transport: tcp
+      
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+server:
+  # Puerto WebFlux REST clásico
+  port: 8080
+
+logging:
+  level:
+    org.springframework.r2dbc: DEBUG
+    org.springframework.data.r2dbc: DEBUG
