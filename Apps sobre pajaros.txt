@@ -9,6 +9,7 @@ iNaturalist: Aunque generalista, es excelente para registrar biodiversidad, incl
 Birding Aragón / Programas de Seguimiento (Sacre, Noctua): Herramientas específicas para el censo y registro de datos de aves en el trabajo de campo, incluso sin conexión a internet.
 BirdRing: Diseñada para ayudar a registrar aves anilladas, incluyendo ubicación, fecha, hora y código de la anilla.
 
+
 Características principales de estas apps:
 Reconocimiento de Sonido (Sound ID): Analiza el canto en tiempo real y resalta las especies detectadas.
 Identificación por Foto: Permite subir una foto y utiliza machine learning para dar sugerencias de la especie.
