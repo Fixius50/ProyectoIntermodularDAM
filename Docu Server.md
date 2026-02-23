@@ -1,47 +1,62 @@
-Documentación Técnica y Configuración - AVIS: Chronicles of Flight
-Este documento detalla la arquitectura base, la configuración del entorno de desarrollo (optimizado para Lubuntu/Debian) y el uso de las herramientas internas creadas para el proyecto AVIS (juego TCG con geolocalización y mecánicas MMO).
+1. Stack Tecnológico del Proyecto (Backend)
+El sistema está diseñado para soportar alta concurrencia y baja latencia mediante un enfoque 100% reactivo:
 
-1. Stack Tecnológico del Proyecto
-El proyecto está diseñado para soportar alta concurrencia y baja latencia:
+Framework Core: Java 21 con Spring Boot 3 (WebFlux / Reactor).
 
-Backend: Java 21 con Spring Boot 3 (WebFlux / Reactor) y RSocket.
+Comunicación en Tiempo Real: RSocket.
 
-Base de Datos: Supabase (PostgreSQL con JSONB) y Redis (Caché/Marketplace).
+Base de Datos Principal: Supabase (PostgreSQL con uso intensivo de tipos JSONB mediante Spring Data R2DBC).
 
-Frontend: React Native / Flutter.
+Caché y Marketplace: Redis Reactive con bloqueos distribuidos (Redisson).
 
-Herramientas Auxiliares: Scripts en Python y Node.js para gestión de assets y modelos.
+Procesamiento de Eventos: Kafka / RabbitMQ.
 
 2. Preparación del Entorno de Desarrollo (Lubuntu)
 Para desarrollar el servidor backend y ejecutar las herramientas del equipo, es necesario instalar las siguientes dependencias base en el sistema operativo:
 
-2.1. Herramientas Base y Lenguajes
+2.1. Herramientas Base, Python y Node.js
 Bash
 # Actualizar repositorios del sistema
 sudo apt update && sudo apt upgrade -y
 
-# Instalar Python 3 y entornos virtuales (necesario para las herramientas internas)
+# Instalar Python 3 y su entorno gráfico (necesario para las herramientas internas)
 sudo apt install python3 python3-pip python3-venv python3-tk -y
 
 # Instalar Node.js y npm (para los MCPs del editor Antigravity)
 sudo apt install nodejs npm -y
-
+2.2. Ecosistema Java y Contenedores
+Bash
 # Instalar Java 21 (JDK requerido por Spring Boot 3) y Maven
 sudo apt install openjdk-21-jdk maven -y
-2.2. Infraestructura y Contenedores
-Bash
+
 # Instalar Docker para levantar Redis y RabbitMQ/Kafka en local
 sudo apt install docker.io docker-compose -y
-sudo usermod -aG docker $USER # Requiere reiniciar sesión
-
+sudo usermod -aG docker $USER # Requiere reiniciar la sesión del sistema
+2.3. Control de Versiones y Git LFS
+Bash
 # Instalar Git y Git LFS (Large File Storage)
 sudo apt install git git-lfs -y
 git lfs install
-3. Herramienta Interna: AVIS Dev Uploader
-Para facilitar el trabajo del equipo, se ha desarrollado una aplicación de escritorio que automatiza la sincronización con GitHub. Está diseñada específicamente para evitar bloqueos en el repositorio al subir archivos masivos, configurando automáticamente Git LFS para los modelos .gguf generados en local, audios pesados y assets gráficos de alta resolución.
+3. Configuración del Repositorio Oficial y Credenciales
+Para interactuar con el repositorio oficial sin bloqueos de autenticación, es necesario guardar un Personal Access Token (PAT) a nivel de sistema.
 
-3.1. Instalación de la Herramienta
-Abre la terminal y ejecuta estos comandos para crear un entorno aislado e instalar la aplicación:
+Bash
+# 1. Clonar el repositorio en el directorio personal
+cd ~
+git clone https://github.com/Fixius50/ProyectoIntermodularDAM.git
+
+# 2. Configurar Git para recordar las credenciales de forma global
+git config --global credential.helper store
+
+# 3. Realizar un push manual para registrar el token por primera vez
+cd ~/ProyectoIntermodularDAM
+git push
+# (Al solicitar credenciales, introducir el usuario 'Fixius50' y el Personal Access Token).
+4. Herramienta Interna: AVIS Dev Uploader (Pro Edition)
+Para agilizar el flujo de trabajo del equipo, se ha desarrollado una aplicación de escritorio (GUI) en Python. Su objetivo es subir archivos al repositorio oficial esquivando el límite de 100MB de GitHub. La aplicación detecta extensiones configuradas (como .gguf, .psd, .mp4) y ejecuta automáticamente git lfs track antes del commit.
+
+4.1. Instalación de la Herramienta
+Se despliega en un entorno virtual aislado:
 
 Bash
 mkdir ~/avis-dev-tools
@@ -49,8 +64,8 @@ cd ~/avis-dev-tools
 python3 -m venv venv
 source venv/bin/activate
 python -m pip install customtkinter GitPython
-3.2. Código Fuente (app.py)
-Dentro de la carpeta ~/avis-dev-tools, crea un archivo llamado app.py y pega el siguiente código:
+4.2. Código Fuente (app.py)
+Dentro de la carpeta ~/avis-dev-tools, crear el archivo app.py con el siguiente código base:
 
 Python
 import customtkinter as ctk
@@ -75,7 +90,8 @@ class AvisUltimateUploader(ctk.CTk):
         self.title("AVIS Dev Uploader - Pro Edition")
         self.geometry("700x650")
         
-        self.repo_path = ctk.StringVar(value=os.getcwd())
+        # Apunta automáticamente al repositorio oficial clonado
+        self.repo_path = ctk.StringVar(value=os.path.expanduser("~/ProyectoIntermodularDAM"))
         self.selected_files = []
 
         # Interfaz - Sección Superior
@@ -162,7 +178,7 @@ class AvisUltimateUploader(ctk.CTk):
                     shutil.copy2(filepath, destino)
                     self.log(f"Copiado: {filename}")
 
-                # Auto-configuración de Git LFS
+                # Auto-configuración de Git LFS para archivos masivos
                 ext = os.path.splitext(filename)[1].lower()
                 if ext in LFS_EXTENSIONS:
                     self.log(f"Extensión pesada detectada ({ext}). Configurando Git LFS...")
@@ -197,13 +213,15 @@ class AvisUltimateUploader(ctk.CTk):
 if __name__ == "__main__":
     app = AvisUltimateUploader()
     app.mainloop()
-3.3. Acceso Directo de Escritorio (Lanzador)
-Para no tener que abrir la terminal cada vez, se creó un acceso directo en el escritorio de Lubuntu. Ejecuta esto en la terminal:
+4.3. Acceso Directo de Escritorio (Lanzador)
+Para ejecutar la aplicación nativamente en el entorno de escritorio de Lubuntu sin abrir la terminal:
+
+Crear el archivo .desktop:
 
 Bash
 cd $(xdg-user-dir DESKTOP)
 nano AVIS_Uploader.desktop
-Pega el siguiente contenido, guarda (Ctrl + O) y sal (Ctrl + X):
+Insertar la configuración:
 
 Ini, TOML
 [Desktop Entry]
@@ -215,8 +233,7 @@ Exec=bash -c "cd ~/avis-dev-tools && source venv/bin/activate && python app.py"
 Icon=utilities-terminal
 Terminal=false
 Categories=Development;
-Finalmente, dale permisos de ejecución:
+Otorgar permisos de ejecución:
 
 Bash
 chmod +x AVIS_Uploader.desktop
-(Ahora puedes hacer doble clic en el icono del escritorio para lanzar la aplicación).
