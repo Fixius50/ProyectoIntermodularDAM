@@ -1,0 +1,13 @@
+{
+  "Pajaros": [
+    {
+      "Nombre": "",
+      "Vida": 0,
+      "DañoAtaque": 0,
+      "Defensa": 0,
+      "Tipo": "",
+      "Suerte": 0,
+      "Velocidad": 0
+    }
+  ]
+}
