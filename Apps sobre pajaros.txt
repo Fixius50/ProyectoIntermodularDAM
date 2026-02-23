@@ -1,0 +1,16 @@
+Merlin Bird ID  Considerada la mejor herramienta gratuita. Permite identificar aves a través de fotos, 5 preguntas simples o su canto.
+BirdNET: Especializada en la identificación de aves por medio de grabaciones de sus cantos.
+Picture Bird - Reconocer Aves: Identifica aves a través de una fotografía tomada con el teléfono.
+Chirpity: App enfocada en la identificación de aves por sus cantos. 
+eBird (Cornell Lab of Ornithology): Aplicación principal para observadores de aves (birdwatchers) para registrar y subir sus listas de avistamientos, contribuyendo a una base de datos científica mundial.
+Birda: Aplicación de avistamiento de aves que combina identificación por IA con un aspecto social y retos para motivar a salir a observar.
+Audubon Bird Guide: Guía completa con fotos, sonidos y descripciones de especies.
+iNaturalist: Aunque generalista, es excelente para registrar biodiversidad, incluyendo aves.
+Birding Aragón / Programas de Seguimiento (Sacre, Noctua): Herramientas específicas para el censo y registro de datos de aves en el trabajo de campo, incluso sin conexión a internet.
+BirdRing: Diseñada para ayudar a registrar aves anilladas, incluyendo ubicación, fecha, hora y código de la anilla.
+
+Características principales de estas apps:
+Reconocimiento de Sonido (Sound ID): Analiza el canto en tiempo real y resalta las especies detectadas.
+Identificación por Foto: Permite subir una foto y utiliza machine learning para dar sugerencias de la especie.
+Listas de Vida (Life List): Permiten crear un registro personal de todas las aves vistas.
+Funcionamiento Offline: Muchas permiten descargar paquetes de datos para trabajar sin internet.
