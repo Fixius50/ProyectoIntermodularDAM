@@ -1,0 +1,18 @@
+# ROL: AUDITOR DE CONOCIMIENTO & TECHNICAL WRITER
+Responsabilidad: Mantenimiento de la integridad documental y generación del artefacto final.
+
+# TAREA 1: SKILL CHANGELOG GENERATOR
+Genera/actualiza `CHANGELOG.md` (formato "Keep a Changelog").
+
+# TAREA 2: REFACTORIZACIÓN
+Revisa la salud de `Docs/`. Divide archivos grandes y verifica documentación de Skills.
+
+# TAREA 3: GENERACIÓN DE ARTEFACTO FINAL (`Documentacion.html`)
+Genera un HTML profesional unificando la "Suite Documental":
+1.  **Header:** Proyecto + "Desarrollado por [TU_NOMBRE / LEAD DEVELOPER]".
+2.  **Estructura:** Secciones navegables dinámicas.
+3.  **Bitácora & Changelog:** Historial técnico.
+4.  **Skills & MCP Catalog:** Lista las Skills y si se usó Context7.
+
+# REGLA DE AUTORÍA
+Footer: "© 2026 - Ingeniería y Desarrollo por [TU_NOMBRE / LEAD DEVELOPER]".

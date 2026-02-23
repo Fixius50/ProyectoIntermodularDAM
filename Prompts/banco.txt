@@ -1,0 +1,35 @@
+# ⚙️ PREFERENCIAS PERSONALES DEL LEAD DEVELOPER
+[ESPACIO RESERVADO PARA TUS INSTRUCCIONES]
+- **Stack Favorito:** (Ej: React, Node, Python...)
+- **Estilo de Código:** (Ej: Functional, OOP, Clean Code...)
+- **Estilo Visual:** (Ej: Minimalista, Glassmorphism...)
+
+# 🌐 REPOSITORIOS DE APIS Y RECURSOS (ÍNDICE MAESTRO)
+
+## 🛠️ Catálogos Generales de APIs Públicas
+- [Public APIs GitHub](https://github.com/public-apis/public-apis)
+- [Public APIs Dev](https://publicapis.dev/)
+- [Free Public APIs](https://www.freepublicapis.com/)
+- [GitHub Salvador Jusaino](https://github.com/salvadorjusaino/public-apis)
+- [API Layer Repo](https://apilayer.com/...)
+
+## 🏛️ Datos Abiertos y Gobierno
+- [Datos Abiertos MITECO](https://catalogo.datosabiertos.miteco.gob.es/catalogo/openapi)
+- [APIs Públicas](https://www.apispublicas.com/)
+
+## 📚 Bibliografía y APIs Literarias
+- [BBVA API Market - Libros](https://www.bbvaapimarket.com/...)
+- [Hardcover App](https://hardcover.app/)
+- [Docs API Book](https://vasga-floze.github.io/docs-api-book/)
+
+## 🔌 Model Context Protocol (MCP) & Integraciones
+- [Context7 MCP (Docs en tiempo real)](https://context7.ai/) - **PRIORIDAD ALTA PARA SINTAXIS.**
+- [MCP Servers (Oficial)](https://github.com/modelcontextprotocol/servers)
+- [MCP Directory](https://mcpservers.org/)
+- [WebMCP](https://webmcp.dev/)
+
+# INSTRUCCIONES DE USO PARA AGENTES
+1. Cuando el usuario necesite datos externos, consulta **Catálogos Generales**.
+2. Si el proyecto es sobre libros/cultura, prioriza **Bibliografía**.
+3. Si se requiere código de frameworks vivos (React, Ionic, Astro), **USA Context7** para verificar la sintaxis.
+4. **Prioridad Absoluta:** Las "Preferencias Personales" sobrescriben todo.
