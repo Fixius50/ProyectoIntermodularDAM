@@ -1,0 +1,300 @@
+:root {
+    /* Paleta Soft Nature */
+    --color-primary: #7C9A92; /* Verde Salvia */
+    --color-secondary: #D9A08B; /* Terracota Suave */
+    --color-bg-light: #FDFBF7; /* Papel Crema */
+    --color-text-dark: #2C3E50; /* Gris Carbón */
+    --color-text-light: #FDFBF7;
+    
+    /* Tipografías */
+    --font-heading: 'Lora', serif;
+    --font-body: 'Nunito', sans-serif;
+    
+    /* Glassmorphism */
+    --glass-bg: rgba(253, 251, 247, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+    --border-radius: 20px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--color-text-dark);
+    background-color: var(--color-bg-light);
+    height: 100vh;
+    overflow: hidden; /* App feel */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #1a1a1a;
+}
+
+/* Simulate Mobile Device Screen on Desktop */
+.app-container {
+    position: relative;
+    width: 100%;
+    max-width: 480px; /* iPhone/Android width */
+    height: 100dvh;
+    max-height: 900px;
+    background-color: transparent;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+}
+
+@media (min-width: 481px) {
+    .app-container {
+        height: 90vh;
+        border-radius: 40px;
+        border: 8px solid #000;
+    }
+}
+
+/* Weather Background */
+.weather-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+}
+
+#bg-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.85);
+}
+
+.overlay-gradiente {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(124,154,146,0.3) 0%, rgba(253,251,247,0.1) 100%);
+    z-index: 2;
+}
+
+/* Typography Helpers */
+h1, h2, h3, h4 { font-family: var(--font-heading); }
+.font-nunito { font-family: var(--font-body); font-weight: 700; color: var(--color-text-dark); }
+
+/* Glassmorphism Styles */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    box-shadow: var(--glass-shadow);
+}
+
+/* Header */
+.top-nav {
+    position: absolute;
+    top: 40px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+}
+
+.status-card {
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.inventory-card {
+    display: flex;
+    padding: 6px 12px;
+    gap: 12px;
+}
+
+.resource-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.9rem;
+}
+
+/* Main Area (Santuario) */
+.main-area {
+    flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.tree-container {
+    position: relative;
+    width: 100%;
+    height: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -100px;
+}
+
+.tree-img {
+    height: 120%;
+    opacity: 0.85;
+    filter: drop-shadow(0px 10px 10px rgba(0,0,0,0.3));
+    z-index: 5;
+    pointer-events: none;
+}
+
+/* Interactive Birds */
+.bird-node {
+    position: absolute;
+    z-index: 10;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    animation: drift 4s infinite alternate ease-in-out;
+}
+
+.bird-node:hover {
+    transform: scale(1.15) rotate(5deg);
+}
+
+.bird-avatar img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid var(--color-bg-light);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    object-fit: cover;
+}
+
+@keyframes drift {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-10px); }
+}
+
+/* Action Container */
+.floating-action-container {
+    position: absolute;
+    bottom: 120px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 10;
+}
+
+.glass-btn {
+    padding: 16px 32px;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    border: 1px solid rgba(255,255,255,0.8);
+    background: rgba(124, 154, 146, 0.75); /* Salvia con transparencia */
+    backdrop-filter: blur(8px);
+    color: var(--color-text-light);
+    font-family: var(--font-heading);
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(124, 154, 146, 0.4);
+    transition: all 0.2s;
+    font-weight: bold;
+}
+
+.glass-btn:hover {
+    background: rgba(124, 154, 146, 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(124, 154, 146, 0.6);
+}
+
+.glass-btn:active {
+    transform: translateY(1px);
+}
+
+/* Bottom Nav */
+.bottom-bar {
+    position: absolute;
+    bottom: 20px;
+    left: 15px;
+    right: 15px;
+    height: 75px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 20;
+}
+
+.nav-item {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+    font-family: var(--font-body);
+    font-weight: 700;
+    color: var(--color-text-dark);
+}
+
+.nav-item .icon {
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.nav-item .label {
+    font-size: 0.7rem;
+}
+
+.nav-item.active {
+    opacity: 1;
+    color: var(--color-primary);
+}
+
+.nav-item.active .icon {
+    transform: translateY(-5px) scale(1.2);
+    /* No cambiamos el emoji, pero en Flutter se pintaría Verde Salvia */
+}
+
+/* Feedback Animations */
+#feedback-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.heart {
+    position: absolute;
+    font-size: 2rem;
+    animation: floatUp 1.5s ease-out forwards;
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(0.5);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(1.5);
+    }
+}
