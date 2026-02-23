@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 /**
  * Consumer service listening to RabbitMQ queues for background processing.
