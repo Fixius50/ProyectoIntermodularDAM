@@ -46,6 +46,10 @@ Write-Host " ========================================================" -Foregrou
 Pause
 
 Write-Host " Apagando servicios..." -ForegroundColor Yellow
-if ($FrontendProcess) { Stop-Process -Id $FrontendProcess.Id -Force -ErrorAction SilentlyContinue }
-if ($BackendProcess) { Stop-Process -Id $BackendProcess.Id -Force -ErrorAction SilentlyContinue }
+if ($FrontendProcess -and (-not $FrontendProcess.HasExited)) { 
+    taskkill /PID $FrontendProcess.Id /T /F 2>$null
+}
+if ($BackendProcess -and (-not $BackendProcess.HasExited)) { 
+    taskkill /PID $BackendProcess.Id /T /F 2>$null
+}
 Write-Host " Servicios apagados correctamente." -ForegroundColor Green
