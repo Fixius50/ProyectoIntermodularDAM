@@ -72,13 +72,16 @@ public class BattleService {
         boolean isPlayerOne = action.getPlayerId().equals(session.getPlayerOneId());
 
         // Pseudo-logic: calculate damage. Using seeds spent as multiplier.
-        int damage = action.getSeedsSpent() * 10;
+        // Base damage is 10 * seeds. Reduced by defense (simplistic).
+        int baseDamage = action.getSeedsSpent() * 20;
+        int defense = 5; // Placeholder for bird stats
+        int damage = Math.max(0, baseDamage - defense);
 
         if (isPlayerOne) {
-            session.setPlayerTwoHealth(session.getPlayerTwoHealth() - damage);
+            session.setPlayerTwoHealth(Math.max(0, session.getPlayerTwoHealth() - damage));
             checkWinner(session);
         } else {
-            session.setPlayerOneHealth(session.getPlayerOneHealth() - damage);
+            session.setPlayerOneHealth(Math.max(0, session.getPlayerOneHealth() - damage));
             checkWinner(session);
         }
 
