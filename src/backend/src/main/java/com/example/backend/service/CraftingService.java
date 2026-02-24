@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +20,7 @@ public class CraftingService {
     private final InventoryRepository inventoryRepository;
     private final BirdCardRepository birdCardRepository;
     private final BirdCatalogService birdCatalogService;
+    private final WeatherService weatherService;
 
     // Dummy "motor de probabilidad"
     private final Random random = new Random();
@@ -46,11 +48,14 @@ public class CraftingService {
                 .flatMap(savedInv -> applyWeatherAndCatalog(request.getUserId()));
     }
 
-    private Mono<BirdCard> applyWeatherAndCatalog(Long userId) {
-        // En el futuro, aquí se consultaría la API del clima
-        // Por ahora, leemos todo el catálogo y elegimos uno al azar.
-        return birdCatalogService.getAllBirds()
-                .collectList()
+    private Mono<BirdCard> applyWeatherAndCatalog(UUID userId) {
+        // Consultamos el clima real (lat/lon hardcoded por ahora, vendrían del usuario en el futuro)
+        return weatherService.getCurrentWeather(40.4168, -3.7038) // Madrid default
+                .flatMap(weather -> {
+                    System.out.println("Clima detectado para expedición: " + weather);
+                    return birdCatalogService.getAllBirds()
+                            .collectList();
+                })
                 .flatMap(catalog -> {
                     if (catalog.isEmpty()) {
                         return Mono.error(new RuntimeException("El catálogo remoto está vacío o es inaccesible."));

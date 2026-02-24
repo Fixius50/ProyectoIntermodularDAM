@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * Event payload dispatched to RabbitMQ when a user wins a battle.
@@ -18,7 +19,7 @@ import java.io.Serializable;
 public class RewardEvent implements Serializable {
 
     // Identifier of the winner
-    private Long winnerId;
+    private UUID winnerId;
 
     // Total seeds awarded from the combat pool
     private int seedsGained;

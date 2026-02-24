@@ -1,5 +1,15 @@
 {
-    "liveServer.settings.multiRootWorkspaceName": "ProyectoIntermodularDAM",
-    "java.compile.nullAnalysis.mode": "disabled",
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.project.sourcePaths": [
+        "src/backend/src/main/java"
+    ],
+    "java.project.testPaths": [
+        "src/backend/src/test/java"
+    ],
+    "java.project.resourcePaths": [
+        "src/backend/src/main/resources"
+    ],
+    "java.project.testResources": [
+        "src/backend/src/test/resources"
+    ]
 }

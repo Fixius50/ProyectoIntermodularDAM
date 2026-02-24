@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -29,7 +30,7 @@ public class BattleService {
     /**
      * Creates a new battle session waiting for a second player.
      */
-    public Mono<BattleSession> createMatch(Long hostPlayerId, Long birdCardId) {
+    public Mono<BattleSession> createMatch(UUID hostPlayerId, UUID birdCardId) {
         // Base health for testing purposes (could be retrieved from the DB Card)
         int defaultHealth = 100;
         BattleSession session = BattleSession.createRoom(hostPlayerId, birdCardId, defaultHealth);
@@ -40,7 +41,7 @@ public class BattleService {
     /**
      * Joins an existing battle session.
      */
-    public Mono<BattleSession> joinMatch(String sessionId, Long guestPlayerId, Long birdCardId) {
+    public Mono<BattleSession> joinMatch(String sessionId, UUID guestPlayerId, UUID birdCardId) {
         BattleSession session = activeBattles.get(sessionId);
         if (session == null) {
             return Mono.error(new IllegalArgumentException("Battle session not found"));
@@ -71,13 +72,16 @@ public class BattleService {
         boolean isPlayerOne = action.getPlayerId().equals(session.getPlayerOneId());
 
         // Pseudo-logic: calculate damage. Using seeds spent as multiplier.
-        int damage = action.getSeedsSpent() * 10;
+        // Base damage is 10 * seeds. Reduced by defense (simplistic).
+        int baseDamage = action.getSeedsSpent() * 20;
+        int defense = 5; // Placeholder for bird stats
+        int damage = Math.max(0, baseDamage - defense);
 
         if (isPlayerOne) {
-            session.setPlayerTwoHealth(session.getPlayerTwoHealth() - damage);
+            session.setPlayerTwoHealth(Math.max(0, session.getPlayerTwoHealth() - damage));
             checkWinner(session);
         } else {
-            session.setPlayerOneHealth(session.getPlayerOneHealth() - damage);
+            session.setPlayerOneHealth(Math.max(0, session.getPlayerOneHealth() - damage));
             checkWinner(session);
         }
 

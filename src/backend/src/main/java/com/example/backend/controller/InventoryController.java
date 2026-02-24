@@ -5,6 +5,7 @@ import com.example.backend.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/inventory")
@@ -14,7 +15,7 @@ public class InventoryController {
     private final InventoryService inventoryService;
 
     @GetMapping("/{userId}")
-    public Mono<UserInventory> getUserInventory(@PathVariable Long userId) {
+    public Mono<UserInventory> getUserInventory(@PathVariable UUID userId) {
         return inventoryService.getInventoryByUserId(userId);
     }
 
@@ -22,7 +23,7 @@ public class InventoryController {
     // Georreferenciado
     @PostMapping("/{userId}/loot")
     public Mono<UserInventory> receiveExpeditionLoot(
-            @PathVariable Long userId,
+            @PathVariable UUID userId,
             @RequestParam int madera,
             @RequestParam int hierbas) {
 

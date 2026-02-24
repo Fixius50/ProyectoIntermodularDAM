@@ -16,11 +16,11 @@ public class BattleSession {
 
     private String sessionId; // Unique identifier for the room
 
-    private Long playerOneId;
-    private Long playerTwoId;
+    private UUID playerOneId;
+    private UUID playerTwoId;
 
-    private Long playerOneBirdCardId;
-    private Long playerTwoBirdCardId;
+    private UUID playerOneBirdCardId;
+    private UUID playerTwoBirdCardId;
 
     private int playerOneHealth;
     private int playerTwoHealth;
@@ -30,7 +30,7 @@ public class BattleSession {
     private int playerTwoSeeds;
 
     private String status; // WAITING, IN_PROGRESS, FINISHED
-    private Long winnerId;
+    private UUID winnerId;
 
     /**
      * Initializes a new battle room.
@@ -38,7 +38,7 @@ public class BattleSession {
      * @param playerOneId ID of the host player.
      * @return A newly minted BattleSession.
      */
-    public static BattleSession createRoom(Long playerOneId, Long playerOneBirdCardId, int initialHealth) {
+    public static BattleSession createRoom(UUID playerOneId, UUID playerOneBirdCardId, int initialHealth) {
         return BattleSession.builder()
                 .sessionId(UUID.randomUUID().toString())
                 .playerOneId(playerOneId)

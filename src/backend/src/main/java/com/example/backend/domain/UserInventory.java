@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -15,9 +16,9 @@ import org.springframework.data.relational.core.mapping.Table;
 public class UserInventory {
 
     @Id
-    private Long id;
+    private UUID id;
 
-    private Long userId; // Vinculado a Supabase Auth User ID (convertido a numerico o UUID despues)
+    private UUID userId; // Vinculado a Supabase Auth User ID (convertido a numerico o UUID despues)
 
     // Recursos del módulo "Expedición"
     private int madera;

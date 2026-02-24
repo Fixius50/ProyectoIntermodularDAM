@@ -17,7 +17,7 @@ import java.util.Map;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret:ThisIsAVerySecretKeyThatHasToBeVeryLongForHS512AlgorithmToWorkProperly1234567890}")
+    @Value("${spring.supabase.jwt-secret:ThisIsAVerySecretKeyThatHasToBeVeryLongForHS256AlgorithmToWorkProperly1234567890}")
     private String secret;
 
     @Value("${jwt.expiration:86400000}") // Default 24h
@@ -63,7 +63,7 @@ public class JwtUtil {
                 .subject(username)
                 .issuedAt(createdDate)
                 .expiration(expirationDate)
-                .signWith(getSigningKey(), Jwts.SIG.HS512)
+                .signWith(getSigningKey(), Jwts.SIG.HS256)
                 .compact();
     }
 }
