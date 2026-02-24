@@ -4,7 +4,7 @@ import { colors, typography, spacing, borders, shadows } from '../theme/theme';
 
 interface ResourceCounterProps {
     icon: string;
-    value: number;
+    value: number | string;
     label?: string;
 }
 
