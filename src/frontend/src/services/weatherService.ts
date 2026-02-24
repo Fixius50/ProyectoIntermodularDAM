@@ -21,7 +21,7 @@ function mapWmoToCondition(wmoCode: number, isDay: boolean): WeatherCondition {
     return 'SOL'; // Fallback
 }
 
-export async function fetchCurrentWeather(latitude = 40.4165, longitude = -3.7026, locationName = 'Madrid'): Promise<Weather> {
+export async function fetchCurrentWeather(latitude: number, longitude: number, locationName = 'Ubicación Actual'): Promise<Weather> {
     try {
         // Obtenemos clima, código WMO e indicador de si es de día
         const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,is_day,weather_code&timezone=auto`);

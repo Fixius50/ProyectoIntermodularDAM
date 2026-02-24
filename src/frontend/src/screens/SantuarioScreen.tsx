@@ -122,12 +122,23 @@ export function SantuarioScreen() {
 
     // ─── EFFECTS ───────────────────────────────────────────────
     useEffect(() => {
-        // Al montar el Santuario, sincronizamos el clima real de Madrid
-        // (Opcionalmente, podríamos pedir acceso a Geolocalización aquí)
         const loadRealWeather = async () => {
             try {
-                const realWeather = await fetchCurrentWeather(40.4165, -3.7026, 'Madrid');
-                dispatch({ type: 'SET_WEATHER', payload: realWeather });
+                // Intentamos usar geolocalización real
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(async (position) => {
+                        const { latitude, longitude } = position.coords;
+                        const realWeather = await fetchCurrentWeather(latitude, longitude);
+                        dispatch({ type: 'SET_WEATHER', payload: realWeather });
+                    }, async (err) => {
+                        console.warn('Geolocalización denegada o fallida, usando Madrid:', err);
+                        const madridWeather = await fetchCurrentWeather(40.4165, -3.7026, 'Madrid');
+                        dispatch({ type: 'SET_WEATHER', payload: madridWeather });
+                    });
+                } else {
+                    const fallbackWeather = await fetchCurrentWeather(40.4165, -3.7026, 'Madrid');
+                    dispatch({ type: 'SET_WEATHER', payload: fallbackWeather });
+                }
             } catch (error) {
                 console.error('No se pudo cargar el clima:', error);
             }
@@ -185,7 +196,7 @@ export function SantuarioScreen() {
                 position: 'absolute', inset: 0,
                 backgroundColor: phaseConfig.bgTint,
                 pointerEvents: 'none' as any, zIndex: 5,
-                animation: 'sunriseGlow 8s ease-in-out infinite',
+                animation: 'sunriseGlow 12s ease-in-out infinite',
             }} />
 
             {/* ── Panel Superior ────────────────────────────── */}
@@ -222,15 +233,16 @@ export function SantuarioScreen() {
             {/* ── Zona del Árbol ────────────────────────────── */}
             <View style={styles.treeZone}>
                 {/* Partículas de hojas flotantes */}
-                {[0, 1, 2, 3, 4].map(i => (
+                {[0, 1, 2].map(i => (
                     <div key={`leaf-${i}`} style={{
                         position: 'absolute',
-                        top: `${25 + i * 10}%`,
-                        left: `${15 + i * 14}%`,
+                        top: `${25 + i * 20}%`,
+                        left: `${15 + i * 25}%`,
                         fontSize: i % 2 === 0 ? 14 : 11,
-                        animation: `leafDrift ${3.5 + i * 0.8}s ease-in-out ${i * 1.5}s infinite`,
+                        animation: `leafDrift ${6 + i * 1.5}s ease-in-out ${i * 3}s infinite`,
                         pointerEvents: 'none' as any,
                         zIndex: 10,
+                        opacity: 0.4,
                     }}>{i % 3 === 0 ? '🍂' : '🍃'}</div>
                 ))}
 
@@ -452,18 +464,18 @@ function BirdOnTree({ bird, position, isTapped, onTap, animDelay }: BirdOnTreePr
 const styles = StyleSheet.create({
     /* Panel Superior */
     topPanel: {
-        paddingTop: 44,
+        paddingTop: 60,
         paddingHorizontal: spacing.xl,
-        gap: spacing.sm,
+        gap: spacing.md,
         zIndex: 20,
     },
     greeting: {
-        fontSize: 11,
-        color: colors.text,
-        opacity: 0.5,
+        fontSize: 10,
+        color: colors.primaryDark,
+        opacity: 0.7,
         fontFamily: typography.fontBody,
         textAlign: 'center',
-        letterSpacing: 1.5,
+        letterSpacing: 2,
         textTransform: 'uppercase',
     },
     playerName: {
@@ -534,27 +546,27 @@ const styles = StyleSheet.create({
     },
     heartBubble: {
         position: 'absolute',
-        top: -72,
+        top: -80,
         left: -40,
-        backgroundColor: colors.glass,
-        borderRadius: borders.radiusMedium,
-        padding: spacing.sm,
-        paddingHorizontal: spacing.md,
+        backgroundColor: colors.background, // Usamos fondo sólido crema para máxima visibilidad
+        borderRadius: borders.radiusLarge,
+        padding: spacing.md,
         alignItems: 'center',
-        minWidth: 140,
-        maxWidth: 200,
-        //@ts-ignore
-        backdropFilter: 'blur(18px)',
-        borderWidth: 1,
-        borderColor: colors.glassBorder,
-        ...shadows.glass,
+        minWidth: 160,
+        maxWidth: 220,
+        borderWidth: 2,
+        borderColor: colors.primary,
+        ...shadows.card,
     },
     birdName: {
-        fontSize: typography.sizeCaption,
+        fontSize: typography.sizeSubtitle,
         fontWeight: typography.weightBold,
         color: colors.text,
         fontFamily: typography.fontTitle,
         textAlign: 'center',
+        textShadowColor: 'rgba(255,255,255,0.8)',
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 2,
     },
     birdScientific: {
         fontSize: 9,
@@ -585,8 +597,11 @@ const styles = StyleSheet.create({
         paddingVertical: spacing.sm,
         borderWidth: 1,
         borderColor: colors.glassBorder,
-        //@ts-ignore
-        backdropFilter: 'blur(12px)',
+        shadowColor: colors.primary,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
     },
     tapHintText: {
         fontSize: 11,
@@ -608,7 +623,7 @@ const styles = StyleSheet.create({
     },
     craftHintText: {
         fontSize: typography.sizeCaption,
-        color: '#FF8F00',
+        color: colors.secondaryDark,
         fontWeight: typography.weightSemiBold,
         fontFamily: typography.fontBody,
         textAlign: 'center',
@@ -645,6 +660,7 @@ const styles = StyleSheet.create({
         color: colors.primaryDark,
         fontStyle: 'italic',
         fontFamily: typography.fontBody,
+        opacity: 0.8,
     },
     dayBarContainer: {
         height: 3,
@@ -656,7 +672,7 @@ const styles = StyleSheet.create({
     /* Modal */
     modalOverlay: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.6)',
+        backgroundColor: 'rgba(44, 62, 80, 0.4)',
         justifyContent: 'center',
         alignItems: 'center',
         padding: spacing.md,
@@ -711,7 +727,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: spacing.xl,
         paddingVertical: spacing.md,
         borderRadius: borders.radiusFull,
-        backgroundColor: 'rgba(124, 154, 146, 0.15)',
+        backgroundColor: 'rgba(124, 154, 146, 0.12)',
         width: '100%',
         alignItems: 'center',
     },
