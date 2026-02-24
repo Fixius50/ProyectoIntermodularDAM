@@ -1,3 +1,8 @@
 {
+<<<<<<< HEAD
     "liveServer.settings.multiRootWorkspaceName": "ProyectoIntermodularDAM"
+=======
+    "java.compile.nullAnalysis.mode": "disabled",
+    "java.configuration.updateBuildConfiguration": "automatic"
+>>>>>>> 267b424ecdc5da9e0bf142a1d70f6080a381abed
 }
