@@ -3,7 +3,9 @@ import { View, StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-nati
 import { GlassCard } from '../components/GlassCard';
 import { ResourceCounter } from '../components/ResourceCounter';
 import { useGame } from '../context/GameContext';
-import { BiomeType, BaitType } from '../types/types';
+import { useCoop } from '../context/CoopContext';
+import { BiomeType, BaitType, CraftItem, CraftItemType } from '../types/types';
+import { CoopTab, Invitation, TrainingSession, CoopExpedition } from '../types/coop';
 import { colors, typography, spacing, borders, shadows } from '../theme/theme';
 
 // CSS animations for Expedición effects
@@ -36,14 +38,23 @@ const BAITS: { type: BaitType; icon: string; label: string }[] = [
     { type: 'PEZ', icon: '🐟', label: 'Pez' },
 ];
 
+// ─── TYPES & CONSTANTS ─────────────────────────────────────
+type ExpedicionSubTab = 'EXPLORA' | 'TALLER' | 'COOP';
+
+const SUB_TABS: { id: ExpedicionSubTab; label: string; icon: string }[] = [
+    { id: 'EXPLORA', label: 'Explora', icon: '🔭' },
+    { id: 'TALLER', label: 'Taller', icon: '🔨' },
+    { id: 'COOP', label: 'Coop', icon: '👥' },
+];
+
 /**
- * Pantalla de Expedición
- * Objetivo: Exploración y obtención de materiales.
- * - Estado A: Elegir bioma + cebo → Enviar Observador
- * - Estado B: Temporizador + minijuego de Enfoque
+ * Pantalla Unificada de Expedición
+ * Agrupa Exploración, Taller y Cooperación.
  */
 export function ExpedicionScreen() {
     const { state, dispatch } = useGame();
+    const coop = useCoop();
+    const [activeSubTab, setActiveSubTab] = useState<ExpedicionSubTab>('EXPLORA');
     const { expedition, weather } = state;
 
     const [selectedBiome, setSelectedBiome] = useState<BiomeType | null>(null);
@@ -113,223 +124,309 @@ export function ExpedicionScreen() {
         MONTAÑA: 'Bioma Montaña — Mayor probabilidad de rapaces y aves de altura',
     };
 
-    // ─── ESTADO A: Seleccionar bioma y cebo ─────────────────
-    if (expedition.status === 'IDLE') {
-        return (
-            <View style={styles.container}>
-                <style>{expedicionAnimCSS}</style>
-                <Text style={styles.title}>🗺️ Expedición</Text>
-                <Text style={styles.subtitle}>Elige un bioma y un cebo para enviar a tu observador</Text>
+    // ─── RENDERERS ─────────────────────────────────────────────
 
-                {/* Selector de Bioma */}
-                <Text style={styles.sectionTitle}>Bioma</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.selectorRow}>
-                    {BIOMES.map((biome) => {
-                        const isSelected = selectedBiome === biome.type;
-                        return (
-                            <TouchableOpacity
-                                key={biome.type}
-                                style={[
-                                    styles.biomeCard,
-                                    isSelected && { borderColor: biome.color, borderWidth: 3 },
-                                ]}
-                                onPress={() => setSelectedBiome(biome.type)}
-                                accessibilityLabel={biomeAccessibility[biome.type]}
-                                accessibilityRole="radio"
-                                accessibilityState={{ selected: isSelected }}
-                            >
-                                <Text style={styles.biomeIcon}>{biome.icon}</Text>
-                                {isRaining && (
-                                    <div style={{ position: 'absolute', top: 6, right: 6, animation: 'rainDropBiome 1s ease-in-out infinite', fontSize: 14 }}>💧</div>
-                                )}
-                                <Text style={[styles.biomeLabel, isSelected && { color: biome.color, fontWeight: typography.weightBold }]}>
-                                    {biome.label}
-                                </Text>
-                            </TouchableOpacity>
-                        );
-                    })}
-                </ScrollView>
+    const renderExploracion = () => {
+        if (expedition.status === 'IDLE') {
+            return (
+                <View style={styles.tabContent}>
+                    <Text style={styles.sectionHeading}>📍 Nueva Exploración</Text>
+                    <Text style={styles.sectionSub}>Elige un bioma y un cebo para enviar a tu observador</Text>
 
-                {/* Selector de Cebo */}
-                <Text style={styles.sectionTitle}>Cebo</Text>
-                <View style={styles.baitRow}>
-                    {BAITS.map((bait) => {
-                        const isSelected = selectedBait === bait.type;
-                        return (
-                            <TouchableOpacity
-                                key={bait.type}
-                                style={[
-                                    styles.baitCard,
-                                    isSelected && styles.baitCardSelected,
-                                ]}
-                                onPress={() => setSelectedBait(bait.type)}
-                                accessibilityLabel={`Cebo ${bait.label}. Atrae aves según su dieta`}
-                                accessibilityRole="radio"
-                                accessibilityState={{ selected: isSelected }}
-                            >
-                                <Text style={styles.baitIcon}>{bait.icon}</Text>
-                                <Text style={[styles.baitLabel, isSelected && styles.baitLabelSelected]}>{bait.label}</Text>
-                            </TouchableOpacity>
-                        );
-                    })}
-                </View>
+                    {/* Selector de Bioma */}
+                    <Text style={styles.miniLabel}>Bioma</Text>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.selectorRow}>
+                        {BIOMES.map((biome) => {
+                            const isSelected = selectedBiome === biome.type;
+                            return (
+                                <TouchableOpacity
+                                    key={biome.type}
+                                    style={[
+                                        styles.biomeCard,
+                                        isSelected && { borderColor: biome.color, borderWidth: 3 },
+                                    ]}
+                                    onPress={() => setSelectedBiome(biome.type)}
+                                >
+                                    <Text style={styles.biomeIcon}>{biome.icon}</Text>
+                                    {isRaining && (
+                                        <Text style={{ position: 'absolute', top: 6, right: 6, fontSize: 14 }}>💧</Text>
+                                    )}
+                                    <Text style={[styles.biomeLabel, isSelected && { color: biome.color, fontWeight: typography.weightBold }]}>
+                                        {biome.label}
+                                    </Text>
+                                </TouchableOpacity>
+                            );
+                        })}
+                    </ScrollView>
 
-                {/* Botón Enviar — brilla en dorado si tiene Notas de Campo */}
-                <div style={hasFieldNotes && selectedBiome && selectedBait ? {
-                    animation: 'goldenPulse 2s ease-in-out infinite',
-                    borderRadius: 999,
-                    alignSelf: 'center',
-                } : { alignSelf: 'center' }}>
+                    {/* Selector de Cebo */}
+                    <Text style={styles.miniLabel}>Cebo</Text>
+                    <View style={styles.baitRow}>
+                        {BAITS.map((bait) => {
+                            const isSelected = selectedBait === bait.type;
+                            return (
+                                <TouchableOpacity
+                                    key={bait.type}
+                                    style={[
+                                        styles.baitCard,
+                                        isSelected && styles.baitCardSelected,
+                                    ]}
+                                    onPress={() => setSelectedBait(bait.type)}
+                                >
+                                    <Text style={styles.baitIcon}>{bait.icon}</Text>
+                                    <Text style={[styles.baitLabel, isSelected && styles.baitLabelSelected]}>{bait.label}</Text>
+                                </TouchableOpacity>
+                            );
+                        })}
+                    </View>
+
                     <TouchableOpacity
                         style={[
                             styles.sendButton,
                             (!selectedBiome || !selectedBait) && styles.sendButtonDisabled,
-                            hasFieldNotes && selectedBiome && selectedBait && styles.sendButtonGolden,
                         ]}
                         onPress={handleStartExpedition}
                         disabled={!selectedBiome || !selectedBait}
-                        accessibilityLabel={`Enviar observador${hasFieldNotes ? '. Tienes Notas de Campo — mayor probabilidad de éxito' : ''}`}
                     >
-                        <Text style={styles.sendButtonText}>
-                            {hasFieldNotes ? '✨ ' : ''}🔭 Enviar Observador
-                        </Text>
-                        {hasFieldNotes && (
-                            <Text style={styles.goldenHint}>Notas de Campo activas — más suerte</Text>
-                        )}
+                        <Text style={styles.sendButtonText}>🔭 Enviar Observador</Text>
                     </TouchableOpacity>
-                </div>
+                </View>
+            );
+        }
 
-                {/* Recursos actuales */}
-                <View style={styles.resourceBar}>
-                    <ResourceCounter icon="📝" value={state.player.resources.fieldNotes} label="Notas" />
-                    <ResourceCounter icon="🌰" value={state.player.resources.seeds} label="Semillas" />
+        if (expedition.status === 'IN_PROGRESS') {
+            return (
+                <View style={styles.tabContent}>
+                    <Text style={styles.sectionHeading}>🔭 En Curso...</Text>
+                    <GlassCard style={styles.timerCard}>
+                        <Text style={styles.timerValue}>{formatTime(timeLeft)}</Text>
+                        <Text style={styles.timerBiome}>
+                            {BIOMES.find((b) => b.type === expedition.selectedBiome)?.icon}{' '}
+                            Explorando {expedition.selectedBiome}
+                        </Text>
+                    </GlassCard>
+
+                    {!showMinigame ? (
+                        <TouchableOpacity style={styles.minigameButton} onPress={() => setShowMinigame(true)}>
+                            <Text style={styles.minigameButtonText}>📸 Avistamiento Rápido</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <View style={styles.minigameZone}>
+                            <Text style={styles.minigameTitle}>🔍 ¡Mantén el enfoque!</Text>
+                            <View style={styles.photoZone}>
+                                <Text style={[styles.photoEmoji, { opacity: 0.2 + (sliderValue / 100) * 0.8 }]}>🐦</Text>
+                            </View>
+                            <View style={styles.sliderControls}>
+                                <TouchableOpacity style={styles.sliderBtn} onPress={() => setSliderValue(Math.max(0, sliderValue - 10))}>
+                                    <Text>◀</Text>
+                                </TouchableOpacity>
+                                <Text style={styles.sliderValueText}>{sliderValue}%</Text>
+                                <TouchableOpacity style={styles.sliderBtn} onPress={() => setSliderValue(Math.min(100, sliderValue + 10))}>
+                                    <Text>▶</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <TouchableOpacity style={styles.shutterButton} onPress={handleFocusAttempt}>
+                                <Text style={styles.shutterButtonText}>📸 ¡FOTO!</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                </View>
+            );
+        }
+
+        return (
+            <View style={styles.tabContent}>
+                <Text style={styles.sectionHeading}>✅ Completada</Text>
+                <GlassCard style={styles.completedCard}>
+                    <Text style={styles.completedEmoji}>🎉</Text>
+                    <Text style={styles.completedText}>¡Expedición exitosa!</Text>
+                </GlassCard>
+                <TouchableOpacity style={styles.sendButton} onPress={handleReset}>
+                    <Text style={styles.sendButtonText}>🔄 Volver</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    };
+
+    /**
+     * Lógica simplificada de Taller integrada
+     */
+    const renderTaller = () => {
+        const REQUIRED_SLOTS: { type: CraftItemType; icon: string; label: string }[] = [
+            { type: 'FOTO', icon: '📸', label: 'Foto' },
+            { type: 'PLUMA', icon: '🪶', label: 'Pluma' },
+            { type: 'NOTAS', icon: '📝', label: 'Notas' },
+        ];
+
+        const availableItems = state.player.craftItems;
+        const hasFoto = availableItems.some(i => i.type === 'FOTO');
+        const hasPluma = availableItems.some(i => i.type === 'PLUMA');
+        const hasNotas = availableItems.some(i => i.type === 'NOTAS');
+        const canCraft = hasFoto && hasPluma && hasNotas;
+
+        const handleCraft = () => {
+            if (!canCraft) return;
+            // Consume materials
+            const itemFoto = availableItems.find(i => i.type === 'FOTO');
+            const itemPluma = availableItems.find(i => i.type === 'PLUMA');
+            const itemNotas = availableItems.find(i => i.type === 'NOTAS');
+
+            if (itemFoto) dispatch({ type: 'REMOVE_CRAFT_ITEM', payload: itemFoto.id });
+            if (itemPluma) dispatch({ type: 'REMOVE_CRAFT_ITEM', payload: itemPluma.id });
+            if (itemNotas) dispatch({ type: 'REMOVE_CRAFT_ITEM', payload: itemNotas.id });
+
+            alert('¡Ave registrada! Has obtenido una nueva carta en tu colección.');
+        };
+
+        return (
+            <View style={styles.tabContent}>
+                <Text style={styles.sectionHeading}>🔨 Mesa de Trabajo</Text>
+                <Text style={styles.sectionSub}>Combina materiales para crear cartas de aves</Text>
+
+                <View style={styles.craftingGrid}>
+                    {REQUIRED_SLOTS.map((slot) => {
+                        const hasItem = availableItems.some(i => i.type === slot.type);
+                        return (
+                            <View key={slot.type} style={[styles.craftSlot, hasItem && styles.craftSlotActive]}>
+                                <Text style={styles.slotIcon}>{slot.icon}</Text>
+                                <Text style={styles.slotLabel}>{slot.label}</Text>
+                                {hasItem && (
+                                    <View style={styles.checkMark}>
+                                        <Text style={{ fontSize: 10, color: colors.white }}>✓</Text>
+                                    </View>
+                                )}
+                            </View>
+                        );
+                    })}
+                </View>
+
+                <TouchableOpacity
+                    style={[styles.sendButton, styles.workshopButton, !canCraft && styles.sendButtonDisabled]}
+                    onPress={handleCraft}
+                    disabled={!canCraft}
+                >
+                    <Text style={styles.sendButtonText}>🔨 Registrar Ave</Text>
+                </TouchableOpacity>
+
+                <View style={styles.inventoryMini}>
+                    <Text style={styles.miniLabel}>Tus Materiales ({availableItems.length})</Text>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing.sm }}>
+                        {availableItems.map(item => (
+                            <View key={item.id} style={styles.invChip}>
+                                <Text style={{ fontSize: 18 }}>{item.icon}</Text>
+                            </View>
+                        ))}
+                        {availableItems.length === 0 && (
+                            <Text style={{ fontSize: 12, opacity: 0.4 }}>No tienes materiales aún</Text>
+                        )}
+                    </ScrollView>
                 </View>
             </View>
         );
-    }
+    };
 
-    // ─── ESTADO B: Expedición en progreso / Minijuego ───────
-    if (expedition.status === 'IN_PROGRESS') {
+    /**
+     * Lógica simplificada de Cooperación integrada
+     */
+    const renderCoop = () => {
+        const { invitations, trainingSessions } = coop.state;
+        const pendingInvs = invitations.filter(inv => inv.status === 'PENDING');
+
         return (
-            <View style={styles.container}>
-                <Text style={styles.title}>🔭 Expedición en Curso</Text>
+            <View style={styles.tabContent}>
+                <Text style={styles.sectionHeading}>👥 Comunidad</Text>
+                <Text style={styles.sectionSub}>Colabora con otros naturalistas</Text>
 
-                <GlassCard style={styles.timerCard}>
-                    <Text style={styles.timerLabel}>⏱️ Tiempo restante</Text>
-                    <Text style={styles.timerValue}>{formatTime(timeLeft)}</Text>
-                    <Text style={styles.timerBiome}>
-                        {BIOMES.find((b) => b.type === expedition.selectedBiome)?.icon}{' '}
-                        {expedition.selectedBiome} — Cebo: {BAITS.find((b) => b.type === expedition.selectedBait)?.icon}
-                    </Text>
-                </GlassCard>
-
-                {/* Minijuego de Enfoque */}
-                {!showMinigame ? (
-                    <TouchableOpacity
-                        style={styles.minigameButton}
-                        onPress={() => setShowMinigame(true)}
-                        accessibilityLabel="Realizar avistamiento rápido para ganar notas de campo"
-                    >
-                        <Text style={styles.minigameButtonText}>📸 Realizar Avistamiento Rápido</Text>
-                        <Text style={styles.minigameHint}>¡Gana Notas de Campo extra!</Text>
-                    </TouchableOpacity>
-                ) : (
-                    <View style={styles.minigameOverlay}>
-                        <Text style={styles.minigameTitle}>🔍 Minijuego de Enfoque</Text>
-                        <Text style={styles.minigameInstruction}>
-                            Mueve el marcador hasta enfocar la imagen (zona verde ≈ 70-80%)
+                <View style={styles.coopSection}>
+                    <Text style={styles.miniLabel}>Invitaciones Pendientes ({pendingInvs.length})</Text>
+                    {pendingInvs.map(inv => (
+                        <GlassCard key={inv.id} style={styles.invMiniCard}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={styles.invFrom}>{inv.fromPlayerName}</Text>
+                                    <Text style={styles.invMsg}>{inv.message}</Text>
+                                </View>
+                                <View style={{ flexDirection: 'row', gap: spacing.xs }}>
+                                    <TouchableOpacity
+                                        style={[styles.smallBtn, { backgroundColor: colors.primary }]}
+                                        onPress={() => coop.acceptInvitation(inv.id)}
+                                    >
+                                        <Text style={styles.smallBtnText}>✓</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={[styles.smallBtn, { backgroundColor: colors.error }]}
+                                        onPress={() => coop.declineInvitation(inv.id)}
+                                    >
+                                        <Text style={styles.smallBtnText}>✕</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </GlassCard>
+                    ))}
+                    {pendingInvs.length === 0 && (
+                        <Text style={{ fontSize: 12, opacity: 0.4, textAlign: 'center', marginVertical: spacing.md }}>
+                            No tienes invitaciones nuevas
                         </Text>
+                    )}
 
-                        {/* Zona de la "foto" con blur simulado */}
-                        <View style={styles.photoZone}>
-                            <Text style={[
-                                styles.photoEmoji,
-                                { opacity: 0.2 + (sliderValue / 100) * 0.8 },
-                            ]}>
-                                🐦
-                            </Text>
-                            <Text style={[
-                                styles.photoText,
-                                { opacity: sliderValue > 60 && sliderValue < 90 ? 1 : 0.3 },
-                            ]}>
-                                {sliderValue > 60 && sliderValue < 90 ? '¡Bien enfocado!' : 'Borroso...'}
-                            </Text>
-                        </View>
-
-                        {/* Slider simulado con botones */}
-                        <View style={styles.sliderContainer}>
-                            <View style={styles.sliderTrack}>
-                                <View style={[styles.sliderFill, { width: `${sliderValue}%` as any }]} />
-                                <View style={[styles.sweetSpot, { left: '65%' as any, width: '20%' as any }]} />
-                            </View>
-                            <View style={styles.sliderButtons}>
-                                <TouchableOpacity
-                                    style={styles.sliderBtn}
-                                    onPress={() => setSliderValue(Math.max(0, sliderValue - 10))}
-                                    accessibilityLabel="Desenfocar"
-                                >
-                                    <Text style={styles.sliderBtnText}>◀ −</Text>
-                                </TouchableOpacity>
-                                <Text style={styles.sliderPercent}>{sliderValue}%</Text>
-                                <TouchableOpacity
-                                    style={styles.sliderBtn}
-                                    onPress={() => setSliderValue(Math.min(100, sliderValue + 10))}
-                                    accessibilityLabel="Enfocar más"
-                                >
-                                    <Text style={styles.sliderBtnText}>+ ▶</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-
-                        {/* Botón de disparo */}
-                        <TouchableOpacity style={styles.shutterButton} onPress={handleFocusAttempt}>
-                            <Text style={styles.shutterButtonText}>📸 ¡Capturar!</Text>
-                        </TouchableOpacity>
-
-                        {/* Flash de cámara en éxito */}
-                        {focusResult === 'success' && (
-                            <div style={{
-                                position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                                backgroundColor: 'white',
-                                animation: 'cameraFlash 0.6s ease-out forwards',
-                                zIndex: 999,
-                                pointerEvents: 'none',
-                            }} />
-                        )}
-
-                        {/* Resultado */}
-                        {focusResult !== 'none' && (
-                            <GlassCard style={focusResult === 'success' ? styles.resultSuccess : styles.resultFail}>
-                                <Text style={styles.resultText}>
-                                    {focusResult === 'success'
-                                        ? '📸 ¡Foto perfecta! +1 Nota de Campo'
-                                        : '❌ Imagen borrosa... ¡Inténtalo de nuevo!'}
+                    <Text style={[styles.miniLabel, { marginTop: spacing.md }]}>Sesiones de Entrenamiento</Text>
+                    {trainingSessions.map(sess => (
+                        <View key={sess.id} style={styles.trainingItem}>
+                            <View style={{ flex: 1, gap: 4 }}>
+                                <Text style={{ fontWeight: 'bold', fontSize: 13 }}>
+                                    {sess.birdCard.photo} {sess.birdCard.name}
                                 </Text>
-                            </GlassCard>
-                        )}
-                    </View>
-                )}
+                                <View style={styles.progressBar}>
+                                    <View style={{ width: `${sess.progress}%`, height: 4, backgroundColor: colors.primary }} />
+                                </View>
+                                <Text style={{ fontSize: 10, opacity: 0.6 }}>Progreso: {sess.progress}%</Text>
+                            </View>
+                            <TouchableOpacity
+                                style={[styles.smallBtn, { backgroundColor: colors.secondary, width: 80 }]}
+                                onPress={() => coop.boostTraining(sess.id)}
+                            >
+                                <Text style={styles.smallBtnText}>¡ANIMAR!</Text>
+                            </TouchableOpacity>
+                        </View>
+                    ))}
+                </View>
             </View>
         );
-    }
+    };
 
-    // ─── ESTADO C: Expedición completada ────────────────────
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>✅ ¡Expedición Completada!</Text>
-            <GlassCard style={styles.completedCard}>
-                <Text style={styles.completedEmoji}>🎉</Text>
-                <Text style={styles.completedText}>
-                    Has recolectado materiales del bioma{' '}
-                    {BIOMES.find((b) => b.type === expedition.selectedBiome)?.label}
-                </Text>
-                <Text style={styles.completedHint}>
-                    Ve al Taller para construir tu Estación de Reclamo
-                </Text>
-            </GlassCard>
-            <TouchableOpacity style={styles.sendButton} onPress={handleReset}>
-                <Text style={styles.sendButtonText}>🔄 Nueva Expedición</Text>
-            </TouchableOpacity>
+            <style>{expedicionAnimCSS}</style>
+
+            {/* Cabecero Unificado con Tabs */}
+            <View style={styles.header}>
+                <Text style={styles.mainTitle}>🗺️ Expedición</Text>
+                <View style={styles.tabBar}>
+                    {SUB_TABS.map(tab => (
+                        <TouchableOpacity
+                            key={tab.id}
+                            style={[styles.tabItem, activeSubTab === tab.id && styles.tabItemActive]}
+                            onPress={() => setActiveSubTab(tab.id)}
+                        >
+                            <Text style={styles.tabIcon}>{tab.icon}</Text>
+                            {activeSubTab === tab.id && <Text style={styles.tabLabel}>{tab.label}</Text>}
+                        </TouchableOpacity>
+                    ))}
+                </View>
+            </View>
+
+            <ScrollView contentContainerStyle={styles.scrollRoot}>
+                {activeSubTab === 'EXPLORA' && renderExploracion()}
+                {activeSubTab === 'TALLER' && renderTaller()}
+                {activeSubTab === 'COOP' && renderCoop()}
+            </ScrollView>
+
+            {/* Global Resources Bar */}
+            <View style={styles.globalResources}>
+                <ResourceCounter icon="🌰" value={state.player.resources.seeds} />
+                <ResourceCounter icon="📝" value={state.player.resources.fieldNotes} />
+                <ResourceCounter icon="⭐" value={state.player.reputation} />
+            </View>
         </View>
     );
 }
@@ -339,323 +436,330 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.background,
-        paddingTop: 48,
-        paddingHorizontal: spacing.xl,
     },
-    title: {
+    scrollRoot: {
+        paddingHorizontal: spacing.xl,
+        paddingBottom: spacing.huge,
+    },
+    header: {
+        paddingTop: 48,
+        paddingBottom: spacing.lg,
+        paddingHorizontal: spacing.xl,
+        backgroundColor: colors.background,
+        gap: spacing.md,
+    },
+    mainTitle: {
         fontSize: typography.sizeTitle,
         fontWeight: typography.weightBold,
         color: colors.text,
-        textAlign: 'center',
         fontFamily: typography.fontTitle,
+    },
+    tabBar: {
+        flexDirection: 'row',
+        gap: spacing.sm,
+        backgroundColor: 'rgba(124, 154, 146, 0.08)',
+        borderRadius: borders.radiusFull,
+        padding: 4,
+    },
+    tabItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 8,
+        paddingHorizontal: spacing.lg,
+        borderRadius: borders.radiusFull,
+        gap: spacing.xs,
+    },
+    tabItemActive: {
+        backgroundColor: colors.primary,
+        ...shadows.card,
+    },
+    tabIcon: {
+        fontSize: 16,
+    },
+    tabLabel: {
+        fontSize: 12,
+        fontWeight: typography.weightBold,
+        color: colors.white,
+        fontFamily: typography.fontBody,
+    },
+    tabContent: {
+        paddingTop: spacing.md,
+    },
+    sectionHeading: {
+        fontSize: typography.sizeSubtitle,
+        fontWeight: typography.weightBold,
+        color: colors.text,
+        fontFamily: typography.fontTitle,
+        marginBottom: 2,
+    },
+    sectionSub: {
+        fontSize: 11,
+        color: colors.text,
+        opacity: 0.6,
+        marginBottom: spacing.xl,
+    },
+    miniLabel: {
+        fontSize: 10,
+        fontWeight: typography.weightBold,
+        color: colors.primary,
+        textTransform: 'uppercase',
+        letterSpacing: 1,
         marginBottom: spacing.sm,
     },
-    subtitle: {
-        fontSize: typography.sizeBody,
-        color: colors.text,
-        opacity: 0.7,
-        textAlign: 'center',
-        marginBottom: spacing.xxl,
-        fontFamily: typography.fontBody,
-    },
-    sectionTitle: {
-        fontSize: typography.sizeSubtitle,
-        fontWeight: typography.weightSemiBold,
-        color: colors.text,
-        marginBottom: spacing.md,
-        fontFamily: typography.fontBody,
-    },
-
-    // Biome Selector
     selectorRow: {
-        paddingBottom: spacing.xl,
+        paddingBottom: spacing.lg,
         gap: spacing.md,
     },
     biomeCard: {
         backgroundColor: colors.glass,
         borderRadius: borders.radiusLarge,
-        padding: spacing.lg,
+        padding: spacing.md,
         alignItems: 'center',
-        width: 110,
-        borderWidth: 2,
-        borderColor: 'transparent',
-        ...shadows.card,
-        //@ts-ignore
-        backdropFilter: 'blur(10px)',
+        width: 100,
+        borderWidth: 1,
+        borderColor: colors.glassBorder,
     },
     biomeIcon: {
-        fontSize: 48,
-        marginBottom: spacing.sm,
-    },
-    rainIndicator: {
-        position: 'absolute',
-        top: 8,
-        right: 8,
-        fontSize: 16,
+        fontSize: 32,
+        marginBottom: 4,
     },
     biomeLabel: {
-        fontSize: typography.sizeCaption,
+        fontSize: 11,
         color: colors.text,
-        fontFamily: typography.fontBody,
     },
-
-    // Bait Selector
     baitRow: {
         flexDirection: 'row',
-        justifyContent: 'center',
-        gap: spacing.lg,
+        gap: spacing.md,
         marginBottom: spacing.xxl,
     },
     baitCard: {
+        flex: 1,
         backgroundColor: colors.glass,
-        borderRadius: borders.radiusFull,
-        padding: spacing.lg,
+        borderRadius: borders.radiusMedium,
+        padding: spacing.md,
         alignItems: 'center',
-        width: 90,
-        height: 90,
-        justifyContent: 'center',
-        borderWidth: 2,
-        borderColor: 'transparent',
-        ...shadows.card,
+        borderWidth: 1,
+        borderColor: colors.glassBorder,
     },
     baitCardSelected: {
+        backgroundColor: 'rgba(217, 160, 139, 0.15)',
         borderColor: colors.secondary,
-        backgroundColor: colors.secondaryLight,
     },
     baitIcon: {
-        fontSize: 32,
+        fontSize: 24,
     },
     baitLabel: {
-        fontSize: typography.sizeSmall,
-        color: colors.text,
-        marginTop: spacing.xs,
-        fontFamily: typography.fontBody,
+        fontSize: 10,
+        marginTop: 2,
     },
     baitLabelSelected: {
         fontWeight: typography.weightBold,
         color: colors.secondaryDark,
     },
-
-    // Send Button
     sendButton: {
         backgroundColor: colors.primary,
         borderRadius: borders.radiusFull,
         paddingVertical: spacing.lg,
-        paddingHorizontal: spacing.xxl,
         alignItems: 'center',
-        alignSelf: 'center',
-        marginBottom: spacing.xl,
-        ...shadows.glass,
-    },
-    sendButtonGolden: {
-        backgroundColor: '#FF8F00',
-    },
-    sendButtonDisabled: {
-        backgroundColor: colors.disabled,
-    },
-    goldenHint: {
-        color: 'rgba(255,255,255,0.85)',
-        fontSize: typography.sizeSmall,
-        marginTop: spacing.xs,
-        fontStyle: 'italic',
+        ...shadows.card,
     },
     sendButtonText: {
         color: colors.white,
-        fontSize: typography.sizeSubtitle,
+        fontSize: 14,
         fontWeight: typography.weightBold,
-        fontFamily: typography.fontBody,
     },
-
-    // Resources
-    resourceBar: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        gap: spacing.lg,
-        marginTop: spacing.lg,
+    sendButtonDisabled: {
+        backgroundColor: colors.disabled,
+        opacity: 0.5,
     },
-
-    // Timer
     timerCard: {
         alignItems: 'center',
-        gap: spacing.sm,
-        marginBottom: spacing.xxl,
-    },
-    timerLabel: {
-        fontSize: typography.sizeBody,
-        color: colors.text,
-        fontFamily: typography.fontBody,
+        paddingVertical: spacing.xl,
+        marginBottom: spacing.lg,
     },
     timerValue: {
-        fontSize: typography.sizeHero,
+        fontSize: 48,
         fontWeight: typography.weightBold,
         color: colors.primary,
         fontFamily: typography.fontTitle,
     },
     timerBiome: {
-        fontSize: typography.sizeCaption,
-        color: colors.text,
+        fontSize: 12,
         opacity: 0.6,
     },
-
-    // Minigame Button
     minigameButton: {
         backgroundColor: colors.secondary,
+        padding: spacing.lg,
         borderRadius: borders.radiusLarge,
-        padding: spacing.xl,
         alignItems: 'center',
-        ...shadows.glass,
-        marginBottom: spacing.xl,
     },
     minigameButtonText: {
         color: colors.white,
-        fontSize: typography.sizeSubtitle,
-        fontWeight: typography.weightBold,
-        fontFamily: typography.fontBody,
+        fontWeight: 'bold',
     },
-    minigameHint: {
-        color: 'rgba(255,255,255,0.8)',
-        fontSize: typography.sizeCaption,
-        marginTop: spacing.xs,
-    },
-
-    // Minigame Overlay
-    minigameOverlay: {
-        flex: 1,
-        gap: spacing.lg,
+    minigameZone: {
+        backgroundColor: 'rgba(0,0,0,0.05)',
+        borderRadius: borders.radiusLarge,
+        padding: spacing.lg,
+        alignItems: 'center',
+        gap: spacing.md,
     },
     minigameTitle: {
-        fontSize: typography.sizeSubtitle,
+        fontSize: 14,
         fontWeight: typography.weightBold,
-        color: colors.text,
-        textAlign: 'center',
-        fontFamily: typography.fontTitle,
+        color: colors.primary,
     },
-    minigameInstruction: {
-        fontSize: typography.sizeCaption,
-        color: colors.text,
-        opacity: 0.7,
-        textAlign: 'center',
-        fontFamily: typography.fontBody,
-    },
-
-    // Photo Zone
     photoZone: {
+        width: 160,
         height: 160,
-        backgroundColor: colors.primaryLight,
-        borderRadius: borders.radiusLarge,
-        alignItems: 'center',
+        backgroundColor: colors.white,
+        borderRadius: 80,
         justifyContent: 'center',
+        alignItems: 'center',
         overflow: 'hidden',
+        borderWidth: 4,
+        borderColor: colors.primary,
     },
     photoEmoji: {
         fontSize: 80,
     },
-    photoText: {
-        fontSize: typography.sizeCaption,
-        color: colors.text,
-        fontWeight: typography.weightBold,
-        marginTop: spacing.xs,
-    },
-
-    // Slider
-    sliderContainer: {
-        gap: spacing.md,
-    },
-    sliderTrack: {
-        height: 12,
-        backgroundColor: 'rgba(0,0,0,0.1)',
-        borderRadius: borders.radiusFull,
-        overflow: 'hidden',
-        position: 'relative',
-    },
-    sliderFill: {
-        height: '100%' as any,
-        backgroundColor: colors.primary,
-        borderRadius: borders.radiusFull,
-    },
-    sweetSpot: {
-        position: 'absolute',
-        top: 0,
-        height: '100%' as any,
-        backgroundColor: 'rgba(39, 174, 96, 0.3)',
-        borderRadius: borders.radiusFull,
-    },
-    sliderButtons: {
+    sliderControls: {
         flexDirection: 'row',
-        justifyContent: 'center',
         alignItems: 'center',
         gap: spacing.xl,
     },
     sliderBtn: {
-        backgroundColor: colors.glass,
-        borderRadius: borders.radiusFull,
-        paddingVertical: spacing.sm,
-        paddingHorizontal: spacing.lg,
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: colors.white,
+        justifyContent: 'center',
+        alignItems: 'center',
         ...shadows.card,
     },
-    sliderBtnText: {
-        fontSize: typography.sizeBody,
+    sliderValueText: {
+        fontSize: 18,
         fontWeight: typography.weightBold,
-        color: colors.text,
+        width: 60,
+        textAlign: 'center',
     },
-    sliderPercent: {
-        fontSize: typography.sizeSubtitle,
-        fontWeight: typography.weightBold,
-        color: colors.primary,
-    },
-
-    // Shutter
     shutterButton: {
-        backgroundColor: colors.canto,
-        borderRadius: borders.radiusFull,
-        paddingVertical: spacing.md,
+        backgroundColor: colors.primary,
         paddingHorizontal: spacing.xxl,
-        alignSelf: 'center',
-        ...shadows.glass,
+        paddingVertical: spacing.md,
+        borderRadius: borders.radiusFull,
+        ...shadows.card,
     },
     shutterButtonText: {
         color: colors.white,
-        fontSize: typography.sizeBody,
-        fontWeight: typography.weightBold,
+        fontWeight: 'bold',
+        fontSize: 16,
     },
-
-    // Result
-    resultSuccess: {
-        backgroundColor: 'rgba(39, 174, 96, 0.2)',
-        borderColor: colors.success,
+    // Crafting Styles
+    craftingGrid: {
+        flexDirection: 'row',
+        gap: spacing.md,
+        marginBottom: spacing.xl,
     },
-    resultFail: {
-        backgroundColor: 'rgba(231, 76, 60, 0.2)',
-        borderColor: colors.error,
+    craftSlot: {
+        flex: 1,
+        aspectRatio: 1,
+        backgroundColor: 'rgba(124, 154, 146, 0.05)',
+        borderRadius: borders.radiusMedium,
+        borderWidth: 2,
+        borderColor: colors.glassBorder,
+        borderStyle: 'dashed',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    resultText: {
-        fontSize: typography.sizeBody,
-        fontWeight: typography.weightSemiBold,
-        color: colors.text,
-        textAlign: 'center',
-        fontFamily: typography.fontBody,
+    craftSlotActive: {
+        borderStyle: 'solid',
+        borderColor: colors.primary,
+        backgroundColor: 'rgba(124, 154, 146, 0.1)',
     },
-
-    // Completed
-    completedCard: {
+    slotIcon: { fontSize: 24 },
+    slotLabel: { fontSize: 10, opacity: 0.6 },
+    checkMark: {
+        position: 'absolute',
+        top: -4,
+        right: -4,
+        width: 16,
+        height: 16,
+        borderRadius: 8,
+        backgroundColor: colors.primary,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    workshopButton: {
+        backgroundColor: colors.primaryDark,
+        marginBottom: spacing.xl,
+    },
+    inventoryMini: {
+        marginTop: spacing.md,
+    },
+    invChip: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: colors.glass,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: spacing.sm,
+        borderWidth: 1,
+        borderColor: colors.glassBorder,
+    },
+    // Coop Styles
+    coopSection: {
+        gap: spacing.md,
+    },
+    invMiniCard: {
+        padding: spacing.md,
+        gap: 2,
+    },
+    invFrom: { fontWeight: 'bold', fontSize: 13 },
+    invMsg: { fontSize: 11, opacity: 0.7, fontStyle: 'italic' },
+    trainingItem: {
+        flexDirection: 'row',
         alignItems: 'center',
         gap: spacing.md,
-        marginBottom: spacing.xxl,
+        padding: spacing.sm,
+        backgroundColor: 'rgba(0,0,0,0.03)',
+        borderRadius: 8,
     },
-    completedEmoji: {
-        fontSize: 64,
+    progressBar: {
+        flex: 1,
+        height: 6,
+        backgroundColor: 'rgba(0,0,0,0.05)',
+        borderRadius: 3,
+        overflow: 'hidden',
     },
-    completedText: {
-        fontSize: typography.sizeBody,
-        color: colors.text,
-        textAlign: 'center',
-        fontFamily: typography.fontBody,
+    smallBtn: {
+        paddingHorizontal: spacing.sm,
+        paddingVertical: 6,
+        borderRadius: 6,
+        alignItems: 'center',
+        justifyContent: 'center',
+        minWidth: 32,
     },
-    completedHint: {
-        fontSize: typography.sizeCaption,
-        color: colors.primaryDark,
-        fontStyle: 'italic',
-        textAlign: 'center',
-        fontFamily: typography.fontBody,
+    smallBtnText: {
+        color: colors.white,
+        fontSize: 12,
+        fontWeight: 'bold',
     },
+    globalResources: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        gap: spacing.xl,
+        paddingVertical: spacing.md,
+        backgroundColor: colors.background,
+        borderTopWidth: 1,
+        borderColor: 'rgba(0,0,0,0.05)',
+    },
+    completedCard: {
+        alignItems: 'center',
+        paddingVertical: spacing.xxl,
+        marginBottom: spacing.xl,
+    },
+    completedEmoji: { fontSize: 64 },
+    completedText: { fontWeight: 'bold' },
 });
