@@ -201,30 +201,47 @@ export function SantuarioScreen() {
 
             {/* ── Panel Superior ────────────────────────────── */}
             <View style={styles.topPanel}>
-                {/* Saludo dinámico */}
-                <div style={{ animation: 'greetFade 0.7s ease-out' }}>
-                    <Text style={styles.greeting}>{phaseConfig.greeting}</Text>
-                    <Text style={styles.playerName}>{player.name}</Text>
-                </div>
-
-                {/* Tarjeta de clima — layout horizontal */}
-                <GlassCard style={styles.weatherCard}>
-                    <View style={styles.weatherMain}>
-                        <Text style={styles.weatherEmoji}>{weatherIcon}</Text>
-                        <View style={styles.weatherInfo}>
-                            <Text style={styles.tempText}>{weather.temperature}°C</Text>
-                            <Text style={styles.locationText}>📍 {weather.location}</Text>
-                        </View>
-                        <View style={styles.weatherBadge}>
-                            <Text style={styles.conditionText}>{weatherLabel}</Text>
-                        </View>
+                {/* Cabecero Unificado: Saludo + Recursos Principales */}
+                <View style={styles.headerRow}>
+                    <View style={styles.greetingGroup}>
+                        <div style={{ animation: 'greetFade 0.7s ease-out' }}>
+                            <Text style={styles.greeting}>{phaseConfig.greeting}</Text>
+                            <Text style={styles.playerName}>{player.name}</Text>
+                        </div>
                     </View>
-                </GlassCard>
+                    <View style={styles.quickResources}>
+                        <ResourceCounter icon="🌰" value={player.resources.seeds} />
+                        <ResourceCounter icon="📝" value={player.resources.fieldNotes} />
+                    </View>
+                </View>
 
-                {/* Recursos en línea */}
-                <View style={styles.resourceRow}>
-                    <ResourceCounter icon="🌰" value={player.resources.seeds} label="Semillas" />
-                    <ResourceCounter icon="📝" value={player.resources.fieldNotes} label="Notas" />
+                {/* Fichas Modulares (El "Cuaderno"): Clima y Fase lado a lado */}
+                <View style={styles.modularGrid}>
+                    <GlassCard style={styles.compactTile}>
+                        <View style={styles.tileContent}>
+                            <Text style={styles.tileEmoji}>{weatherIcon}</Text>
+                            <View>
+                                <Text style={styles.tileValue}>{weather.temperature}°C</Text>
+                                <Text style={styles.tileLabel}>{weatherLabel}</Text>
+                            </View>
+                        </View>
+                    </GlassCard>
+
+                    <GlassCard style={styles.compactTile}>
+                        <View style={styles.tileContent}>
+                            <div style={{ animation: 'phaseGlow 3s ease-in-out infinite' }}>
+                                <Text style={styles.tileEmoji}>{phaseConfig.icon}</Text>
+                            </div>
+                            <View>
+                                <Text style={styles.tileValue}>{gamePhase}</Text>
+                                <Text style={styles.tileLabel}>Fase Actual</Text>
+                            </View>
+                        </View>
+                    </GlassCard>
+                </View>
+
+                {/* Otros Contadores (Progreso) */}
+                <View style={styles.metaResources}>
                     <ResourceCounter icon="⭐" value={player.reputation} label="Rep" />
                     <ResourceCounter icon="📖" value={`${collectionProgress}%`} label="Álbum" />
                 </View>
@@ -336,28 +353,11 @@ export function SantuarioScreen() {
                 </View>
             )}
 
-            {/* ── Panel Inferior — Fase del Día ────────────── */}
+            {/* ── Panel Inferior — Simplificado ────────────── */}
             <View style={styles.bottomInfo}>
-                <GlassCard style={styles.phaseCard}>
-                    <View style={styles.phaseHeader}>
-                        <div style={{ animation: 'phaseGlow 3s ease-in-out infinite' }}>
-                            <Text style={styles.phaseIcon}>{phaseConfig.icon}</Text>
-                        </div>
-                        <View style={styles.phaseContent}>
-                            <Text style={styles.phaseText}>Fase: {gamePhase}</Text>
-                            <Text style={styles.phaseHint}>{phaseConfig.hint}</Text>
-                        </View>
-                    </View>
-                    {/* Barra de progreso del día */}
-                    <View style={styles.dayBarContainer}>
-                        <div style={{
-                            height: 3, borderRadius: 2,
-                            width: gamePhase === 'MAÑANA' ? '25%' : gamePhase === 'MEDIODÍA' ? '50%' : gamePhase === 'TARDE' ? '75%' : '100%',
-                            background: `linear-gradient(90deg, ${phaseConfig.color}, rgba(255,193,7,0.4))`,
-                            transition: 'width 0.8s ease',
-                        }} />
-                    </View>
-                </GlassCard>
+                <View style={styles.phaseHintContainer}>
+                    <Text style={styles.phaseHint}>💡 {phaseConfig.hint}</Text>
+                </View>
             </View>
 
             {/* ── Modal de Detalle de Ave ──────────────────── */}
@@ -486,50 +486,55 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: spacing.xs,
     },
-    weatherCard: {
-        alignSelf: 'stretch',
-    },
-    weatherMain: {
+    headerRow: {
         flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        gap: spacing.md,
+        marginBottom: spacing.xs,
     },
-    weatherEmoji: {
-        fontSize: 36,
-    },
-    weatherInfo: {
+    greetingGroup: {
         flex: 1,
     },
-    tempText: {
-        fontSize: 26,
+    quickResources: {
+        flexDirection: 'row',
+        gap: spacing.sm,
+    },
+    modularGrid: {
+        flexDirection: 'row',
+        gap: spacing.md,
+        marginBottom: spacing.sm,
+    },
+    compactTile: {
+        flex: 1,
+        padding: spacing.sm,
+        paddingHorizontal: spacing.md,
+    },
+    tileContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: spacing.sm,
+    },
+    tileEmoji: {
+        fontSize: 22,
+    },
+    tileValue: {
+        fontSize: 14,
         fontWeight: typography.weightBold,
         color: colors.text,
         fontFamily: typography.fontTitle,
-        lineHeight: 30,
+        lineHeight: 16,
     },
-    locationText: {
-        fontSize: 11,
+    tileLabel: {
+        fontSize: 10,
         color: colors.primaryDark,
         fontFamily: typography.fontBody,
-        fontWeight: typography.weightSemiBold,
+        opacity: 0.7,
     },
-    weatherBadge: {
-        backgroundColor: 'rgba(124, 154, 146, 0.1)',
-        borderRadius: borders.radiusFull,
-        paddingHorizontal: spacing.md,
-        paddingVertical: spacing.xs,
-    },
-    conditionText: {
-        fontSize: 11,
-        color: colors.primary,
-        fontWeight: typography.weightSemiBold,
-        fontFamily: typography.fontBody,
-    },
-    resourceRow: {
+    metaResources: {
         flexDirection: 'row',
-        justifyContent: 'center',
-        gap: spacing.sm,
-        flexWrap: 'wrap',
+        justifyContent: 'flex-start',
+        gap: spacing.md,
+        opacity: 0.8,
     },
 
     /* Zona del Árbol */
@@ -635,38 +640,17 @@ const styles = StyleSheet.create({
         paddingBottom: spacing.lg,
         zIndex: 20,
     },
-    phaseCard: {
-        gap: spacing.sm,
-    },
-    phaseHeader: {
-        flexDirection: 'row',
+    phaseHintContainer: {
         alignItems: 'center',
-        gap: spacing.md,
-    },
-    phaseContent: {
-        flex: 1,
-    },
-    phaseIcon: {
-        fontSize: 30,
-    },
-    phaseText: {
-        fontSize: typography.sizeBody,
-        fontWeight: typography.weightBold,
-        color: colors.text,
-        fontFamily: typography.fontTitle,
+        paddingVertical: spacing.xs,
     },
     phaseHint: {
-        fontSize: typography.sizeSmall,
+        fontSize: 10,
         color: colors.primaryDark,
         fontStyle: 'italic',
         fontFamily: typography.fontBody,
-        opacity: 0.8,
-    },
-    dayBarContainer: {
-        height: 3,
-        backgroundColor: 'rgba(124, 154, 146, 0.12)',
-        borderRadius: 2,
-        overflow: 'hidden',
+        opacity: 0.7,
+        textAlign: 'center',
     },
 
     /* Modal */
