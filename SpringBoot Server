@@ -1,0 +1,93 @@
+6. Servidor Backend: Spring Boot 4 (WebFlux) & RSocket
+El cerebro del juego "AVIS" es un servidor reactivo de última generación construido con Spring Boot 4.0 y Java 21. Está diseñado para manejar miles de conexiones concurrentes de jugadores en tiempo real usando RSocket sobre el servidor integrado Netty, y conectarse de forma asíncrona a la base de datos Supabase mediante el driver reactivo R2DBC.
+
+6.1. Generación del Proyecto Base
+El proyecto se inicializó utilizando la API de Spring Initializr a través de la terminal, obteniendo automáticamente la última versión estable (v4.x) y las dependencias reactivas necesarias:
+
+Bash
+cd ~/ProyectoIntermodularDAM
+curl -G https://start.spring.io/starter.tgz \
+    -d type=maven-project \
+    -d language=java \
+    -d baseDir=avis-backend \
+    -d groupId=com.avis \
+    -d artifactId=server \
+    -d name=AvisServer \
+    -d dependencies=webflux,rsocket,data-r2dbc,postgresql,lombok \
+    -d javaVersion=21 | tar -xzvf -
+6.2. Configuración de Entorno y Base de Datos (Supabase)
+Para la persistencia de datos, el servidor se conecta a un clúster PostgreSQL alojado en Supabase utilizando el driver reactivo r2dbc.
+
+Archivo de configuración (src/main/resources/application.properties):
+
+Properties
+spring.application.name=AvisServer
+
+# Puerto estándar HTTP/REST
+server.port=8080
+
+# Puerto TCP ultrarrápido para el flujo de juego bidireccional (Netty)
+spring.rsocket.server.port=7000
+spring.rsocket.server.transport=tcp
+
+# Conexión Reactiva a Supabase
+spring.r2dbc.url=r2dbc:postgresql://db.shmutxsmjokamnxrkufe.supabase.co:5432/postgres
+spring.r2dbc.username=postgres
+spring.r2dbc.password=${DB_PASSWORD} # Sustituir por la contraseña real en el entorno de despliegue
+6.3. Controlador Principal del Flujo (RSocket)
+Se ha implementado un punto de entrada inicial bidireccional para gestionar las conexiones de los clientes Android.
+
+Archivo (src/main/java/com/avis/server/controller/GameFlowController.java):
+
+Java
+package com.avis.server.controller;
+
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.stereotype.Controller;
+import reactor.core.publisher.Mono;
+
+@Controller
+public class GameFlowController {
+
+    @MessageMapping("game.connect")
+    public Mono<String> handleClientConnection(String playerId) {
+        System.out.println("⚡ Nuevo jugador conectado al flujo: " + playerId);
+        return Mono.just("¡Bienvenido a AVIS, " + playerId + "! Servidor listo y a la escucha.");
+    }
+}
+6.4. Compilación del Servidor
+El proyecto se compila mediante Maven Wrapper en un archivo .jar ejecutable e independiente:
+
+Bash
+cd ~/ProyectoIntermodularDAM/avis-backend
+./mvnw clean package -DskipTests
+6.5. Despliegue como Servicio Nativo (Systemd)
+Para garantizar la alta disponibilidad, resiliencia a fallos y el arranque automático del servidor de juego, se ha configurado como un demonio nativo de Lubuntu (systemd). La directiva After=tailscaled.service garantiza que el juego solo arranque cuando la red VPN esté activa y establecida.
+
+Archivo del servicio (/etc/systemd/system/avis-server.service):
+
+Ini, TOML
+[Unit]
+Description=AVIS Chronicles of Flight - Backend Server
+After=network.target tailscaled.service
+
+[Service]
+User=lubuntu
+WorkingDirectory=/home/lubuntu/ProyectoIntermodularDAM/avis-backend
+ExecStart=/usr/bin/java -jar target/server-0.0.1-SNAPSHOT.jar
+SuccessExitStatus=143
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+Comandos de activación y monitorización:
+
+Bash
+# Habilitar el autoarranque e iniciar el servicio
+sudo systemctl daemon-reload
+sudo systemctl enable avis-server.service
+sudo systemctl start avis-server.service
+
+# Monitorizar los logs en tiempo real
+sudo journalctl -u avis-server.service -f
