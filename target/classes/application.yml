@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: avis-backend
+  r2dbc:
+    url: r2dbc:postgresql://db.shmutxsmjokamnxrkufe.supabase.co:5432/postgres
+    username: postgres
+    password: ${SUPABASE_DB_PASSWORD:postgres}
+    initialization-mode: always
+  
+  supabase:
+    url: ${SUPABASE_URL:https://shmutxsmjokamnxrkufe.supabase.co}
+    anon-key: ${SUPABASE_ANON_KEY:sb_publishable_pdf_b0P1_k01f0zHnsSTqw_2VbDBKbe}
+    jwt-secret: ${SUPABASE_JWT_SECRET:EMQJ6LlshPj8+STmrwElwY4WFcl7aOmh7iQ9oPO3EdVD0iI2qTtQl7/eB7Q5Jg9h+iJ//+41rhFyLDM3PkJf7Q==}
+
+avis:
+  catalog:
+    url: "https://raw.githubusercontent.com/usuario/repo/main/JSONVacio.JSON"
+    initialization-mode: always
+    redis:
+      # Redis para el Marketplace y Redisson Locks
+      host: localhost
+      port: 6379
+  rsocket:
+    server:
+      # Puerto para comunicación RSocket rápida y no bloqueante
+      port: 7000
+      mapping-path: /rsocket
+      transport: tcp
+      
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+  weather:
+    # Open-Meteo doesnt require API Key
+    provider: open-meteo
+  
+  # Wikidata and Wikimedia Commons are used as primary open sources
+  # Nuthatch and Unsplash are kept as fallback if keys are provided
+  nuthatch:
+    api-key: ${NUTHATCH_API_KEY:2ad0ea65-505a-4102-a804-d1a4f72406b8}
+  unsplash:
+    api-key: ${UNSPLASH_API_KEY:REPLACE_ME}
+
+server:
+  # Bind a 0.0.0.0 para poder acceder por IP de Tailscale
+  address: 0.0.0.0
+  # Puerto WebFlux REST clásico
+  port: 8080
+
+logging:
+  level:
+    org.springframework.r2dbc: DEBUG
+    org.springframework.data.r2dbc: DEBUG
+    org.springframework.security: TRACE
+    org.springframework.web: DEBUG
