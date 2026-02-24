@@ -16,8 +16,7 @@ interface BottomBarProps {
 export function BottomBar({ currentTab, onTabChange, isMoreOpen }: BottomBarProps) {
     const tabs = [
         { id: 'santuario', label: 'Santuario', icon: '🏡' },
-        { id: 'expedicion', label: 'Expedición', icon: '🗺️' },
-        { id: 'taller', label: 'Taller', icon: '🔨' },
+        { id: 'expedicion', label: 'Expedición', icon: '🔭' },
         { id: 'certamen', label: 'Certamen', icon: '⚔️' },
         { id: '_more', label: 'Más', icon: '☰' },
     ];

@@ -35,7 +35,6 @@ const MENU_ITEMS: MoreMenuItem[] = [
     { id: 'album', label: 'Álbum', icon: '📖', desc: 'Tu colección de aves' },
     { id: 'bandada', label: 'Bandada', icon: '🦅', desc: 'Chat y comunidad' },
     { id: 'mercado', label: 'Mercado', icon: '🏪', desc: 'Compra y vende cartas' },
-    { id: 'coop', label: 'Cooperación', icon: '🤝', desc: 'Juego cooperativo' },
     { id: 'perfil', label: 'Perfil', icon: '👤', desc: 'Tu naturalista' },
     { id: 'avisos', label: 'Avisos', icon: '🔔', desc: 'Notificaciones', badge: 3 },
 ];

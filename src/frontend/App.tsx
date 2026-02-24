@@ -7,12 +7,10 @@ import { MarketProvider } from './src/context/MarketContext';
 import { CoopProvider } from './src/context/CoopContext';
 import { SantuarioScreen } from './src/screens/SantuarioScreen';
 import { ExpedicionScreen } from './src/screens/ExpedicionScreen';
-import { TallerScreen } from './src/screens/TallerScreen';
 import { CertamenScreen } from './src/screens/CertamenScreen';
 import { AlbumScreen } from './src/screens/AlbumScreen';
 import { FlockScreen } from './src/screens/FlockScreen';
 import { MarketScreen } from './src/screens/MarketScreen';
-import { CoopScreen } from './src/screens/CoopScreen';
 import { ProfileScreen } from './src/screens/ProfileScreen';
 import { NotificationsScreen } from './src/screens/NotificationsScreen';
 import { LoginScreen } from './src/screens/LoginScreen';
@@ -57,8 +55,6 @@ function GameContent() {
         return <SantuarioScreen />;
       case 'expedicion':
         return <ExpedicionScreen />;
-      case 'taller':
-        return <TallerScreen />;
       case 'certamen':
         return <CertamenScreen />;
       case 'album':
@@ -67,8 +63,6 @@ function GameContent() {
         return <FlockScreen />;
       case 'mercado':
         return <MarketScreen />;
-      case 'coop':
-        return <CoopScreen />;
       case 'perfil':
         return <ProfileScreen />;
       case 'avisos':
