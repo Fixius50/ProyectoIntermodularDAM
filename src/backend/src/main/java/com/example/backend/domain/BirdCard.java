@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -17,9 +18,9 @@ import java.time.LocalDateTime;
 public class BirdCard {
 
     @Id
-    private Long id;
+    private UUID id;
 
-    private Long userId; // Dueño de la carta
+    private UUID userId; // Dueño de la carta
     private Long birdId; // Referencia al ID del JSON original
 
     // Stats basícas copiadas al momento de creación

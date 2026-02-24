@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +47,7 @@ public class CraftingService {
                 .flatMap(savedInv -> applyWeatherAndCatalog(request.getUserId()));
     }
 
-    private Mono<BirdCard> applyWeatherAndCatalog(Long userId) {
+    private Mono<BirdCard> applyWeatherAndCatalog(UUID userId) {
         // En el futuro, aquí se consultaría la API del clima
         // Por ahora, leemos todo el catálogo y elegimos uno al azar.
         return birdCatalogService.getAllBirds()

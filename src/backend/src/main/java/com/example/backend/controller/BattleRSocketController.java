@@ -3,6 +3,7 @@ package com.example.backend.controller;
 import com.example.backend.domain.BattleSession;
 import com.example.backend.dto.BattleAction;
 import com.example.backend.service.BattleService;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -36,7 +37,7 @@ public class BattleRSocketController {
                                                                                                                      // bird_id
         // Parse hack for demonstration: sessionId payload space used for birdId in
         // creation
-        Long birdCardId = Long.parseLong(hostRequest.getSessionId());
+        UUID birdCardId = UUID.fromString(hostRequest.getSessionId());
         return battleService.createMatch(hostRequest.getPlayerId(), birdCardId);
     }
 
@@ -47,7 +48,7 @@ public class BattleRSocketController {
     public Mono<BattleSession> joinMatch(BattleAction joinRequest) {
         log.info("Player {} joining room {}", joinRequest.getPlayerId(), joinRequest.getSessionId());
         // Payload hack for demo string ID passing
-        Long birdCardId = (long) joinRequest.getSeedsSpent();
+        UUID birdCardId = new java.util.UUID(0L, (long) joinRequest.getSeedsSpent());
         return battleService.joinMatch(joinRequest.getSessionId(), joinRequest.getPlayerId(), birdCardId);
     }
 

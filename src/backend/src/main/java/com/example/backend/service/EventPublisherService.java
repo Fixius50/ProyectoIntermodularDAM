@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+import java.util.UUID;
 
 /**
  * Publisher service handling generic message brokering to RabbitMQ.
@@ -24,7 +25,7 @@ public class EventPublisherService {
     /**
      * Publishes a winning reward event to the message broker.
      */
-    public void publishBattleReward(Long winnerId, int seedsEarned) {
+    public void publishBattleReward(UUID winnerId, int seedsEarned) {
         RewardEvent event = RewardEvent.builder()
                 .winnerId(winnerId)
                 .seedsGained(seedsEarned)

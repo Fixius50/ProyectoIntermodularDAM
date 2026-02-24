@@ -1,7 +1,9 @@
 package com.example.backend.dto;
 
 import lombok.Builder;
+import lombok.Builder;
 import lombok.Data;
+import java.util.UUID;
 
 /**
  * Represents a BirdCard currently listed in the global marketplace.
@@ -15,10 +17,10 @@ public class AuctionItem {
     private String auctionId;
 
     // The ID of the user selling the card
-    private Long sellerId;
+    private UUID sellerId;
 
     // The specific BirdCard being sold
-    private Long birdCardId;
+    private UUID birdCardId;
 
     // The price in 'semillas' (seeds/currency)
     private int price;

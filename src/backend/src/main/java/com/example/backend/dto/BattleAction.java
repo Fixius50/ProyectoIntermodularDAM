@@ -1,6 +1,7 @@
 package com.example.backend.dto;
 
 import lombok.Data;
+import java.util.UUID;
 
 /**
  * Payload representing an action performed by a player during a battle.
@@ -13,7 +14,7 @@ public class BattleAction {
     private String sessionId;
 
     // Identifier of the player executing the action
-    private Long playerId;
+    private UUID playerId;
 
     // Type of action: "ATTACK_CANTO", "ATTACK_VUELO", "DEFEND"
     private String actionType;

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 /**
  * Reactive REST Controller exposing the marketplace functionality.
@@ -25,15 +26,15 @@ public class MarketplaceController {
     }
 
     @PostMapping("/sell")
-    public Mono<AuctionItem> createAuction(@RequestParam Long sellerId,
-            @RequestParam Long birdCardId,
+    public Mono<AuctionItem> createAuction(@RequestParam UUID sellerId,
+            @RequestParam UUID birdCardId,
             @RequestParam int price) {
         return marketplaceService.createAuction(sellerId, birdCardId, price);
     }
 
     @PostMapping("/buy/{auctionId}")
     public Mono<AuctionItem> buyItem(@PathVariable String auctionId,
-            @RequestParam Long buyerId) {
+            @RequestParam UUID buyerId) {
         return marketplaceService.buyItem(auctionId, buyerId);
     }
 }

@@ -5,6 +5,7 @@ import com.example.backend.repository.InventoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -15,7 +16,7 @@ public class InventoryService {
     /**
      * Obtiene el inventario actual asincronamente
      */
-    public Mono<UserInventory> getInventoryByUserId(Long userId) {
+    public Mono<UserInventory> getInventoryByUserId(UUID userId) {
         return inventoryRepository.findByUserId(userId)
                 .switchIfEmpty(Mono.defer(() -> createDefaultInventory(userId)));
     }
@@ -23,7 +24,7 @@ public class InventoryService {
     /**
      * Si no tiene inventario, crea un base
      */
-    private Mono<UserInventory> createDefaultInventory(Long userId) {
+    private Mono<UserInventory> createDefaultInventory(UUID userId) {
         UserInventory newInventory = UserInventory.builder()
                 .userId(userId)
                 .madera(10) // Starter pack
@@ -38,7 +39,7 @@ public class InventoryService {
     /**
      * Simulacion de llegada de expedicion con loot
      */
-    public Mono<UserInventory> addExpeditionLoot(Long userId, int bonusMadera, int bonusHierba) {
+    public Mono<UserInventory> addExpeditionLoot(UUID userId, int bonusMadera, int bonusHierba) {
         return getInventoryByUserId(userId)
                 .flatMap(inv -> {
                     inv.setMadera(inv.getMadera() + bonusMadera);

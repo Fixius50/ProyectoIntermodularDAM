@@ -26,7 +26,7 @@ public class MarketplaceService {
     /**
      * Lists a new BirdCard on the marketplace.
      */
-    public Mono<AuctionItem> createAuction(Long sellerId, Long birdCardId, int price) {
+    public Mono<AuctionItem> createAuction(UUID sellerId, UUID birdCardId, int price) {
         AuctionItem item = AuctionItem.builder()
                 .auctionId(UUID.randomUUID().toString())
                 .sellerId(sellerId)
@@ -55,7 +55,7 @@ public class MarketplaceService {
      * to prevent race conditions if two players buy exactly at the same
      * millisecond.
      */
-    public Mono<AuctionItem> buyItem(String auctionId, Long buyerId) {
+    public Mono<AuctionItem> buyItem(String auctionId, UUID buyerId) {
         return Mono.defer(() -> {
             AuctionItem item = activeAuctions.get(auctionId);
 

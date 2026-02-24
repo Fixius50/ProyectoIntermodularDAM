@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -29,7 +30,7 @@ public class BattleService {
     /**
      * Creates a new battle session waiting for a second player.
      */
-    public Mono<BattleSession> createMatch(Long hostPlayerId, Long birdCardId) {
+    public Mono<BattleSession> createMatch(UUID hostPlayerId, UUID birdCardId) {
         // Base health for testing purposes (could be retrieved from the DB Card)
         int defaultHealth = 100;
         BattleSession session = BattleSession.createRoom(hostPlayerId, birdCardId, defaultHealth);
@@ -40,7 +41,7 @@ public class BattleService {
     /**
      * Joins an existing battle session.
      */
-    public Mono<BattleSession> joinMatch(String sessionId, Long guestPlayerId, Long birdCardId) {
+    public Mono<BattleSession> joinMatch(String sessionId, UUID guestPlayerId, UUID birdCardId) {
         BattleSession session = activeBattles.get(sessionId);
         if (session == null) {
             return Mono.error(new IllegalArgumentException("Battle session not found"));

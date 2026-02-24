@@ -4,10 +4,11 @@ import com.example.backend.domain.BirdCard;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
+import java.util.UUID;
 
 @Repository
-public interface BirdCardRepository extends R2dbcRepository<BirdCard, Long> {
+public interface BirdCardRepository extends R2dbcRepository<BirdCard, UUID> {
 
-    Flux<BirdCard> findByUserId(Long userId);
+    Flux<BirdCard> findByUserId(UUID userId);
 
 }
