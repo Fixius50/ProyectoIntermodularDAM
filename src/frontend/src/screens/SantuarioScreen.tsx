@@ -1,9 +1,11 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Modal } from 'react-native';
 import { GlassCard } from '../components/GlassCard';
 import { ResourceCounter } from '../components/ResourceCounter';
 import { WeatherBackground } from '../components/WeatherBackground';
+import { BirdCardView } from '../components/BirdCardView';
 import { useGame } from '../context/GameContext';
+import { fetchCurrentWeather } from '../services/weatherService';
 import { colors, typography, spacing, borders, shadows } from '../theme/theme';
 import { BirdCard } from '../types/types';
 
@@ -106,15 +108,33 @@ const BIRD_POSITIONS = [
  * partículas de hojas, clima expandido, craft hint pulsante, fase con glow.
  */
 export function SantuarioScreen() {
-    const { state } = useGame();
+    const { state, dispatch } = useGame();
     const { weather, player, gamePhase } = state;
     const [tappedBird, setTappedBird] = useState<string | null>(null);
+    const [selectedBird, setSelectedBird] = useState<BirdCard | null>(null);
     const [hasInteracted, setHasInteracted] = useState(false);
+    const [feedMessage, setFeedMessage] = useState<string | null>(null);
 
     const birdsToShow = player.collection.slice(0, 5);
     const weatherIcon = WEATHER_ICONS[weather.condition] || '☀️';
     const weatherLabel = WEATHER_LABELS[weather.condition] || weather.condition;
     const phaseConfig = PHASE_CONFIG[gamePhase] || PHASE_CONFIG['MAÑANA'];
+
+    // ─── EFFECTS ───────────────────────────────────────────────
+    useEffect(() => {
+        // Al montar el Santuario, sincronizamos el clima real de Madrid
+        // (Opcionalmente, podríamos pedir acceso a Geolocalización aquí)
+        const loadRealWeather = async () => {
+            try {
+                const realWeather = await fetchCurrentWeather(40.4165, -3.7026, 'Madrid');
+                dispatch({ type: 'SET_WEATHER', payload: realWeather });
+            } catch (error) {
+                console.error('No se pudo cargar el clima:', error);
+            }
+        };
+
+        loadRealWeather();
+    }, [dispatch]);
 
     const canCraft = useMemo(() => {
         const hasPhoto = player.craftItems.some(i => i.type === 'FOTO');
@@ -130,8 +150,31 @@ export function SantuarioScreen() {
     const handleBirdTap = useCallback((birdId: string) => {
         setTappedBird(birdId);
         if (!hasInteracted) setHasInteracted(true);
-        setTimeout(() => setTappedBird(null), 2800);
-    }, [hasInteracted]);
+        // Esperamos un momento para la animación y luego mostramos el modelo
+        setTimeout(() => {
+            setTappedBird(null);
+            const bird = player.collection.find(b => b.id === birdId);
+            if (bird) {
+                setSelectedBird(bird);
+            }
+        }, 1000);
+    }, [hasInteracted, player.collection]);
+
+    const handleFeedBird = useCallback(() => {
+        if (player.resources.seeds >= 5) {
+            dispatch({ type: 'UPDATE_SEEDS', payload: -5 });
+            setFeedMessage('¡El ave ha comido felizmente! 💖');
+            setTimeout(() => setFeedMessage(null), 3000);
+        } else {
+            setFeedMessage('No tienes suficientes semillas (Necesitas 5). 🌰');
+            setTimeout(() => setFeedMessage(null), 3000);
+        }
+    }, [player.resources.seeds, dispatch]);
+
+    const handleCloseModal = useCallback(() => {
+        setSelectedBird(null);
+        setFeedMessage(null);
+    }, []);
 
     return (
         <WeatherBackground condition={weather.condition}>
@@ -304,6 +347,38 @@ export function SantuarioScreen() {
                     </View>
                 </GlassCard>
             </View>
+
+            {/* ── Modal de Detalle de Ave ──────────────────── */}
+            <Modal
+                visible={!!selectedBird}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={handleCloseModal}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <TouchableOpacity style={styles.closeModalButton} onPress={handleCloseModal}>
+                            <Text style={styles.closeModalText}>✕</Text>
+                        </TouchableOpacity>
+
+                        {selectedBird && (
+                            <View style={styles.modalInner}>
+                                <BirdCardView card={selectedBird} mode="full" />
+
+                                {feedMessage ? (
+                                    <View style={styles.feedMessageContainer}>
+                                        <Text style={styles.feedMessageText}>{feedMessage}</Text>
+                                    </View>
+                                ) : (
+                                    <TouchableOpacity style={styles.feedButton} onPress={handleFeedBird}>
+                                        <Text style={styles.feedButtonText}>🌰 Alimentar (-5 Semillas)</Text>
+                                    </TouchableOpacity>
+                                )}
+                            </View>
+                        )}
+                    </View>
+                </View>
+            </Modal>
         </WeatherBackground>
     );
 }
@@ -576,5 +651,74 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(124, 154, 146, 0.12)',
         borderRadius: 2,
         overflow: 'hidden',
+    },
+
+    /* Modal */
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: spacing.md,
+    },
+    modalContent: {
+        width: '100%',
+        maxWidth: 400,
+        backgroundColor: colors.background,
+        borderRadius: borders.radiusLarge,
+        padding: spacing.xl,
+        position: 'relative',
+        ...shadows.glass,
+    },
+    modalInner: {
+        alignItems: 'center',
+        gap: spacing.lg,
+    },
+    closeModalButton: {
+        position: 'absolute',
+        top: spacing.md,
+        right: spacing.md,
+        zIndex: 50,
+        backgroundColor: colors.background,
+        borderRadius: borders.radiusFull,
+        width: 36,
+        height: 36,
+        alignItems: 'center',
+        justifyContent: 'center',
+        ...shadows.card,
+    },
+    closeModalText: {
+        fontSize: 18,
+        color: colors.text,
+        fontWeight: typography.weightBold,
+    },
+    feedButton: {
+        backgroundColor: colors.primary,
+        paddingHorizontal: spacing.xl,
+        paddingVertical: spacing.md,
+        borderRadius: borders.radiusFull,
+        width: '100%',
+        alignItems: 'center',
+        ...shadows.card,
+    },
+    feedButtonText: {
+        color: colors.white,
+        fontSize: typography.sizeBody,
+        fontWeight: typography.weightBold,
+        fontFamily: typography.fontBody,
+    },
+    feedMessageContainer: {
+        paddingHorizontal: spacing.xl,
+        paddingVertical: spacing.md,
+        borderRadius: borders.radiusFull,
+        backgroundColor: 'rgba(124, 154, 146, 0.15)',
+        width: '100%',
+        alignItems: 'center',
+    },
+    feedMessageText: {
+        color: colors.primaryDark,
+        fontSize: typography.sizeBody,
+        fontWeight: typography.weightSemiBold,
+        fontFamily: typography.fontBody,
     },
 });
