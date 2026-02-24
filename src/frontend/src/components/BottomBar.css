@@ -1,0 +1,45 @@
+.bottom-bar {
+    position: absolute;
+    bottom: 20px;
+    left: 15px;
+    right: 15px;
+    height: 75px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 20;
+    text-decoration: none;
+}
+
+.nav-item {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+    font-family: var(--font-body);
+    font-weight: 700;
+    color: var(--color-text-dark);
+    text-decoration: none;
+}
+
+.nav-item .icon {
+    transition: transform 0.3s ease;
+}
+
+.nav-item .label {
+    font-size: 0.7rem;
+}
+
+.nav-item.active {
+    opacity: 1;
+    color: var(--color-primary);
+}
+
+.nav-item.active .icon {
+    transform: translateY(-5px) scale(1.2);
+}

@@ -1,0 +1,81 @@
+:root {
+    /* Paleta Soft Nature */
+    --color-primary: #7C9A92;
+    /* Verde Salvia */
+    --color-secondary: #D9A08B;
+    /* Terracota Suave */
+    --color-bg-light: #FDFBF7;
+    /* Papel Crema */
+    --color-text-dark: #2C3E50;
+    /* Gris Carbón */
+    --color-text-light: #FDFBF7;
+
+    /* Tipografías */
+    --font-heading: 'Lora', serif;
+    --font-body: 'Nunito', sans-serif;
+
+    /* Glassmorphism */
+    --glass-bg: rgba(253, 251, 247, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+    --border-radius: 20px;
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--color-text-dark);
+    background-color: #1a1a1a;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Simulate Mobile Device Screen on Desktop */
+.app-container {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    height: 100dvh;
+    max-height: 900px;
+    background-color: transparent;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+}
+
+@media (min-width: 481px) {
+    .app-container {
+        height: 90vh;
+        border-radius: 40px;
+        border: 8px solid #000;
+    }
+}
+
+/* Glassmorphism Styles */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    box-shadow: var(--glass-shadow);
+}
+
+/* Utilities */
+.font-nunito {
+    font-family: var(--font-body);
+    font-weight: 700;
+    color: var(--color-text-dark);
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: var(--font-heading);
+}

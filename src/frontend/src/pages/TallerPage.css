@@ -1,0 +1,55 @@
+.crafting-table {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 10px;
+    margin-bottom: 20px;
+    z-index: 10;
+}
+
+.dropzone {
+    width: 70px;
+    height: 70px;
+    border: 2px dashed rgba(44, 62, 80, 0.3);
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.dropzone .label {
+    font-size: 0.7rem;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.plus {
+    font-weight: bold;
+    color: var(--color-text-dark);
+    opacity: 0.5;
+}
+
+.inventory-tray h3 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    z-index: 10;
+    position: relative;
+}
+
+.items-row {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    z-index: 10;
+    position: relative;
+}
+
+.item {
+    padding: 10px 15px;
+    white-space: nowrap;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
