@@ -8,8 +8,8 @@ Evasión de NAT/Firewalls: Permite esquivar las restricciones de red, puertos ce
 
 Seguridad del Modelo de IA: Mantiene el procesamiento de los modelos locales pesados (.gguf) aislado y seguro dentro del servidor Lubuntu, exponiendo únicamente los endpoints necesarios a través del túnel cifrado.
 
-5.2. Script de Autoconfiguración y Despliegue Desatendido
-Para automatizar el alta del servidor en la red virtual, se ha creado un script Bash (auth_tailscale.sh) que utiliza una Auth Key estática.
+5.2. Script de Autoconfiguración y Despliegue (auth_tailscale.sh)
+Para automatizar el alta del servidor en la red virtual, se ha creado un script Bash en la ruta /home/lubuntu/auth_tailscale.sh que utiliza una Auth Key estática.
 
 Código del script:
 
@@ -21,7 +21,7 @@ Bash
 # Proyecto AVIS - TFG
 # ==========================================
 
-# Clave de autorización del proyecto (Ocultar en repositorios públicos)
+# Clave de autorización del proyecto (Precaución: No exponer en repositorios públicos)
 TAILSCALE_AUTH_KEY="tskey-auth-k4cntXLUiW11CNTRL-ZriLhcmNRY6WHVTap15NZ6ygQTDoJY4o"
 
 echo "Autenticando el servidor en la Tailnet de AVIS..."
@@ -29,24 +29,32 @@ echo "Autenticando el servidor en la Tailnet de AVIS..."
 # 1. Levantar Tailscale usando la Auth Key de forma desatendida
 sudo tailscale up --authkey=${TAILSCALE_AUTH_KEY}
 
-# 2. Habilitar el demonio en systemd para garantizar el autoarranque
+# 2. Habilitar el demonio en systemd
 sudo systemctl enable --now tailscaled
 
 echo "=========================================="
 echo "✅ Tailscale autenticado y configurado con éxito."
-echo "El autoarranque está activado. El servicio sobrevivirá a los reinicios."
 echo "La IP virtual estática del servidor backend es:"
 tailscale ip -4
 echo "=========================================="
-Ejecución (Solo es necesario ejecutarlo una vez):
+Permisos de ejecución:
 
 Bash
-chmod +x auth_tailscale.sh
-./auth_tailscale.sh
-5.3. Resiliencia y Autoarranque (Systemd)
-El servidor está configurado para ser tolerante a caídas de red o cortes de energía. Gracias a la instrucción sudo systemctl enable --now tailscaled ejecutada en el script anterior, el servicio de Tailscale se registra en el gestor de arranque del núcleo de Linux (systemd).
+chmod +x /home/lubuntu/auth_tailscale.sh
+5.3. Resiliencia y Autoarranque (Crontab)
+Para que el servidor sea el gestor autónomo del flujo del juego, debe ser tolerante a caídas de red o cortes de energía. Se ha configurado el programador de tareas del sistema (cron) para ejecutar el script de conexión automáticamente en cada inicio, antes de que el usuario inicie sesión.
 
-Esto garantiza que, tras cualquier reinicio del sistema físico, el túnel VPN se levante automáticamente en segundo plano antes del inicio de sesión del usuario, manteniendo la misma IP virtual asignada (100.x.x.x).
+Configuración en el servidor (Lubuntu):
+
+Abrir el editor de tareas del superusuario:
+
+Bash
+sudo crontab -e
+Añadir la directiva de ejecución al final del archivo:
+
+Bash
+@reboot /home/lubuntu/auth_tailscale.sh
+Esto garantiza que, tras cualquier reinicio físico, el túnel VPN se levante en segundo plano al instante, manteniendo la misma IP virtual asignada (100.x.x.x).
 
 5.4. Configuración en Dispositivos Cliente (Android)
 Para que los jugadores puedan acceder al juego:
@@ -64,6 +72,6 @@ Dentro del código de la aplicación móvil (React Native/Flutter), las variable
 
 JavaScript
 // Configuración de red para el cliente Android
-const SERVER_IP = "100.x.x.x"; // Sustituir por la IP generada por Tailscale
+const SERVER_IP = "100.x.x.x"; // Sustituir por la IP asignada a Lubuntu
 const API_REST_URL = `http://${SERVER_IP}:8080/api`;
 const RSOCKET_URL = `ws://${SERVER_IP}:7000/rsocket`;
