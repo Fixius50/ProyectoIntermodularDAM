@@ -409,3 +409,447 @@ Comandos Server:
 [image5]: <data:image/png;base64,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>
 
 [image6]: <data:image/png;base64,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>
+
+---
+
+5. Infraestructura de Red: VPN Peer-to-Peer (Tailscale)
+Para garantizar que los dispositivos móviles (Android) puedan comunicarse de manera segura y directa con el servidor local (Lubuntu) durante las fases de desarrollo y la presentación final del TFG, se ha implementado una red virtual privada basada en WireGuard mediante Tailscale.
+
+5.1. Justificación Arquitectónica
+El uso de esta Tailnet resuelve dos problemas críticos del proyecto:
+
+Evasión de NAT/Firewalls: Permite esquivar las restricciones de red, puertos cerrados y aislamiento de clientes típicos de las redes Wi-Fi institucionales (institutos/universidades).
+
+Seguridad del Modelo de IA: Mantiene el procesamiento de los modelos locales pesados (.gguf) aislado y seguro dentro del servidor Lubuntu, exponiendo únicamente los endpoints necesarios a través del túnel cifrado.
+
+5.2. Script de Autoconfiguración y Despliegue (auth_tailscale.sh)
+Para automatizar el alta del servidor en la red virtual, se ha creado un script Bash en la ruta /home/lubuntu/auth_tailscale.sh que utiliza una Auth Key estática.
+
+Código del script:
+
+Bash
+#!/bin/bash
+
+# ==========================================
+# Script de Autenticación y Autoarranque de Tailscale
+# Proyecto AVIS - TFG
+# ==========================================
+
+# Clave de autorización del proyecto (Precaución: No exponer en repositorios públicos)
+TAILSCALE_AUTH_KEY="tskey-auth-k4cntXLUiW11CNTRL-ZriLhcmNRY6WHVTap15NZ6ygQTDoJY4o"
+
+echo "Autenticando el servidor en la Tailnet de AVIS..."
+
+# 1. Levantar Tailscale usando la Auth Key de forma desatendida
+sudo tailscale up --authkey=${TAILSCALE_AUTH_KEY}
+
+# 2. Habilitar el demonio en systemd
+sudo systemctl enable --now tailscaled
+
+echo "=========================================="
+echo "✅ Tailscale autenticado y configurado con éxito."
+echo "La IP virtual estática del servidor backend es:"
+tailscale ip -4
+echo "=========================================="
+Permisos de ejecución:
+
+Bash
+chmod +x /home/lubuntu/auth_tailscale.sh
+5.3. Resiliencia y Autoarranque (Crontab)
+Para que el servidor sea el gestor autónomo del flujo del juego, debe ser tolerante a caídas de red o cortes de energía. Se ha configurado el programador de tareas del sistema (cron) para ejecutar el script de conexión automáticamente en cada inicio, antes de que el usuario inicie sesión.
+
+Configuración en el servidor (Lubuntu):
+
+Abrir el editor de tareas del superusuario:
+
+Bash
+sudo crontab -e
+Añadir la directiva de ejecución al final del archivo:
+
+Bash
+@reboot /home/lubuntu/auth_tailscale.sh
+Esto garantiza que, tras cualquier reinicio físico, el túnel VPN se levante en segundo plano al instante, manteniendo la misma IP virtual asignada (100.x.x.x).
+
+5.4. Configuración en Dispositivos Cliente (Android)
+Para que los jugadores puedan acceder al juego:
+
+Instalar la aplicación oficial de Tailscale desde Google Play.
+
+Iniciar sesión con la cuenta de administración del proyecto.
+
+Activar el interruptor de conexión VPN en la app.
+
+El dispositivo Android se conectará instantáneamente a la misma red de área local virtual (VLAN) que el servidor Lubuntu.
+
+5.5. Integración en el Frontend
+Dentro del código de la aplicación móvil (React Native/Flutter), las variables de entorno apuntan directamente a la IP estática del túnel Tailscale en lugar de a localhost:
+
+JavaScript
+// Configuración de red para el cliente Android
+const SERVER_IP = "100.x.x.x"; // Sustituir por la IP asignada a Lubuntu 100.112.239.82
+const API_REST_URL = `http://${SERVER_IP}:8080/api`;
+const RSOCKET_URL = `ws://${SERVER_IP}:7000/rsocket`;
+
+
+---
+
+1. Stack Tecnológico del Proyecto (Backend)
+El sistema está diseñado para soportar alta concurrencia y baja latencia mediante un enfoque 100% reactivo:
+
+Framework Core: Java 21 con Spring Boot 3 (WebFlux / Reactor).
+
+Comunicación en Tiempo Real: RSocket.
+
+Base de Datos Principal: Supabase (PostgreSQL con uso intensivo de tipos JSONB mediante Spring Data R2DBC).
+
+Caché y Marketplace: Redis Reactive con bloqueos distribuidos (Redisson).
+
+Procesamiento de Eventos: Kafka / RabbitMQ.
+
+2. Preparación del Entorno de Desarrollo (Lubuntu)
+Para desarrollar el servidor backend y ejecutar las herramientas del equipo, es necesario instalar las siguientes dependencias base en el sistema operativo:
+
+2.1. Herramientas Base, Python y Node.js
+Bash
+# Actualizar repositorios del sistema
+sudo apt update && sudo apt upgrade -y
+
+# Instalar Python 3 y su entorno gráfico (necesario para las herramientas internas)
+sudo apt install python3 python3-pip python3-venv python3-tk -y
+
+# Instalar Node.js y npm (para los MCPs del editor Antigravity)
+sudo apt install nodejs npm -y
+2.2. Ecosistema Java y Contenedores
+Bash
+# Instalar Java 21 (JDK requerido por Spring Boot 3) y Maven
+sudo apt install openjdk-21-jdk maven -y
+
+# Instalar Docker para levantar Redis y RabbitMQ/Kafka en local
+sudo apt install docker.io docker-compose -y
+sudo usermod -aG docker $USER # Requiere reiniciar la sesión del sistema
+2.3. Control de Versiones y Git LFS
+Bash
+# Instalar Git y Git LFS (Large File Storage)
+sudo apt install git git-lfs -y
+git lfs install
+3. Configuración del Repositorio Oficial y Credenciales
+Para interactuar con el repositorio oficial sin bloqueos de autenticación, es necesario guardar un Personal Access Token (PAT) a nivel de sistema.
+
+Bash
+# 1. Clonar el repositorio en el directorio personal
+cd ~
+git clone https://github.com/Fixius50/ProyectoIntermodularDAM.git
+
+# 2. Configurar Git para recordar las credenciales de forma global
+git config --global credential.helper store
+
+# 3. Realizar un push manual para registrar el token por primera vez
+cd ~/ProyectoIntermodularDAM
+git push
+# (Al solicitar credenciales, introducir el usuario 'Fixius50' y el Personal Access Token).
+4. Herramienta Interna: AVIS Dev Uploader (Pro Edition)
+Para agilizar el flujo de trabajo del equipo, se ha desarrollado una aplicación de escritorio (GUI) en Python. Su objetivo es subir archivos al repositorio oficial esquivando el límite de 100MB de GitHub. La aplicación detecta extensiones configuradas (como .gguf, .psd, .mp4) y ejecuta automáticamente git lfs track antes del commit.
+
+4.1. Instalación de la Herramienta
+Se despliega en un entorno virtual aislado:
+
+Bash
+mkdir ~/avis-dev-tools
+cd ~/avis-dev-tools
+python3 -m venv venv
+source venv/bin/activate
+python -m pip install customtkinter GitPython
+4.2. Código Fuente (app.py)
+Dentro de la carpeta ~/avis-dev-tools, crear el archivo app.py con el siguiente código base:
+
+Python
+import customtkinter as ctk
+import tkinter.filedialog as fd
+import os
+import shutil
+import threading
+from git import Repo
+import subprocess
+
+# Configuración visual
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("blue")
+
+# Extensiones configuradas para Git LFS automático
+LFS_EXTENSIONS = ['.gguf', '.psd', '.mp4', '.zip', '.tar.gz', '.bin', '.png', '.jpg']
+
+class AvisUltimateUploader(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+
+        self.title("AVIS Dev Uploader - Pro Edition")
+        self.geometry("700x650")
+        
+        # Apunta automáticamente al repositorio oficial clonado
+        self.repo_path = ctk.StringVar(value=os.path.expanduser("~/ProyectoIntermodularDAM"))
+        self.selected_files = []
+
+        # Interfaz - Sección Superior
+        self.frame_top = ctk.CTkFrame(self)
+        self.frame_top.pack(pady=10, padx=20, fill="x")
+
+        self.lbl_repo = ctk.CTkLabel(self.frame_top, text="Ruta del Repositorio Local:", font=("Roboto", 14, "bold"))
+        self.lbl_repo.pack(anchor="w", padx=10, pady=(10, 0))
+        
+        self.entry_repo = ctk.CTkEntry(self.frame_top, textvariable=self.repo_path, width=500)
+        self.entry_repo.pack(side="left", padx=10, pady=10)
+        
+        self.btn_repo = ctk.CTkButton(self.frame_top, text="Cambiar Repo", command=self.select_repo, width=100)
+        self.btn_repo.pack(side="left", padx=10, pady=10)
+
+        # Interfaz - Sección Media
+        self.frame_mid = ctk.CTkFrame(self)
+        self.frame_mid.pack(pady=10, padx=20, fill="x")
+
+        self.btn_select = ctk.CTkButton(self.frame_mid, text="1. Seleccionar Archivos a Subir", command=self.select_files)
+        self.btn_select.pack(pady=10)
+
+        self.files_label = ctk.CTkLabel(self.frame_mid, text="0 archivos seleccionados", text_color="gray")
+        self.files_label.pack(pady=5)
+
+        self.commit_msg = ctk.CTkEntry(self.frame_mid, placeholder_text="2. Escribe el mensaje del commit...", width=500)
+        self.commit_msg.pack(pady=15)
+
+        self.btn_upload = ctk.CTkButton(self.frame_mid, text="3. Sincronizar y Subir a GitHub", command=self.start_upload_thread, fg_color="#10b981", hover_color="#059669", font=("Roboto", 14, "bold"))
+        self.btn_upload.pack(pady=10)
+
+        # Interfaz - Consola de Logs
+        self.lbl_log = ctk.CTkLabel(self, text="Terminal de Operaciones:", font=("Roboto", 12, "bold"))
+        self.lbl_log.pack(anchor="w", padx=20)
+
+        self.log_console = ctk.CTkTextbox(self, width=660, height=200, state="disabled", fg_color="#1e1e1e", text_color="#00ff00")
+        self.log_console.pack(pady=5, padx=20)
+
+    def log(self, message):
+        self.log_console.configure(state="normal")
+        self.log_console.insert("end", f"> {message}\n")
+        self.log_console.see("end")
+        self.log_console.configure(state="disabled")
+
+    def select_repo(self):
+        directorio = fd.askdirectory(title="Selecciona la carpeta raíz del repositorio Git")
+        if directorio:
+            self.repo_path.set(directorio)
+            self.log(f"Repositorio fijado en: {directorio}")
+
+    def select_files(self):
+        archivos = fd.askopenfilenames(title="Elige los archivos para añadir al proyecto")
+        if archivos:
+            self.selected_files = list(archivos)
+            self.files_label.configure(text=f"{len(archivos)} archivo(s) listo(s) para copiar y subir", text_color="white")
+            self.log(f"Se han seleccionado {len(archivos)} archivos.")
+
+    def start_upload_thread(self):
+        if not self.selected_files:
+            self.log("ERROR: No has seleccionado ningún archivo.")
+            return
+        if not self.commit_msg.get():
+            self.log("ERROR: El mensaje de commit no puede estar vacío.")
+            return
+        
+        self.btn_upload.configure(state="disabled", text="Subiendo...")
+        hilo = threading.Thread(target=self.process_and_upload)
+        hilo.start()
+
+    def process_and_upload(self):
+        repo_dir = self.repo_path.get()
+        mensaje = self.commit_msg.get()
+
+        try:
+            self.log("Verificando repositorio Git...")
+            repo = Repo(repo_dir)
+            
+            self.log("Copiando archivos al espacio de trabajo...")
+            for filepath in self.selected_files:
+                filename = os.path.basename(filepath)
+                destino = os.path.join(repo_dir, filename)
+                
+                if filepath != destino:
+                    shutil.copy2(filepath, destino)
+                    self.log(f"Copiado: {filename}")
+
+                # Auto-configuración de Git LFS para archivos masivos
+                ext = os.path.splitext(filename)[1].lower()
+                if ext in LFS_EXTENSIONS:
+                    self.log(f"Extensión pesada detectada ({ext}). Configurando Git LFS...")
+                    subprocess.run(["git", "lfs", "track", f"*{ext}"], cwd=repo_dir, check=True, capture_output=True)
+                    repo.git.add(".gitattributes")
+
+            self.log("Añadiendo archivos al índice (git add)...")
+            repo.git.add(all=True)
+
+            self.log(f"Creando commit: '{mensaje}'...")
+            repo.index.commit(mensaje)
+
+            self.log("Enviando datos a GitHub (git push)... Esto puede tardar.")
+            origen = repo.remote(name='origin')
+            info_push = origen.push()
+            
+            for info in info_push:
+                self.log(f"Resultado Push: {info.summary}")
+
+            self.log("✅ ¡SUBIDA COMPLETADA CON ÉXITO!")
+            
+            self.selected_files = []
+            self.files_label.configure(text="0 archivos seleccionados", text_color="gray")
+            self.commit_msg.delete(0, 'end')
+
+        except Exception as e:
+            self.log(f"❌ ERROR CRÍTICO: {str(e)}")
+        
+        finally:
+            self.btn_upload.configure(state="normal", text="3. Sincronizar y Subir a GitHub")
+
+if __name__ == "__main__":
+    app = AvisUltimateUploader()
+    app.mainloop()
+4.3. Acceso Directo de Escritorio (Lanzador)
+Para ejecutar la aplicación nativamente en el entorno de escritorio de Lubuntu sin abrir la terminal:
+
+Crear el archivo .desktop:
+
+Bash
+cd $(xdg-user-dir DESKTOP)
+nano AVIS_Uploader.desktop
+Insertar la configuración:
+
+Ini, TOML
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=AVIS Dev Uploader
+Comment=Herramienta interna para subir archivos masivos a GitHub
+Exec=bash -c "cd ~/avis-dev-tools && source venv/bin/activate && python app.py"
+Icon=utilities-terminal
+Terminal=false
+Categories=Development;
+Otorgar permisos de ejecución:
+
+Bash
+chmod +x AVIS_Uploader.desktop
+
+
+---
+
+# ProyectoIntermodularDAM
+
+---
+
+7. Base de Datos (Supabase) y Persistencia Reactiva
+Para el almacenamiento de datos persistentes y multimedia del juego, se utiliza Supabase (PostgreSQL). La arquitectura de la base de datos está diseñada para soportar las mecánicas principales de un TCG con geolocalización: gestión de usuarios, catálogo de cartas (estadísticas de los pájaros) y el inventario posicional.
+
+7.1. Esquema Relacional (SQL)
+Se ha implementado el siguiente esquema de datos directamente en el clúster de PostgreSQL de Supabase. El uso de UUID como clave primaria previene la enumeración de recursos y mejora la seguridad de la API.
+
+SQL
+-- 1. Tabla de Jugadores (Perfiles de usuario)
+CREATE TABLE players (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    username VARCHAR(50) UNIQUE NOT NULL,
+    level INT DEFAULT 1,
+    experience INT DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 2. Tabla Catálogo: Estadísticas base de las cartas (Pájaros)
+CREATE TABLE bird_cards (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) UNIQUE NOT NULL,      
+    health INT NOT NULL DEFAULT 0,          
+    attack_damage INT NOT NULL DEFAULT 0,   
+    defense INT NOT NULL DEFAULT 0,         
+    type VARCHAR(50),                       
+    luck INT NOT NULL DEFAULT 0,            
+    speed INT NOT NULL DEFAULT 0,           
+    image_url TEXT,                         
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 3. Tabla Inventario: Relación N:M entre Jugador y Carta (con tracking GPS)
+CREATE TABLE player_inventory (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    player_id UUID REFERENCES players(id) ON DELETE CASCADE,
+    bird_card_id UUID REFERENCES bird_cards(id) ON DELETE CASCADE,
+    captured_lat DOUBLE PRECISION,          
+    captured_lon DOUBLE PRECISION,          
+    captured_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+7.2. Almacenamiento Multimedia (Supabase Storage)
+Para servir los assets gráficos (las imágenes de las cartas) a los dispositivos móviles sin sobrecargar el servidor backend, se ha configurado un Bucket público en Supabase Storage llamado bird-images. Los enlaces absolutos a estos recursos se almacenan en la columna image_url de la tabla bird_cards.
+
+7.3. Mapeo Objeto-Relacional en Spring Boot (Entities)
+Para que el backend interactúe con las tablas de forma asíncrona, se ha utilizado Spring Data R2DBC. Se han generado las clases de modelo (Entities) en el paquete com.avis.server.model, utilizando Lombok para automatizar la generación de constructores, getters y setters, manteniendo un código limpio.
+
+Ejemplo del Modelo Principal: BirdCard.java
+
+Java
+package com.avis.server.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
+import java.time.Instant;
+import java.util.UUID;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table("bird_cards")
+public class BirdCard {
+    
+    @Id
+    private UUID id;
+    
+    private String name;
+    private Integer health;
+    private Integer attackDamage; // Mapeado automáticamente a attack_damage en SQL
+    private Integer defense;
+    private String type;
+    private Integer luck;
+    private Integer speed;
+    private String imageUrl;
+    
+    private Instant createdAt;
+}
+(Se han implementado de forma análoga las clases Player.java y PlayerInventory.java para reflejar sus respectivas tablas).
+
+7.4. Capa de Acceso a Datos (R2DBC Repositories)
+La persistencia se gestiona de forma 100% no bloqueante gracias a las interfaces R2dbcRepository. Spring Boot genera en tiempo de ejecución las consultas SQL subyacentes, devolviendo tipos de datos reactivos (Mono y Flux de Project Reactor).
+
+Archivo de configuración (src/main/java/com/avis/server/repository/GameRepositories.java):
+
+Java
+package com.avis.server.repository;
+
+import com.avis.server.model.BirdCard;
+import com.avis.server.model.Player;
+import com.avis.server.model.PlayerInventory;
+import org.springframework.data.r2dbc.repository.R2dbcRepository;
+import java.util.UUID;
+
+public interface GameRepositories {
+
+    // Repositorio reactivo para el catálogo de cartas
+    interface BirdCardRepository extends R2dbcRepository<BirdCard, UUID> {}
+
+    // Repositorio reactivo para la gestión de usuarios
+    interface PlayerRepository extends R2dbcRepository<Player, UUID> {}
+
+    // Repositorio reactivo para inventario y geolocalización
+    interface PlayerInventoryRepository extends R2dbcRepository<PlayerInventory, UUID> {}
+
+}
+
+
+---
+
+

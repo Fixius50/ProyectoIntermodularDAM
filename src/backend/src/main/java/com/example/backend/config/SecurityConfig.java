@@ -20,28 +20,41 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationManager authenticationManager;
-    private final JwtSecurityContextRepository securityContextRepository;
+        private final JwtAuthenticationManager authenticationManager;
+        private final JwtSecurityContextRepository securityContextRepository;
 
-    @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-        return http
-                .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
-                .authenticationManager(authenticationManager)
-                .securityContextRepository(securityContextRepository)
-                .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers(HttpMethod.OPTIONS).permitAll() // Allow CORS preflight
-                        .pathMatchers("/api/auth/**").permitAll() // Auth endpoints exposed
-                        .anyExchange().authenticated() // Secure all other APIs
-                )
-                // Return 401 instead of redirecting to login page when unauthorized
-                .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .authenticationEntryPoint((swe, e) -> Mono
-                                .fromRunnable(() -> swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED)))
-                        .accessDeniedHandler((swe, e) -> Mono
-                                .fromRunnable(() -> swe.getResponse().setStatusCode(HttpStatus.FORBIDDEN))))
-                .build();
-    }
+        @Bean
+        public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+                return http
+                                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                                .cors(ServerHttpSecurity.CorsSpec::disable) // Desactivar CORS temporalmente para
+                                                                            // pruebas
+                                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+                                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+                                .authenticationManager(authenticationManager)
+                                .securityContextRepository(securityContextRepository)
+                                .authorizeExchange(exchanges -> exchanges
+                                                .pathMatchers(HttpMethod.OPTIONS).permitAll() // Allow CORS preflight
+                                                .pathMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/**")
+                                                .permitAll() // Expose Auth explicitly for POST
+                                                .pathMatchers(HttpMethod.GET, "/pruebaConexion.txt").permitAll() // Permit
+                                                                                                                 // connection
+                                                                                                                 // test
+                                                                                                                 // file
+                                                                                                                 // explicitly
+                                                .pathMatchers("/api/auth/**").permitAll() // Expose all other Auth
+                                                                                          // endpoints
+                                                // endpoints and testing file
+                                                .anyExchange().authenticated() // Secure all other APIs
+                                )
+                                // Return 401 instead of redirecting to login page when unauthorized
+                                .exceptionHandling(exceptionHandling -> exceptionHandling
+                                                .authenticationEntryPoint((swe, e) -> Mono
+                                                                .fromRunnable(() -> swe.getResponse().setStatusCode(
+                                                                                HttpStatus.UNAUTHORIZED)))
+                                                .accessDeniedHandler((swe, e) -> Mono
+                                                                .fromRunnable(() -> swe.getResponse()
+                                                                                .setStatusCode(HttpStatus.FORBIDDEN))))
+                                .build();
+        }
 }

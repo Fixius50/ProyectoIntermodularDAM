@@ -45,3 +45,21 @@ Uncaught Error: Incompatible React versions: The "react" and "react-dom" package
 **SoluciÃ³n:**
 1.  **En `application.yml`**: Configurada globalmente a `server.address: 0.0.0.0` para obligar a Spring Boot a escuchar indiscriminadamente en todos los adaptadores de red de la mÃ¡quina huÃ©sped (incluido Tailscale).
 2.  **Firewall de Windows**: Configurar explÃ­citamente una nueva Regla de Entrada en `wf.msc` permitiendo trÃ¡fico concurrente `TCP 8080` a perfiles pÃºblicos/privados generados por la interfaz del tÃºnel VPN de Tailscale.
+
+### Acceso Remoto al Servidor (Pruebas y Logs)
+
+**Fecha:** 2026-02-24
+**Contexto:** Necesidad de verificar archivos generados por el backend (por ejemplo, \pruebaConexion.txt\) en el servidor remoto Lubuntu durante el testing.
+**Procedimiento:**
+Dado que el servidor está conectado a la Tailnet (IP \100.112.239.82\), se puede acceder de forma segura y directa por SSH desde cualquier equipo de desarrollo autorizado, sin lidiar con redirección de puertos del router.
+
+1.  **Conexión SSH vía Tailscale:**
+    Para entrar al servidor y tener interactividad total:
+    \ssh lubuntu@100.112.239.82\
+    *(Se solicitará la contraseña del usuario \lubuntu\, que actualmente es \Mbba6121.\)*.
+
+2.  **Búsqueda y Lectura Rápida de Archivos Vía SSH:**
+    Si solo se desea buscar un archivo de prueba (ej. \pruebaConexion.txt\) y volcar su contenido directamente en la terminal local sin abrir una sesión interactiva, se puede pasar el comando directamente:
+    \ssh lubuntu@100.112.239.82 "find /home/lubuntu -name pruebaConexion.txt -type f -exec cat {} + "\
+
+**Nota Técnica (Troubleshooting):** Si tras iniciar el túnel \	ailscale up\ localmente los endpoints \http://100.112.239.82:8080/...\ arrojan Timeout, pero por SSH el acceso es correcto, el problema reside en la **ausencia del servicio Spring Boot** levantado en el servidor remoto, o que el Firewall UFW de Lubuntu está bloqueando el puerto 8080.
