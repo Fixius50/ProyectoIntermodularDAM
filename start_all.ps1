@@ -15,7 +15,8 @@ Write-Host "   Maven Wrapper: $MVNW"
 Write-Host " Limpiando Backend..." -ForegroundColor Cyan
 if (Test-Path "$MVNW") {
     & "$MVNW" clean
-} else {
+}
+else {
     Write-Error "No se encontró el Maven Wrapper en: $MVNW"
     exit 1
 }
@@ -26,12 +27,25 @@ npm run build
 Pop-Location
 
 Write-Host " Arrancando Backend (Spring Boot)..." -ForegroundColor Cyan
-Start-Process "$MVNW" -ArgumentList "spring-boot:run" -WorkingDirectory "$BACKEND_DIR" -WindowStyle Hidden
+$BackendProcess = Start-Process "$MVNW" -ArgumentList "spring-boot:run" -WorkingDirectory "$BACKEND_DIR" -WindowStyle Hidden -PassThru
 
 Write-Host " Esperando a que el Backend suba (15s)..." -ForegroundColor Yellow
 Start-Sleep -Seconds 15
 
 Write-Host " Arrancando Frontend Mode Dev (Vite)..." -ForegroundColor Green
-Start-Process "npm" -ArgumentList "run dev" -WorkingDirectory "$FRONTEND_DIR" -WindowStyle Hidden
+$FrontendProcess = Start-Process "npm.cmd" -ArgumentList "run dev" -WorkingDirectory "$FRONTEND_DIR" -WindowStyle Hidden -PassThru
 
-Write-Host " ¡Todo listo! Backend en :8080, Frontend en :5173" -ForegroundColor Magenta
+Write-Host " "
+Write-Host " ¡Todo listo!" -ForegroundColor Magenta
+Write-Host " Backend:  http://localhost:8080" -ForegroundColor Cyan
+Write-Host " Frontend: http://localhost:5173" -ForegroundColor Green
+Write-Host " "
+Write-Host " ========================================================" -ForegroundColor DarkGray
+Write-Host " Pulsa ENTER en esta ventana para APAGAR los servidores." -ForegroundColor Red
+Write-Host " ========================================================" -ForegroundColor DarkGray
+Pause
+
+Write-Host " Apagando servicios..." -ForegroundColor Yellow
+if ($FrontendProcess) { Stop-Process -Id $FrontendProcess.Id -Force -ErrorAction SilentlyContinue }
+if ($BackendProcess) { Stop-Process -Id $BackendProcess.Id -Force -ErrorAction SilentlyContinue }
+Write-Host " Servicios apagados correctamente." -ForegroundColor Green
