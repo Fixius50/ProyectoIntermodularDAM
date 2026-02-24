@@ -5,7 +5,7 @@
 ### Fase 1: Investigación y Configuración Documental (Activo 🟢)
 - [x] Extracción de requerimientos de diseño, UX y arquitectura técnica (PDF).
 - [x] Consolidación de información en `Docs/` base suite.
-- [ ] Revisión y aprobación del alcance por el Promotor (Roberto Monedero Alonso).
+- [ ] Revisión y aprobación del alcance por el Promotor.
 
 ### Fase 2: Configuración Inicial del WorkSpace (Completado ✅)
 - [x] Inicialización del proyecto Frontend (Estrategia PWA con React + Vite).

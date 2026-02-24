@@ -29,6 +29,8 @@ avis:
     password: guest
 
 server:
+  # Bind a 0.0.0.0 para poder acceder por IP de Tailscale
+  address: 0.0.0.0
   # Puerto WebFlux REST clásico
   port: 8080
 
