@@ -116,14 +116,17 @@ function AuthGate() {
 
   // Pantalla de carga mientras restauramos sesión
   if (state.status === 'IDLE' || (isLoading && !state.error)) {
+    console.log('AuthGate: Loading state...', { status: state.status, isLoading });
     return (
-      <View style={styles.loadingContainer}>
+      <View style={[styles.loadingContainer, { backgroundColor: '#ffeb3b' }]}>
         <Text style={styles.loadingEmoji}>🐦</Text>
         <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={styles.loadingText}>Preparando tu cuaderno...</Text>
+        <Text style={styles.loadingText}>Preparando tu cuaderno (Loading Gate)...</Text>
       </View>
     );
   }
+
+  console.log('AuthGate: Final state', { status: state.status, isAuthenticated });
 
   // Si no autenticado, mostrar Login o Register
   if (!isAuthenticated) {
@@ -141,10 +144,13 @@ function AuthGate() {
  * App raíz: AuthProvider envuelve todo.
  */
 function App() {
+  console.log('App: Rendering root');
   return (
-    <AuthProvider>
-      <AuthGate />
-    </AuthProvider>
+    <View style={{ flex: 1, backgroundColor: '#f0f0f0' }}>
+      <AuthProvider>
+        <AuthGate />
+      </AuthProvider>
+    </View>
   );
 }
 
