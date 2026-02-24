@@ -11,5 +11,6 @@
     ],
     "java.project.testResources": [
         "src/backend/src/test/resources"
-    ]
+    ],
+    "java.compile.nullAnalysis.mode": "disabled"
 }
