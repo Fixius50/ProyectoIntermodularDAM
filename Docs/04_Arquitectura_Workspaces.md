@@ -13,11 +13,14 @@
 │   ├── 02_Diseño_UI_UX.md
 │   ├── 03_Roadmap_Vivo.md
 │   ├── 04_Arquitectura_Workspaces.md
-│   └── 05_Bitacora_Dev.md
-├── src/                   (Código Fuente - Próximamente)
-│   ├── backend/           (Spring Boot WebFlux)
-│   └── frontend/          (React Native)
-└── avis-dev-tools/        (Scripts y utilidades internas documentadas)
+│   ├── 05_Bitacora_Dev.md
+│   └── 06_Arquitectura_Frontend.md
+├── src/                   (Código Fuente)
+│   ├── backend/           (Spring Boot 3 + WebFlux)
+│   └── frontend/          (React Native + Vite Hybrid)
+│       ├── src/           (Componentes, Screens, Context)
+│       └── App.tsx        (Navegación Core)
+└── avis-dev-tools/        (Scripts y utilidades)
 ```
 
 ## Convenciones de Organización
