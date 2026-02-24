@@ -72,6 +72,6 @@ Dentro del código de la aplicación móvil (React Native/Flutter), las variable
 
 JavaScript
 // Configuración de red para el cliente Android
-const SERVER_IP = "100.x.x.x"; // Sustituir por la IP asignada a Lubuntu
+const SERVER_IP = "100.x.x.x"; // Sustituir por la IP asignada a Lubuntu 100.112.239.82
 const API_REST_URL = `http://${SERVER_IP}:8080/api`;
 const RSOCKET_URL = `ws://${SERVER_IP}:7000/rsocket`;
