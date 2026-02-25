@@ -77,12 +77,18 @@ export interface BirdCard {
         speed: number;   // 1-10
     };
 
+    // Sistema de Niveles
+    level: number;
+    xp: number;
+    xpToNextLevel: number;
+
     // Cara B (Educativa)
     scientificName: string;
     habitat: HabitatFilter;
     curiosity: string;     // Texto de curiosidad
     songUrl?: string;      // Audio del canto (Nuthatch API)
 }
+
 
 // ─── JUGADOR ───────────────────────────────────────────────
 export interface Player {

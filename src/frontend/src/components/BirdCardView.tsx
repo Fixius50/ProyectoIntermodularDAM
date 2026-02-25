@@ -26,6 +26,9 @@ export function BirdCardView({ card, mode, onPress }: BirdCardViewProps) {
                 accessibilityLabel={`Carta de ${card.name}`}
             >
                 <Image source={{ uri: card.photo }} style={styles.miniImage} />
+                <View style={styles.levelBadgeMini}>
+                    <Text style={styles.levelTextMini}>Nf. {card.level}</Text>
+                </View>
                 <View style={styles.miniInfo}>
                     <Text style={styles.miniName} numberOfLines={1}>{card.name}</Text>
                     <View style={styles.miniCostBadge}>
@@ -45,7 +48,16 @@ export function BirdCardView({ card, mode, onPress }: BirdCardViewProps) {
                 <View style={styles.faceA}>
                     <Image source={{ uri: card.photo }} style={styles.fullImage} />
                     <View style={styles.fullContent}>
-                        <Text style={styles.fullName}>{card.name}</Text>
+                        <View style={styles.nameRow}>
+                            <Text style={styles.fullName}>{card.name}</Text>
+                            <View style={styles.levelBadgeFull}>
+                                <Text style={styles.levelTextFull}>Nivel {card.level}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.xpBarContainer}>
+                            <View style={[styles.xpBarFill, { width: `${(card.xp / card.xpToNextLevel) * 100}%` }]} />
+                            <Text style={styles.xpText}>{card.xp} / {card.xpToNextLevel} XP</Text>
+                        </View>
                         <View style={styles.costRow}>
                             <Text style={styles.costLabel}>🌰 Coste: {card.cost}</Text>
                             <PostureBadge posture={card.preferredPosture} size="large" />
@@ -208,6 +220,63 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         paddingVertical: spacing.sm,
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        borderColor: colors.primaryLight + '40',
+        marginVertical: spacing.xs,
+    },
+    // Niveles y XP
+    levelBadgeMini: {
+        position: 'absolute',
+        top: spacing.xs,
+        left: spacing.xs,
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        borderRadius: borders.radiusSmall,
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+    },
+    levelTextMini: {
+        color: colors.white,
+        fontSize: 10,
+        fontWeight: 'bold',
+    },
+    nameRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    levelBadgeFull: {
+        backgroundColor: colors.primary,
+        borderRadius: borders.radiusSmall,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+    },
+    levelTextFull: {
+        color: colors.white,
+        fontSize: typography.sizeCaption,
+        fontWeight: 'bold',
+    },
+    xpBarContainer: {
+        height: 12,
+        backgroundColor: colors.primaryLight + '40',
+        borderRadius: borders.radiusFull,
+        overflow: 'hidden',
+        position: 'relative',
+        justifyContent: 'center',
+        marginVertical: spacing.xs,
+    },
+    xpBarFill: {
+        height: '100%',
+        backgroundColor: colors.secondary,
+        borderRadius: borders.radiusFull,
+    },
+    xpText: {
+        position: 'absolute',
+        width: '100%',
+        textAlign: 'center',
+        fontSize: 8,
+        color: colors.text,
+        fontWeight: 'bold',
     },
     abilityText: {
         fontSize: typography.sizeCaption,
