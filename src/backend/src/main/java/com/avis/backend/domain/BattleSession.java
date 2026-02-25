@@ -32,6 +32,11 @@ public class BattleSession {
     private int playerOneSeeds;
     private int playerTwoSeeds;
 
+    // Turn Synchronization
+    private int currentRound;
+    private Integer playerOnePendingAction; // Null if waiting for action
+    private Integer playerTwoPendingAction; // Null if waiting for action
+
     private String status; // WAITING, IN_PROGRESS, FINISHED
     private UUID winnerId;
 
@@ -44,6 +49,9 @@ public class BattleSession {
                 .playerTwoHealth(initialHealth)
                 .playerOneSeeds(0)
                 .playerTwoSeeds(0)
+                .currentRound(1)
+                .playerOnePendingAction(null)
+                .playerTwoPendingAction(null)
                 .status("WAITING")
                 .build();
     }
