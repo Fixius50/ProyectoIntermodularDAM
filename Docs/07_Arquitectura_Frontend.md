@@ -12,7 +12,7 @@ Las páginas web tradicionales cargan HTML desde el servidor por cada clic (Bloq
 
 ### ¿Qué hace React / Ionic aquí?
 
-Usamos arquitectura de **Single Page Application (SPA)**. Cuando el usuario abre AVIS, se descarga todo el esqueleto visual de la aplicación una única vez. Todos los clics, transiciones, y menús ocurren **dentro de la memoria de su propio móvil/navegador**. La pantalla jamás se recarga. Las únicas peticiones que salen a internet van en busca de **JSON crudo** (los datos puros) que React inyecta en los botones y texturas instantáneamente.
+Usamos arquitectura de **Single Page Application (SPA)**. Cuando el usuario abre AVIS, se descarga todo el esqueleto visual de la aplicación una única vez. Todos los clics, transiciones, y menús ocurren **dentro de la memoria de su propio móvil/navegador**. La pantalla jamás se recarga. Las únicas peticiones que salen a internet van en busca de datos de la API que React inyecta en los botones y texturas instantáneamente.
 
 > 🏢 **Equivalencia en el Mundo Real:**
 > **Web Tradicional:** Es como comprar un mueble en Ikea, pero en vez de las tablas, te envían por correo el mueble entero montado. Si quieres cambiar una silla, envías el mueble viejo y correo te manda una silla nueva entera.

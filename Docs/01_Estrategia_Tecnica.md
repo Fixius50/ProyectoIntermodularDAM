@@ -4,7 +4,7 @@
 - **Framework Core:** Java 21 con Spring Boot 3 (WebFlux / Alternativa: Spring Web MVC + Virtual Threads)
 - **Comunicación en Tiempo Real:** RSocket (Alternativa: WebSockets Clásicos STOMP)
 - **Persistencia y Base de Datos:**
-  - Supabase (PostgreSQL) con uso intensivo de tipos JSONB
+  - Supabase (PostgreSQL) usando estructura puramente relacional
   - Driver: Spring Data R2DBC (Asíncrono) (Alternativa: JPA/Hibernate)
 - **Caché y Marketplace:** Spring Data Redis Reactive con Redisson (Distributed Locks)
 - **Gestión de Identidad:** Spring Security Reactive + JWT

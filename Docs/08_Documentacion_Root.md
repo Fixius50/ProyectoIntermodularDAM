@@ -336,7 +336,6 @@ Aquí tienes el diagrama conceptual de lo que vamos a construir, seguido de la t
 | **Spring WebFlux**  *(Servidor Netty)* | Es el motor central no bloqueante. Permite que un solo servidor maneje miles de partidas a la vez sin quedarse sin memoria RAM. | Se usa en lugar de Spring MVC (Tomcat). En tu código Java, en vez de devolver Carta, devuelves Mono\<Carta\> o Flux\<Carta\>. |
 | **RSocket**  *(Comunicación)* | Protocolo bidireccional más rápido que WebSockets. Soporta *Backpressure*: si el móvil va lento, ajusta el envío de datos para no colgar la app React. | Se habilita con spring-boot-starter-rsocket. Usas la anotación @MessageMapping para escuchar los movimientos (ej: "Atacar") del cliente. |
 | **Spring Data R2DBC**  *(Conexión DB)* | Es el driver asíncrono para PostgreSQL (Supabase). Evita que el servidor se quede "congelado" esperando a que la base de datos lea el inventario. | Reemplaza a Hibernate/JPA. Creas repositorios reactivos (ReactiveCrudRepository) que devuelven Mono/Flux al interactuar con las tablas. |
-| **Jackson \+ R2DBC Converters**  *(Mapeo JSON)* | R2DBC es "crudo" y no entiende el tipo JSONB de Postgres mágicamente. Jackson traduce ese JSON a objetos Java al vuelo. | Creas una clase que implemente Converter\<Json, MiCartaRecord\> y usas ObjectMapper de Jackson para deserializar el string JSONB de Supabase. |
 | **Spring Data Redis Reactive**  *(Caché Marketplace)* | Para el Marketplace, consultar Supabase por cada búsqueda saturaría la red. Redis mantiene el catálogo en RAM para respuestas en submilisegundos. | Usas ReactiveRedisTemplate para guardar y leer las ofertas activas sin bloquear el hilo principal. |
 | **Redisson**  *(Distributed Locks)* | Evita el "doble gasto" o clonación de cartas en el Marketplace. Bloquea una carta a nivel de red entera si dos personas la compran a la vez. | Cuando un usuario le da a "Comprar", pides un lock (RLockReactive) a Redisson por el ID de la carta. Nadie más puede tocarla hasta que se libere. |
 | **Spring Security Reactive**  *(Auth)* | Valida que el usuario sea quien dice ser sin frenar el flujo de datos. Se integra directamente con el sistema Auth de Supabase. | Configuras un ReactiveJwtDecoder que verifica la firma del token enviado desde la WebView y guarda el usuario en el ReactiveSecurityContext. |
@@ -351,7 +350,7 @@ Si durante el desarrollo veis que el modelo reactivo (Mono / Flux) hace que el c
 * **Alternativa a RSocket (Comunicación): *WebSockets Clásicos (STOMP).***  
   * *Por qué:* Es mucho más fácil de integrar con React y la WebView. Hay decenas de librerías listas para usar (como sockjs-client), mientras que RSocket requiere un poco más de configuración en el frontend.  
 * **Alternativa a R2DBC (Base de datos): *Spring Data JPA (Hibernate) \+ Hypersistence Utils.***  
-  * *Por qué:* R2DBC requiere que hagas tú mismo el mapeo de relaciones y JSONB. JPA/Hibernate te hace toda la "magia" de convertir las tablas y el JSON de Supabase en objetos Java con simples anotaciones, a costa de usar operaciones bloqueantes.  
+  * *Por qué:*jpa JPA/Hibernate te hace toda la "magia" de convertir las tablas en objetos Java con simples anotaciones, a costa de usar operaciones bloqueantes.  
 * **Alternativa a Kafka/Redis (Mercado simple): *Optimistic Locking en PostgreSQL.***  
   * *Por qué:* Si no quieres pagar/mantener servidores extra de Redis o Kafka, puedes usar un simple campo @Version en Supabase. Si hay un conflicto de compra, la base de datos lanza una excepción, se cancela todo, y le muestras un error de "Carta ya vendida" al usuario.
 
@@ -361,7 +360,8 @@ Si durante el desarrollo veis que el modelo reactivo (Mono / Flux) hace que el c
 * **Motor Asíncrono:** Project Reactor (Mono/Flux).  
 * **Comunicación Cliente-Servidor:** **RSocket** (para el juego en tiempo real) \+ REST (para configuración inicial).  
 * **Persistencia:** Spring Data R2DBC (Reactivo).  
-* **Base de Datos:** **Supabase (PostgreSQL)**. Uso intensivo de tipos `JSONB` para las cartas y `PostGIS` (si Supabase lo permite, o coordenadas simples) para la geolocalización.  
+* **Base de Datos:** **Supabase (PostgreSQL)**. Uso de modelo puramente relacional y `PostGIS` (si Supabase lo permite, o coordenadas simples) para la geolocalización.  
+* **Networking (Multijugador):** **Tailscale**. Se utilizará para crear una red segura entre jugadores y el servidor, permitiendo tráfico RSocket directo sin exposición pública de puertos. El servidor escuchará en `0.0.0.0` y los clientes se conectarán a la IP de Tailscale del servidor.
 * **Caché & Locks:** **Redis Reactive** (con Redisson para bloqueos distribuidos en el Marketplace).  
 * **Event Broker:** RabbitMQ o Kafka (para desacoplar la lógica de recompensas post-partida).  
 * **Seguridad:** Spring Security Reactive \+ JWT (validando contra Supabase Auth).
@@ -500,7 +500,7 @@ Framework Core: Java 21 con Spring Boot 3 (WebFlux / Reactor).
 
 Comunicación en Tiempo Real: RSocket.
 
-Base de Datos Principal: Supabase (PostgreSQL con uso intensivo de tipos JSONB mediante Spring Data R2DBC).
+Base de Datos Principal: Supabase (PostgreSQL con uso de estructura relacional mediante Spring Data R2DBC).
 
 Caché y Marketplace: Redis Reactive con bloqueos distribuidos (Redisson).
 

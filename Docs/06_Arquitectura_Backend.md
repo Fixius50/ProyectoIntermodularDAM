@@ -4,6 +4,25 @@ Este documento no es solo una hoja de ruta, es la **Autopsia Técnica** del serv
 
 ---
 
+## 🏗️ 0. Política de Datos e Infraestructura
+
+**Persistencia:** Se ha prohibido el uso de tipos `JSONB`. Toda la persistencia debe ser **relacional** (R2DBC).
+
+**Red (Multijugador):** Se utiliza **Tailscale**. El servidor escucha en `0.0.0.0` (IP Tailscale) en los puertos `8080` (API) y `7000` (RSocket).
+
+---
+
+## 🏎️ 0.1. Lógica de Matchmaking (RSocket)
+
+El flujo de emparejamiento para las batallas multijugador sigue este patrón reactivo:
+
+1.  **Creación de Sala (`battle.room.create`):** Un jugador "Host" envía su ID de jugador y ID de carta. El servidor genera un `sessionId` único y pone la sala en estado `WAITING`.
+2.  **Unión a Sala (`battle.room.join`):** Un segundo jugador envía el `sessionId` de la sala. El servidor valida la existencia, vincula al segundo jugador, sincroniza la vida inicial y cambia el estado a `IN_PROGRESS`.
+3.  **Duelo en Tiempo Real (`battle.action.stream`):** Ambos jugadores abren un flujo de datos bidireccional. Cada ataque descuenta vida del oponente instantáneamente sin recargar la página.
+4.  **Finalización:** Al llegar a 0 HP, el servidor marca `FINISHED`, otorga recompensas vía **RabbitMQ** y notifica a los clientes el ganador.
+
+---
+
 ## 🏗️ 1. Filosofía de la Arquitectura: Asincronía Pura (Non-Blocking)
 
 El problema de las APIs REST tradicionales (Bloqueantes) es que por cada usuario que pide datos, Java abre un "Hilo" (`Thread`) que se queda quieto (bloqueado) esperando a que la Base de Datos responda. Si hay 10,000 usuarios esperando a que cargue su inventario, el servidor necesita 10,000 hilos de RAM, lo que colapsaría (Out of Memory) un servidor estándar.
