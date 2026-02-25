@@ -23,6 +23,8 @@ else {
 
 Write-Host " Construyendo Frontend (Build)..." -ForegroundColor Green
 Push-Location "$FRONTEND_DIR"
+Write-Host "   Instalando dependencias (npm install)..." -ForegroundColor DarkGray
+npm install
 npm run build
 Pop-Location
 

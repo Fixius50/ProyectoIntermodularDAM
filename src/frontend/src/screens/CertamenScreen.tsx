@@ -1,12 +1,12 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, ScrollView, Image, Dimensions } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView, Image, useWindowDimensions } from 'react-native';
 import { GlassCard } from '../components/GlassCard';
 import { useGame } from '../context/GameContext';
 import { BirdCard } from '../types/types';
 import { colors, spacing, borders, shadows } from '../theme/theme';
 import { BirdCardView } from '../components/BirdCardView';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+// Eliminamos SCREEN_WIDTH estático para usar useWindowDimensions
 
 // ─── CONFIGURACIÓN SIMPLE ──────────────────────────────
 const MAX_ROUNDS = 5;
@@ -61,8 +61,16 @@ const RIVAL_BIRDS_POOL: BirdCard[] = [
 ];
 
 export function CertamenScreen() {
+    const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
     const { state } = useGame();
     const { player } = state;
+
+    // Cálculos Responsivos
+    const tableMargin = spacing.md;
+    const tablePadding = spacing.sm;
+    const gridGap = 8;
+    const slotWidth = (SCREEN_WIDTH - (tableMargin * 2) - (tablePadding * 2) - (gridGap * 2)) / 3;
+    const slotHeight = Math.min(slotWidth * 1.4, SCREEN_HEIGHT * 0.15);
 
     // Estado del Tablero
     const [playerTable, setPlayerTable] = useState<(BirdCard | null)[]>(new Array(SLOT_COUNT).fill(null));
@@ -170,6 +178,7 @@ export function CertamenScreen() {
                                     key={`rival-${idx}`}
                                     style={[
                                         styles.slot,
+                                        { width: slotWidth, height: slotHeight },
                                         bird && styles.occupiedRival,
                                         (selectedPlayerIdx !== null && bird) && styles.targetable
                                     ]}
@@ -196,6 +205,7 @@ export function CertamenScreen() {
                                     key={`player-${idx}`}
                                     style={[
                                         styles.slot,
+                                        { width: slotWidth, height: slotHeight },
                                         bird && styles.occupiedPlayer,
                                         selectedPlayerIdx === idx && styles.selected
                                     ]}
@@ -283,6 +293,51 @@ const styles = StyleSheet.create({
         borderWidth: 4,
         borderColor: '#3E2723',
         padding: spacing.sm,
+        justifyContent: 'center',
+    },
+    grid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        alignContent: 'center',
+        gap: 8,
+    },
+    slot: {
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.2)',
+        backgroundColor: 'rgba(0,0,0,0.1)',
+        overflow: 'hidden',
+        position: 'relative',
+    },
+    emptySlot: {
+        flex: 1,
+    },
+    cardImg: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
+    },
+    divider: {
+        height: 1,
+        backgroundColor: 'rgba(255,255,255,0.1)',
+        marginVertical: spacing.sm,
+        width: '100%',
+    },
+    occupiedPlayer: {
+        borderColor: 'rgba(255,255,255,0.5)',
+    },
+    occupiedRival: {
+        borderColor: 'rgba(255,100,100,0.5)',
+    },
+    selected: {
+        borderColor: colors.secondary,
+        borderWidth: 3,
+    },
+    targetable: {
+        borderColor: colors.error,
+        borderWidth: 2,
+        backgroundColor: 'rgba(255,0,0,0.1)',
     },
     sideLabel: {
         color: 'rgba(255,255,255,0.4)',
@@ -320,7 +375,7 @@ const styles = StyleSheet.create({
         borderColor: 'rgba(255,255,255,0.2)',
     },
     handContainer: {
-        height: 250,
+        flex: 0.6, // Altura relativa para la mano
         backgroundColor: 'rgba(0,0,0,0.4)',
         padding: spacing.md,
         borderTopLeftRadius: 20,
@@ -335,9 +390,11 @@ const styles = StyleSheet.create({
     },
     handPadding: {
         paddingBottom: 10,
+        alignItems: 'center',
     },
     handCard: {
         marginRight: spacing.sm,
+        height: '100%',
     },
     nextBtn: {
         backgroundColor: colors.primary,

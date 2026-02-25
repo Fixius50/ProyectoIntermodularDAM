@@ -12,7 +12,7 @@ Las páginas web tradicionales cargan HTML desde el servidor por cada clic (Bloq
 
 ### ¿Qué hace React / Ionic aquí?
 
-Usamos arquitectura de **Single Page Application (SPA)**. Cuando el usuario abre AVIS, se descarga todo el esqueleto visual de la aplicación una única vez. Todos los clics, transiciones, y menús ocurren **dentro de la memoria de su propio móvil/navegador**. La pantalla jamás se recarga. Las únicas peticiones que salen a internet van en busca de **JSON crudo** (los datos puros) que React inyecta en los botones y texturas instantáneamente.
+Usamos arquitectura de **Single Page Application (SPA)**. Cuando el usuario abre AVIS, se descarga todo el esqueleto visual de la aplicación una única vez. Todos los clics, transiciones, y menús ocurren **dentro de la memoria de su propio móvil/navegador**. La pantalla jamás se recarga. Las únicas peticiones que salen a internet van en busca de datos de la API que React inyecta en los botones y texturas instantáneamente.
 
 > 🏢 **Equivalencia en el Mundo Real:**
 > **Web Tradicional:** Es como comprar un mueble en Ikea, pero en vez de las tablas, te envían por correo el mueble entero montado. Si quieres cambiar una silla, envías el mueble viejo y correo te manda una silla nueva entera.
@@ -71,3 +71,53 @@ Nuestra interfaz utilizará tecnologías CSS-IN-JS de alto octanaje sin bibliote
 
 - **Componentización:** En lugar de tener una megapplikacion de código duro (Monolito Visual), diseñamos botones modulares aislados `<BirdCardGlass />` que reciben propiedades de color y stats, reaccionando holográficamente on-hover con transformaciones matemáticas en GPU.
 - **Carga Peresosa (Lazy Loading):** Los gráficos pesados de un halcón no se descargan si estás solo en el taller. React "taja" el código (`Code Splitting`) en minipaquetes microscópicos, asegurando que la primera carga de la Interfaz apenas consuma unos KiloBytes.
+
+---
+
+# Frontend Architecture Overview (AVIS)
+
+This document describes the structure and design patterns of the recently updated frontend.
+
+## 🏗️ Technical Stack
+- **Framework**: [React Native](https://reactnative.dev/) + [React Native for Web](https://necolas.github.io/react-native-web/).
+- **Build System**: [Vite](https://vitejs.dev/) for fast development and web builds.
+- **Language**: TypeScript (Mainly).
+- **State Management**: 
+  - **Zustand**: Global application store (`store/useAppStore.js`).
+  - **React Context**: Feature-specific state (Auth, Game, Flock, etc.).
+- **Icons**: Lucide React / Lucide React Native.
+
+## 🗺️ Workspace Structure
+```text
+src/frontend/
+├── src/
+│   ├── components/       # Shared UI components (GlassCard, WeatherBackground)
+│   ├── context/          # State providers (Auth, Game, etc.)
+│   ├── screens/          # Primary feature views (12 screens)
+│   ├── services/         # API clients and business logic handlers
+│   ├── store/            # Zustand global stores
+│   ├── theme/            # Design system (colors, typography)
+│   └── types/            # TypeScript definitions
+├── App.tsx               # Root component & Navigation state machine
+└── index.web.js          # Entry point for Web build
+```
+
+## 🔄 Core Patterns
+
+### 1. Navigation State Machine
+Instead of a standard router, `App.tsx` manages the visible screen using a `currentTab` state. This provides total control over the view hierarchy and transitions between the `AuthGate` and `GameContent`.
+
+### 2. Authentication Logic
+The `AuthContext` uses a `useReducer` to manage the lifecycle of a user session:
+- **IDLE/LOADING**: Session restoration from `localStorage`.
+- **AUTHENTICATED**: Access to game content.
+- **UNAUTHENTICATED**: Redirect to Login/Register screens.
+
+### 3. API Integration
+The `apiClient.ts` centralizes all HTTP communication:
+- Automatic **JWT injection** via interceptors.
+- **Refresh Token** handling (automatic 401 retry).
+- Environment-based base URL configuration.
+
+### 4. Visual Philosophy
+The UI follows a "Glassmorphism" and "Weather-reactive" design. Components like `WeatherBackground` dynamically adjust the app's look based on real-world conditions fetched from the backend.
