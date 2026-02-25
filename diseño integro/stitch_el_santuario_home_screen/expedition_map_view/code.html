@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aery - Expedition Map</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#5ee830",
+                        "primary-dark": "#4cd625",
+                        "background-light": "#f9fcf8",
+                        "background-dark": "#152111",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1e2b1a",
+                        "border-light": "#eaf3e7",
+                        "border-dark": "#2a3825",
+                        "text-main": "#111b0e",
+                        "text-muted": "#60974e",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .dark .glass-panel {
+            background: rgba(30, 43, 26, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-main dark:text-slate-100 font-display min-h-screen flex flex-col overflow-hidden">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-light dark:border-border-dark px-10 py-3 bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md z-20">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4">
+<div class="size-8 text-primary">
+<svg class="w-full h-full" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M42.4379 44C42.4379 44 36.0744 33.9038 41.1692 24C46.8624 12.9336 42.2078 4 42.2078 4L7.01134 4C7.01134 4 11.6577 12.932 5.96912 23.9969C0.876273 33.9029 7.27094 44 7.27094 44L42.4379 44Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">Aery</h2>
+</div>
+<nav class="flex items-center gap-9 hidden md:flex">
+<a class="text-sm font-bold text-primary leading-normal" href="#">Expedition</a>
+<a class="text-sm font-medium hover:text-primary transition-colors leading-normal" href="#">Journal</a>
+<a class="text-sm font-medium hover:text-primary transition-colors leading-normal" href="#">Collection</a>
+<a class="text-sm font-medium hover:text-primary transition-colors leading-normal" href="#">Marketplace</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-8 items-center">
+<label class="hidden md:flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-xl h-full bg-border-light dark:bg-border-dark overflow-hidden">
+<div class="text-text-muted flex items-center justify-center pl-4 pr-2">
+<span class="material-symbols-outlined text-lg">search</span>
+</div>
+<input class="w-full bg-transparent border-none focus:ring-0 text-sm placeholder:text-text-muted" placeholder="Search birds, locations..."/>
+</div>
+</label>
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-10 border-2 border-primary cursor-pointer" data-alt="User profile avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDv5kya4evrCpNIRXnuG6OoSSZiNhcOsXdGL7j0sq78NmONHGXtkiEiQ_eJ_eMmjk_oFyn414Hu5Kh5EFtFBlAn_jeXTwS89ov7X6g5pQ-OSgnR1kod-DbGXKkodB23EnQJ1v5Bi9MuqnK8pVXCAAI6TUAq3iFgymWxNWVqbwQnhU6lTUGBgWFgd-vCxhwhjUjdohYQ2jxd9IOHiDZFc5zRVTrN4BEJRvgTMbpSOLLJTgFjVdUxzOXVe-oPl8yy1tyRmobUZ1fE-9NV");'></div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 relative flex flex-col md:flex-row h-[calc(100vh-65px)] overflow-hidden">
+<!-- Map Container (Background) -->
+<div class="absolute inset-0 z-0 bg-cover bg-center" data-alt="Stylized hand-drawn naturalist map of forest and coast biomes" data-location="Pacific Northwest Coast" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCE_cllyfRn-HaYIcP6cYCfFIlEnxh2xlIbm2lt8si3TnRh4M32y4FXVLhJ6M7EyZWzVzsgqGpaZm8NNOW3Dop7FGZyrMyifVXXzkui8iEb9q_pPFJEfJqLVYVew6FpcVTkXez6HjB2s-kxMXdZjQuHJTR5ofRVDiyLNjuTXJL4u-VFpASSKHH1zcdKrKSNese3_8_Yt9DJmesWC6NUnRddyTM6KdtnM2d2sVERJQNuYH18VPHJznBMBbmOepfrZEZVkhorSte34W1O");'>
+<!-- Map Overlay Gradient for readability -->
+<div class="absolute inset-0 bg-gradient-to-b from-surface-light/30 via-transparent to-surface-light/80 dark:from-surface-dark/30 dark:to-surface-dark/90 pointer-events-none"></div>
+</div>
+<!-- Left Sidebar / Overlay Controls -->
+<div class="relative z-10 p-6 flex flex-col justify-between w-full md:w-[420px] h-full pointer-events-none">
+<!-- Search & Filter (Top Left) -->
+<div class="pointer-events-auto space-y-4">
+<div class="glass-panel rounded-2xl p-4 shadow-lg animate-fade-in-down">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-primary">explore</span>
+<h3 class="font-bold text-lg">Current Location</h3>
+</div>
+<p class="text-sm text-text-muted dark:text-slate-400">Coastal Cliffs Biome • 48.4° N, 124.6° W</p>
+<div class="mt-4 flex gap-2">
+<button class="flex-1 bg-surface-light dark:bg-surface-dark hover:bg-primary/10 text-xs font-medium py-2 px-3 rounded-lg border border-border-light dark:border-border-dark transition-colors">
+                            Filter: All
+                        </button>
+<button class="flex-1 bg-primary text-white text-xs font-medium py-2 px-3 rounded-lg shadow-md transition-colors hover:bg-primary-dark">
+                            Scan Area
+                        </button>
+</div>
+</div>
+</div>
+<!-- Detected Bird Card (Middle Left - Contextual) -->
+<div class="pointer-events-auto my-auto py-6">
+<div class="glass-panel rounded-2xl p-5 shadow-xl border-l-4 border-l-primary transform transition-all hover:scale-[1.02]">
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="inline-block px-2 py-0.5 rounded-full bg-primary/20 text-primary-dark text-[10px] font-bold uppercase tracking-wider mb-1">Detected</span>
+<h2 class="text-xl font-bold leading-tight">Peregrine Falcon</h2>
+<p class="text-sm text-text-muted dark:text-slate-400">85% Rarity • Diving</p>
+</div>
+<button class="size-8 rounded-full bg-surface-light dark:bg-surface-dark flex items-center justify-center text-text-muted hover:text-primary shadow-sm">
+<span class="material-symbols-outlined text-lg">info</span>
+</button>
+</div>
+<div class="w-full aspect-video rounded-xl bg-cover bg-center mb-4 relative overflow-hidden group cursor-pointer" data-alt="Peregrine Falcon perched on a cliff edge" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCqy_-86G-dJEzPTMbaxNmPIeG8RNWcKarNwUiyTyOZe93FirrPC1AFTl5O0uzWtr75SkmS8MORykZ9Mj4GHtt_NatqPcABrhlKzH1g4dcSaBloqgjFA-GUcIQ66tF3wEmesL6E_YNK3wK6qt-_Oa-QVghbHMZHabQCGPHeES1sp8G6eH_bEeHdiB1HPazB6TwPJRKIKU1x_7K2omcfPNHHk5eWEdOSZ90EID5WE3-8R5uHWMyDjDypOPEwf8sJfJbyYpojko_pzyIT");'>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
+<div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">
+<span class="material-symbols-outlined text-[14px] align-middle mr-1">videocam</span> Live
+                        </div>
+</div>
+<!-- Focus Minigame UI -->
+<div class="space-y-3">
+<div class="flex justify-between text-sm font-medium">
+<span>Focus Sharpness</span>
+<span class="text-primary">75%</span>
+</div>
+<div class="h-3 w-full bg-border-light dark:bg-border-dark rounded-full overflow-hidden relative">
+<!-- Background track -->
+<div class="absolute inset-0 bg-gray-200 dark:bg-gray-700"></div>
+<!-- Target Zone -->
+<div class="absolute left-[60%] w-[15%] h-full bg-yellow-400/50 z-10 border-x border-yellow-500/50"></div>
+<!-- Progress Fill -->
+<div class="h-full bg-primary w-[75%] rounded-full relative z-20 transition-all duration-300 ease-out"></div>
+</div>
+<button class="w-full mt-2 py-3 bg-primary hover:bg-primary-dark text-white font-bold rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center gap-2 transition-all active:scale-95">
+<span class="material-symbols-outlined">center_focus_strong</span>
+                            Capture Photo
+                        </button>
+</div>
+</div>
+</div>
+<!-- Map Controls (Bottom Left) -->
+<div class="pointer-events-auto flex gap-2">
+<div class="flex flex-col bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg overflow-hidden border border-border-light dark:border-border-dark">
+<button class="p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-border-light dark:border-border-dark text-text-main dark:text-slate-200">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-text-main dark:text-slate-200">
+<span class="material-symbols-outlined">remove</span>
+</button>
+</div>
+<button class="p-3 bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border border-border-light dark:border-border-dark text-text-main dark:text-slate-200">
+<span class="material-symbols-outlined">my_location</span>
+</button>
+</div>
+</div>
+<!-- Right Side / Nearby Birds List -->
+<div class="absolute bottom-0 left-0 right-0 md:static md:w-[320px] md:h-full z-10 flex flex-col justify-end md:justify-start pointer-events-none">
+<div class="w-full md:h-full overflow-x-auto md:overflow-y-auto pointer-events-auto pb-6 px-6 md:pt-6 no-scrollbar">
+<div class="sticky top-0 z-20 mb-4 hidden md:block">
+<h3 class="text-lg font-bold bg-surface-light/90 dark:bg-surface-dark/90 backdrop-blur px-4 py-2 rounded-lg border border-border-light dark:border-border-dark shadow-sm inline-block">
+                        Nearby Birds
+                    </h3>
+</div>
+<!-- Horizontal Scroll Container for Mobile, Vertical for Desktop -->
+<div class="flex md:flex-col gap-4 min-w-max md:min-w-0 items-end md:items-stretch pb-4 md:pb-24">
+<!-- Bird Card 1 -->
+<div class="glass-panel w-48 md:w-full p-3 rounded-xl flex flex-col gap-3 shadow-md hover:shadow-lg transition-shadow cursor-pointer border-l-4 border-l-blue-400">
+<div class="relative w-full aspect-[4/3] rounded-lg overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center transition-transform hover:scale-110 duration-700" data-alt="Blue Jay perched on a branch" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC_WxBr7u-35X-OF5Pcu_HzbrEiGNHGQWhNXjc31eMbQGhv48fQ_dQTgkz_3FgXcTisMobviaIqiMhDZhS58iZx_XmuR01z4JUncZXc7MnkIQgFKMG2F4dejxi4aGzNwZP7S9cLDbr4FML30VTTG8GwOItbJQ4L5iB2IukfZF1uXnUKMFkuEp2iiL6p7ZaDoNzL9xiLm2cuCc71HHTJ7r5Q9oZoJhUbDSqMdKSRa-DiYoGwOPX2zBUXPsJHdjWaUSJMQ-GXqwbtc0_6");'></div>
+<div class="absolute top-2 right-2 bg-white/90 dark:bg-black/60 backdrop-blur rounded-md px-1.5 py-0.5 flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-blue-500">water_drop</span>
+<span class="text-[10px] font-bold">River</span>
+</div>
+</div>
+<div>
+<h4 class="font-bold text-sm">Blue Jay</h4>
+<div class="flex justify-between items-center mt-1">
+<span class="text-xs text-text-muted dark:text-slate-400">Common</span>
+<span class="text-xs font-mono bg-border-light dark:bg-border-dark px-1.5 rounded">120m</span>
+</div>
+</div>
+</div>
+<!-- Bird Card 2 -->
+<div class="glass-panel w-48 md:w-full p-3 rounded-xl flex flex-col gap-3 shadow-md hover:shadow-lg transition-shadow cursor-pointer border-l-4 border-l-red-500">
+<div class="relative w-full aspect-[4/3] rounded-lg overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center transition-transform hover:scale-110 duration-700" data-alt="Northern Cardinal on a snowy branch" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBzkxrUF4Q8Q_oCAP5eaSgms-CYnALLJtmDRDgfUKEa32KL4Vm7kM6gWyGWZginZea5Yot0PIQ05JGBGi026E3OxYQY0cupR1uZQORyvrEsOFKe189abRlY2Yuzcv-FeBvfEGtTbZZSMwkuUvE4QJNbwtbUVOti2IMFF4DDBVqywLDMpVfaKwE6bdTReZOD2q8aNRT2Y1IgcJyKn12kNnKdTeVKXU0ORGDVAKQb6o5SeP5alch0kHGOmWLb3g7obhjut571FPF7ZKXS");'></div>
+<div class="absolute top-2 right-2 bg-white/90 dark:bg-black/60 backdrop-blur rounded-md px-1.5 py-0.5 flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-green-600">forest</span>
+<span class="text-[10px] font-bold">Forest</span>
+</div>
+</div>
+<div>
+<h4 class="font-bold text-sm">Northern Cardinal</h4>
+<div class="flex justify-between items-center mt-1">
+<span class="text-xs text-text-muted dark:text-slate-400">Common</span>
+<span class="text-xs font-mono bg-border-light dark:bg-border-dark px-1.5 rounded">350m</span>
+</div>
+</div>
+</div>
+<!-- Bird Card 3 -->
+<div class="glass-panel w-48 md:w-full p-3 rounded-xl flex flex-col gap-3 shadow-md hover:shadow-lg transition-shadow cursor-pointer border-l-4 border-l-orange-400">
+<div class="relative w-full aspect-[4/3] rounded-lg overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center transition-transform hover:scale-110 duration-700" data-alt="American Robin looking for worms" style='background-image: url("");'></div>
+<div class="absolute top-2 right-2 bg-white/90 dark:bg-black/60 backdrop-blur rounded-md px-1.5 py-0.5 flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-orange-500">grass</span>
+<span class="text-[10px] font-bold">Field</span>
+</div>
+</div>
+<div>
+<h4 class="font-bold text-sm">American Robin</h4>
+<div class="flex justify-between items-center mt-1">
+<span class="text-xs text-text-muted dark:text-slate-400">Common</span>
+<span class="text-xs font-mono bg-border-light dark:bg-border-dark px-1.5 rounded">420m</span>
+</div>
+</div>
+</div>
+<!-- Bird Card 4 -->
+<div class="glass-panel w-48 md:w-full p-3 rounded-xl flex flex-col gap-3 shadow-md hover:shadow-lg transition-shadow cursor-pointer border-l-4 border-l-gray-400 opacity-75">
+<div class="relative w-full aspect-[4/3] rounded-lg overflow-hidden flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+<span class="material-symbols-outlined text-4xl text-gray-400">help_outline</span>
+</div>
+<div>
+<h4 class="font-bold text-sm">Unknown Specimen</h4>
+<div class="flex justify-between items-center mt-1">
+<span class="text-xs text-text-muted dark:text-slate-400">Unidentified</span>
+<span class="text-xs font-mono bg-border-light dark:bg-border-dark px-1.5 rounded">~600m</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Map Markers (Simulated) -->
+<div class="absolute inset-0 pointer-events-none hidden md:block">
+<!-- Marker 1 -->
+<div class="absolute top-1/4 left-1/3 transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer group">
+<div class="relative">
+<div class="size-10 bg-white dark:bg-surface-dark rounded-full shadow-lg flex items-center justify-center border-2 border-primary animate-bounce">
+<div class="size-8 rounded-full bg-cover bg-center" data-alt="Blue Jay Thumbnail" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB2xlDndVbMjUixkzeWBXKojUmYo_k6subXEHLSv-0_xbxesWeLCsJj3s-oPsNY69HopfbJqNdwThHcgeW0jgL-oaoHKXBlh6lzrqGVyXQ5UGCC1oOyTdn_cGN37aoRq1YG2sv7I1RVD5yQVE3q0drZ_Y4gvEzwhUgqxU4-lvn4TdNRktM6idu-NU7Gu_rv7QLFOy9l6xpNpKlZg8-12CHJrXoyWzdW_r-FGi6MgKkRU9W2EJy82-C0HPb3_6v0eXbb_ulotxaFB_Rv");'></div>
+</div>
+<div class="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1 bg-white/90 dark:bg-surface-dark/90 backdrop-blur rounded-lg shadow-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity text-xs font-bold">
+                        Blue Jay Sighted
+                    </div>
+</div>
+</div>
+<!-- Marker 2 -->
+<div class="absolute bottom-1/3 right-1/2 transform translate-x-1/2 translate-y-1/2 pointer-events-auto cursor-pointer group">
+<div class="relative">
+<div class="size-12 bg-white dark:bg-surface-dark rounded-full shadow-lg flex items-center justify-center border-2 border-red-500 z-10">
+<div class="size-10 rounded-full bg-cover bg-center" data-alt="Cardinal Thumbnail" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDVT6f9RXWnEcPsye_w-teOPraI_6O-YQzQmlrPAdFD5XE66CoFZYGXfctKcLEWRmOOFELygRXpvL3PPVV2FhrLZTYUsLXo4tOVqBlWultjwS6jUmFv461-X9XdRb0Yxm-6R0JPvhcUB1gi9Pn8ChGgDtLRJgfdlmF-AjViiMYkUyAzD0x30KwfWptl7hPg1GUyMErK2QNTenF_lPhzhDOjQN6J3_ThXj_FOBV4oJ0LVYU8Np2GSyZpOdZNwu2UgeWHS5drMVkHdJP3");'></div>
+</div>
+<div class="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1 bg-white/90 dark:bg-surface-dark/90 backdrop-blur rounded-lg shadow-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity text-xs font-bold">
+                        Cardinal Territory
+                    </div>
+</div>
+</div>
+<!-- Highlight Marker (User Location) -->
+<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+<div class="size-4 bg-primary rounded-full shadow-[0_0_0_4px_rgba(94,232,48,0.3)] animate-pulse"></div>
+</div>
+</div>
+</main>
+</body></html>

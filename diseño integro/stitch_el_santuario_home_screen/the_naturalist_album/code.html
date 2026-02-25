@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Naturalist Album - Aery</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#5ee830",
+                        "primary-dark": "#3ca815",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#152111",
+                        "cream": "#f9f6f0",
+                        "terracotta": "#e6d5c5",
+                        "terracotta-dark": "#3d2e24",
+                        "paper": "#fdfbf7",
+                        "ink": "#2c3e28",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"],
+                        "handwriting": ["Segoe Print", "Bradley Hand", "chilanka", "cursive"], 
+                    },
+                    backgroundImage: {
+                        'paper-texture': "url('https://www.transparenttextures.com/patterns/cream-paper.png')",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .card-flip {
+            perspective: 1000px;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .card-flip:hover .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 0.75rem;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-ink font-display overflow-x-hidden min-h-screen flex flex-col">
+<div class="relative flex h-full grow flex-col">
+<!-- Main Container -->
+<div class="flex flex-1 justify-center py-5 px-4 sm:px-6 lg:px-8">
+<div class="flex flex-col max-w-[1200px] flex-1 bg-white/50 dark:bg-black/20 rounded-xl shadow-sm border border-stone-200 dark:border-stone-800 backdrop-blur-sm">
+<!-- Header -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-stone-200 dark:border-stone-700 px-6 py-4">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-ink dark:text-cream">
+<div class="size-8 bg-primary/20 rounded-full flex items-center justify-center text-primary-dark">
+<span class="material-symbols-outlined">eco</span>
+</div>
+<h2 class="text-xl font-bold leading-tight tracking-tight">Aery</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-stone-600 dark:text-stone-300 hover:text-primary-dark dark:hover:text-primary transition-colors text-sm font-medium" href="#">Journal</a>
+<a class="text-primary-dark dark:text-primary font-semibold text-sm" href="#">Collection</a>
+<a class="text-stone-600 dark:text-stone-300 hover:text-primary-dark dark:hover:text-primary transition-colors text-sm font-medium" href="#">Market</a>
+<a class="text-stone-600 dark:text-stone-300 hover:text-primary-dark dark:hover:text-primary transition-colors text-sm font-medium" href="#">Profile</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<label class="hidden sm:flex flex-col min-w-40 h-10 w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 overflow-hidden focus-within:ring-2 focus-within:ring-primary/50">
+<div class="text-stone-400 flex items-center justify-center pl-3">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="flex w-full min-w-0 flex-1 resize-none overflow-hidden bg-transparent border-none text-ink dark:text-white placeholder:text-stone-400 px-3 text-sm focus:ring-0" placeholder="Search birds..." value=""/>
+</div>
+</label>
+<div class="h-10 w-10 rounded-full bg-stone-200 dark:bg-stone-700 overflow-hidden ring-2 ring-white dark:ring-stone-800" data-alt="User profile avatar">
+<img alt="User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGwLW6luIQmnSEnLFL48eubguzckLaotJSt2N40V-Weakg9Sko5yqGBXMYwONspi32vM0hkrbNiQKQM-dfoQCkUCsfrCjd_lhMlkbiBwK2RYKEDT8Ngohncf16TJfDYtUtbPQfNC6mZTeT9VpF4iUgIs8zbuTeu_s_me1FPtuPJraIq1ZD64HG12n3hQz_CQ7K1ARjqqGBCKQtvQG9dhH9K72HKwpdCEpvGfJu2tFPQFiaztZGLpk-vV_9Es9bdmiT-ve36wsaF00p"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<main class="flex-1 flex flex-col p-6 sm:p-8">
+<div class="flex flex-col items-center justify-center mb-10 text-center">
+<span class="text-primary-dark dark:text-primary text-xs font-bold tracking-widest uppercase mb-2">Ornithology Collection</span>
+<h1 class="text-ink dark:text-cream text-4xl md:text-5xl font-bold font-display tracking-tight mb-4">The Naturalist's Album</h1>
+<p class="text-stone-500 dark:text-stone-400 max-w-lg mx-auto">Explore your curated discoveries. Each sketch represents a moment of observation in the wild.</p>
+</div>
+<!-- Filters -->
+<div class="flex flex-wrap justify-center gap-3 mb-10">
+<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-white font-medium shadow-sm hover:shadow-md transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px]">grid_view</span>
+<span>All Birds</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors">
+<span class="material-symbols-outlined text-[18px]">pest_control_rodent</span>
+<span>Raptors</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors">
+<span class="material-symbols-outlined text-[18px]">music_note</span>
+<span>Songbirds</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors">
+<span class="material-symbols-outlined text-[18px]">water_drop</span>
+<span>Waterfowl</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors">
+<span class="material-symbols-outlined text-[18px] text-amber-500">hotel_class</span>
+<span>Legendary</span>
+</button>
+</div>
+<!-- Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+<!-- Card 1: Harpy Eagle -->
+<div class="card-flip group h-[420px] w-full cursor-pointer">
+<div class="card-inner">
+<!-- Front -->
+<div class="card-front bg-paper border border-stone-200 shadow-sm overflow-hidden flex flex-col p-4 relative">
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuClkPCNCuRXWlvAdVMqhwdIf1re1tz1FMLtobddJU-4fsEDByOwaYUA3SfR8rpo9ywo257BNfUf-cUQl8Y5Utthrz4lQHjubCqc1PTMAkGeRdo1xym0y13_EhdOQzAZvabzrBGz68kfN2ApzyeFJEqyxHMz7FwWn8siLaNwm4JfnPW6-zhoE5vyO1ZBFYMGtUwOTk848R1LtnlG5jDeiLRTpsf5hzMtAkh3LwPHoU9R2R6_ja8hBichjbM78APye0mvMWrQDIbYxZmt');"></div>
+<div class="flex justify-between items-start mb-2 z-10">
+<span class="text-xs font-mono text-stone-400">#042</span>
+<span class="material-symbols-outlined text-stone-400">favorite</span>
+</div>
+<div class="flex-1 flex items-center justify-center p-4 bg-white/50 rounded-lg border border-stone-100 mb-4 overflow-hidden relative" data-alt="Sketch of a Harpy Eagle">
+<img alt="Harpy Eagle" class="w-full h-full object-cover mix-blend-multiply filter contrast-125 sepia-[.3]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCA0ij1xOdBSyX-vw6mPqcp1reA9MODVtt-w8hsyDhlIK68CE8MWqi_77aqUFc_xUyekQOjQ8_PtZz4SHl77pCTXxnCa-QXI8cVMA0R91dzn6qdg4CKH-XvUzrEfxooEvmmXofB4y5N1XFwOa2KLdoJszq4zpnq7PzOshVLlIkaJcuvxOHuShWx7Qg0VhHJPjPyvbnBcFHF51aH4W-_WPm6gBhPMLy-JJoN1misa-TKg23CqVgHV0tnvBmM9ZEha7s418U0d9Bl6xrC"/>
+<div class="absolute bottom-2 right-2 bg-white/80 backdrop-blur px-2 py-1 rounded text-xs font-bold text-stone-600 shadow-sm border border-stone-200">
+                                            Raptor
+                                        </div>
+</div>
+<div class="z-10">
+<h3 class="text-xl font-display font-bold text-ink mb-1">Harpy Eagle</h3>
+<div class="flex items-center gap-2 text-primary-dark">
+<span class="material-symbols-outlined text-[16px]">flight</span>
+<span class="text-sm font-medium">Power: Vuelo</span>
+</div>
+</div>
+</div>
+<!-- Back -->
+<div class="card-back bg-terracotta dark:bg-terracotta-dark text-ink dark:text-cream p-6 flex flex-col justify-between shadow-md border border-stone-300 dark:border-stone-600 overflow-hidden relative">
+<div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 20px 20px;"></div>
+<div class="z-10">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="text-sm uppercase tracking-widest opacity-60 mb-1">Scientific Name</h4>
+<p class="font-serif italic text-lg">Harpia harpyja</p>
+</div>
+<span class="material-symbols-outlined opacity-50">info</span>
+</div>
+<div class="mt-6 space-y-3">
+<div>
+<span class="text-xs uppercase tracking-wide opacity-60 block">Habitat</span>
+<span class="font-medium text-sm">Tropical Rainforests</span>
+</div>
+<div>
+<span class="text-xs uppercase tracking-wide opacity-60 block">Status</span>
+<span class="font-medium text-sm text-amber-700 dark:text-amber-400">Near Threatened</span>
+</div>
+<div>
+<span class="text-xs uppercase tracking-wide opacity-60 block">Observation Notes</span>
+<p class="text-xs leading-relaxed mt-1 opacity-80 font-handwriting">"Spotted high in the canopy. Immense talons visible even from distance. Majestic silence."</p>
+</div>
+</div>
+</div>
+<button class="z-10 w-full mt-4 flex items-center justify-center gap-2 bg-ink dark:bg-black text-white py-3 rounded-lg hover:bg-opacity-90 transition-colors">
+<span class="material-symbols-outlined">play_circle</span>
+<span class="text-sm font-bold">Play Call</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 2: Blue Jay -->
+<div class="card-flip group h-[420px] w-full cursor-pointer">
+<div class="card-inner">
+<div class="card-front bg-paper border border-stone-200 shadow-sm overflow-hidden flex flex-col p-4 relative">
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD-JJnDa3Af8t1O4j0vR3OAhpJ3HePKf7Bi6PohzMMUxBGl6m7TLsZHmtwjx3spAeNbaPy2e201AhIBIDrXljPjgvD51JwzWyT0VI_omntTXZx_g6gjgclWsnGjKEosOO4fslkedTgghykK27AjuRQ1UFcgqzhMejcrBeloazul7un1mpWX9pe-6f5vzvm02GjpWQ1F5RvoTnX9CqikdEu4XNcyH4-dTZtUcpf8_YxIpIrYaO6-htkirtfT-FKYzOJxaw7NvxmfWCIQ');"></div>
+<div class="flex justify-between items-start mb-2 z-10">
+<span class="text-xs font-mono text-stone-400">#089</span>
+<span class="material-symbols-outlined text-stone-400">favorite</span>
+</div>
+<div class="flex-1 flex items-center justify-center p-4 bg-white/50 rounded-lg border border-stone-100 mb-4 overflow-hidden relative" data-alt="Sketch of a Blue Jay">
+<img alt="Blue Jay" class="w-full h-full object-cover mix-blend-multiply filter contrast-125 sepia-[.2]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADzZbHM9Gco7URJAhA38zn6gMdnI4kPMzcBxohc02wGfpPzjWjhGZXzQf_ZIFFrUpr071TE_CwJDO8CoAdR3h3NZjBv84f0Igh3ZMYLZ-Zi2wiEMvGiTm1JrJaE_BS86KMfkwrsbcQaL9yI7S-jB0Q9-ClCicEbYPl9u5YugWTRf1TxQ0X89Evgbegs69wncBAnOkDmP2qoPb4VITDq3ZuD0cKZEK9YQyyWDjZA5qbAEUhqEVlVI1fVKKc1CZQBlqAoduwtiRfwP-r"/>
+<div class="absolute bottom-2 right-2 bg-white/80 backdrop-blur px-2 py-1 rounded text-xs font-bold text-stone-600 shadow-sm border border-stone-200">
+                                            Songbird
+                                        </div>
+</div>
+<div class="z-10">
+<h3 class="text-xl font-display font-bold text-ink mb-1">Blue Jay</h3>
+<div class="flex items-center gap-2 text-blue-600 dark:text-blue-400">
+<span class="material-symbols-outlined text-[16px]">graphic_eq</span>
+<span class="text-sm font-medium">Power: Canto</span>
+</div>
+</div>
+</div>
+<div class="card-back bg-terracotta dark:bg-terracotta-dark text-ink dark:text-cream p-6 flex flex-col justify-between shadow-md border border-stone-300 dark:border-stone-600 overflow-hidden relative">
+<div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 20px 20px;"></div>
+<div class="z-10">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="text-sm uppercase tracking-widest opacity-60 mb-1">Scientific Name</h4>
+<p class="font-serif italic text-lg">Cyanocitta cristata</p>
+</div>
+<span class="material-symbols-outlined opacity-50">info</span>
+</div>
+<div class="mt-6 space-y-3">
+<div>
+<span class="text-xs uppercase tracking-wide opacity-60 block">Habitat</span>
+<span class="font-medium text-sm">Deciduous Forests</span>
+</div>
+<div>
+<span class="text-xs uppercase tracking-wide opacity-60 block">Status</span>
+<span class="font-medium text-sm text-green-700 dark:text-green-400">Least Concern</span>
+</div>
+<div>
+<span class="text-xs uppercase tracking-wide opacity-60 block">Observation Notes</span>
+<p class="text-xs leading-relaxed mt-1 opacity-80 font-handwriting">"Found near the oak tree. Very noisy, mimicking a hawk to scare other birds."</p>
+</div>
+</div>
+</div>
+<button class="z-10 w-full mt-4 flex items-center justify-center gap-2 bg-ink dark:bg-black text-white py-3 rounded-lg hover:bg-opacity-90 transition-colors">
+<span class="material-symbols-outlined">play_circle</span>
+<span class="text-sm font-bold">Play Song</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 3: Cardinal -->
+<div class="card-flip group h-[420px] w-full cursor-pointer">
+<div class="card-inner">
+<div class="card-front bg-paper border border-stone-200 shadow-sm overflow-hidden flex flex-col p-4 relative">
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAKyRZUTFeZV8ODfByGl_EXc2Cjdx00ydgsTBUSrI7zXlQEdmjU1KTAMluGT6D9tHn5Ehb6HFGR4vv3ATdJeGp4s8XJr1ewl8dMnbs-j4aOc-GYWqjDcAgIswOr-wiux0SXIJDxJzActnQ3qDB4M1lFVnsXQ5KnGRKrEKUIL9LZG-jw3ar8sVPdD9J4cUEmysIMsJFz3C4wZbtIMUbMO7vWUBFxEpNjo1BT3Fyz03cwCxI8R5YrGxWSCRvT2hh6Gl8cmRoN2ajEcGYQ');"></div>
+<div class="flex justify-between items-start mb-2 z-10">
+<span class="text-xs font-mono text-stone-400">#112</span>
+<span class="material-symbols-outlined text-stone-400">favorite</span>
+</div>
+<div class="flex-1 flex items-center justify-center p-4 bg-white/50 rounded-lg border border-stone-100 mb-4 overflow-hidden relative" data-alt="Sketch of a Northern Cardinal">
+<img alt="Cardinal" class="w-full h-full object-cover mix-blend-multiply filter contrast-125 sepia-[.2]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyylg5ugGX8nFNmQHR3oE5jzaOw0Mec-sMU2hJpfLg8I-mMhYSJgOFph6iRs0ePcf4k1HqlKYVspTdpQukBhBfcddcQzK6ZLpdqyRT32G8JxA96bltjdZlqqKPADDh4BKvtby3AiTJBA1McJsLuQzzUfmb-ODrR6XsiqWTcWJz8Gan_lbRJUpu9DHALSFqEFmI2m5-gqJlmIdhYVWmY4w9xs2xynm7JDnsPAQnm_kDMBjehPyKGrJQjm_coibjtFc0dAqfXySwIP19"/>
+<div class="absolute bottom-2 right-2 bg-white/80 backdrop-blur px-2 py-1 rounded text-xs font-bold text-stone-600 shadow-sm border border-stone-200">
+                                            Songbird
+                                        </div>
+</div>
+<div class="z-10">
+<h3 class="text-xl font-display font-bold text-ink mb-1">Northern Cardinal</h3>
+<div class="flex items-center gap-2 text-rose-600 dark:text-rose-400">
+<span class="material-symbols-outlined text-[16px]">palette</span>
+<span class="text-sm font-medium">Power: Plumaje</span>
+</div>
+</div>
+</div>
+<div class="card-back bg-terracotta dark:bg-terracotta-dark text-ink dark:text-cream p-6 flex flex-col justify-between shadow-md border border-stone-300 dark:border-stone-600 overflow-hidden relative">
+<div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 20px 20px;"></div>
+<div class="z-10">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="text-sm uppercase tracking-widest opacity-60 mb-1">Scientific Name</h4>
+<p class="font-serif italic text-lg">Cardinalis cardinalis</p>
+</div>
+<span class="material-symbols-outlined opacity-50">info</span>
+</div>
+<div class="mt-6 space-y-3">
+<div>
+<span class="text-xs uppercase tracking-wide opacity-60 block">Habitat</span>
+<span class="font-medium text-sm">Gardens &amp; Woodlands</span>
+</div>
+<div>
+<span class="text-xs uppercase tracking-wide opacity-60 block">Status</span>
+<span class="font-medium text-sm text-green-700 dark:text-green-400">Least Concern</span>
+</div>
+<div>
+<span class="text-xs uppercase tracking-wide opacity-60 block">Observation Notes</span>
+<p class="text-xs leading-relaxed mt-1 opacity-80 font-handwriting">"Striking red against the winter snow. The crest was raised in alertness."</p>
+</div>
+</div>
+</div>
+<button class="z-10 w-full mt-4 flex items-center justify-center gap-2 bg-ink dark:bg-black text-white py-3 rounded-lg hover:bg-opacity-90 transition-colors">
+<span class="material-symbols-outlined">play_circle</span>
+<span class="text-sm font-bold">Play Song</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 4: Barn Owl -->
+<div class="card-flip group h-[420px] w-full cursor-pointer">
+<div class="card-inner">
+<div class="card-front bg-paper border border-stone-200 shadow-sm overflow-hidden flex flex-col p-4 relative">
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCmRQpooKikpKbTj-PDE4DMOMLpEVIoN3W10XSPCzuB9cEgdqXBbwL1M2z0NQUcsnxuGiwzIDVh1AbktL4-QYBWo54Ex-ZhiF1ubesNlkwzXHE3YiCgAxLhyTgmRdR9h4cJIy4OHO4JCwjHqa0wqwIsWCYbr9EaMDz6TnYRqjXZAxsKwcuyYO_9K4qVYwQShjbkk3ZDbURBQoUEm_tkZFqDZI2LW_V0NTMDh4S9tX5fGRJCR_e2uYu33FP4PHFc9--K-AiIq106S3_q');"></div>
+<div class="flex justify-between items-start mb-2 z-10">
+<span class="text-xs font-mono text-stone-400">#203</span>
+<span class="material-symbols-outlined text-stone-400">favorite</span>
+</div>
+<div class="flex-1 flex items-center justify-center p-4 bg-white/50 rounded-lg border border-stone-100 mb-4 overflow-hidden relative" data-alt="Sketch of a Barn Owl">
+<img alt="Barn Owl" class="w-full h-full object-cover mix-blend-multiply filter contrast-125 sepia-[.3]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8Hto5-nKMw2COTpJDqTQJW9-P7HuNPSBq1xgi8zMDLt8tt8gk1hRW4Dx_YJncLCupO0tsbmaOsX_jqOPv7fgVlOzxqcNiGkEyTY35JKf8QKn4Ku-OSllkt1amtefPX6kDxAHQENQorW2nnv3vvITJnV12YHvMTelEc70teiIqQBGLRd3H6B5K0Kl6eSTzQ0tQvqbR9xo5QNYkTY7EpefsXtewTmTHjMaWFr4T86ik7IjSP1gOWhqAYOZj_n6ttMYIFValVeLWm4Oz"/>
+<div class="absolute bottom-2 right-2 bg-white/80 backdrop-blur px-2 py-1 rounded text-xs font-bold text-stone-600 shadow-sm border border-stone-200">
+                                            Raptor
+                                        </div>
+</div>
+<div class="z-10">
+<h3 class="text-xl font-display font-bold text-ink mb-1">Barn Owl</h3>
+<div class="flex items-center gap-2 text-primary-dark">
+<span class="material-symbols-outlined text-[16px]">flight</span>
+<span class="text-sm font-medium">Power: Vuelo</span>
+</div>
+</div>
+</div>
+<div class="card-back bg-terracotta dark:bg-terracotta-dark text-ink dark:text-cream p-6 flex flex-col justify-between shadow-md border border-stone-300 dark:border-stone-600 overflow-hidden relative">
+<div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 20px 20px;"></div>
+<div class="z-10">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="text-sm uppercase tracking-widest opacity-60 mb-1">Scientific Name</h4>
+<p class="font-serif italic text-lg">Tyto alba</p>
+</div>
+<span class="material-symbols-outlined opacity-50">info</span>
+</div>
+<div class="mt-6 space-y-3">
+<div>
+<span class="text-xs uppercase tracking-wide opacity-60 block">Habitat</span>
+<span class="font-medium text-sm">Farms &amp; Grasslands</span>
+</div>
+<div>
+<span class="text-xs uppercase tracking-wide opacity-60 block">Status</span>
+<span class="font-medium text-sm text-green-700 dark:text-green-400">Least Concern</span>
+</div>
+<div>
+<span class="text-xs uppercase tracking-wide opacity-60 block">Observation Notes</span>
+<p class="text-xs leading-relaxed mt-1 opacity-80 font-handwriting">"Ghostly white face in the twilight. Silent flight is uncanny."</p>
+</div>
+</div>
+</div>
+<button class="z-10 w-full mt-4 flex items-center justify-center gap-2 bg-ink dark:bg-black text-white py-3 rounded-lg hover:bg-opacity-90 transition-colors">
+<span class="material-symbols-outlined">play_circle</span>
+<span class="text-sm font-bold">Play Screech</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-12 flex items-center justify-center gap-2">
+<button class="flex items-center justify-center size-10 rounded-full border border-stone-200 bg-white text-stone-500 hover:bg-stone-50 transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="flex items-center justify-center size-10 rounded-full bg-primary text-white font-bold shadow-sm">1</button>
+<button class="flex items-center justify-center size-10 rounded-full bg-transparent hover:bg-black/5 text-stone-600 transition-colors">2</button>
+<button class="flex items-center justify-center size-10 rounded-full bg-transparent hover:bg-black/5 text-stone-600 transition-colors">3</button>
+<span class="flex items-center justify-center size-10 text-stone-400">...</span>
+<button class="flex items-center justify-center size-10 rounded-full bg-transparent hover:bg-black/5 text-stone-600 transition-colors">8</button>
+<button class="flex items-center justify-center size-10 rounded-full border border-stone-200 bg-white text-stone-500 hover:bg-stone-50 transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</main>
+</div>
+</div>
+</div>
+</body></html>
