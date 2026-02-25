@@ -312,6 +312,7 @@ const styles = StyleSheet.create({
         borderColor: '#3E2723',
         ...shadows.card,
         elevation: 10,
+        zIndex: 10,
         padding: spacing.md,
         justifyContent: 'space-between',
     },
@@ -406,6 +407,9 @@ const styles = StyleSheet.create({
         height: 250,
         backgroundColor: 'rgba(0,0,0,0.3)',
         paddingVertical: spacing.md,
+        zIndex: 50,
+        elevation: 50,
+        overflow: 'visible',
     },
     handTitle: {
         color: colors.white,
@@ -420,11 +424,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: spacing.lg,
         alignItems: 'center',
         gap: spacing.md,
+        overflow: 'visible',
     },
     cardInHand: {
         width: 150,
         overflow: 'visible',
         zIndex: 100,
+        elevation: 100,
     },
     resultOverlay: {
         position: 'absolute',
