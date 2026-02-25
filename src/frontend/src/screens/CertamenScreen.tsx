@@ -292,16 +292,8 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         borderWidth: 4,
         borderColor: '#3E2723',
-<<<<<<< HEAD
-        ...shadows.card,
-        elevation: 10,
-        zIndex: 10,
-        padding: spacing.md,
-        justifyContent: 'space-between',
-=======
         padding: spacing.sm,
         justifyContent: 'center',
->>>>>>> d2b5491fb1c5e965f5f21fd4536b5a53a1c5f57a
     },
     grid: {
         flexDirection: 'row',
@@ -357,71 +349,8 @@ const styles = StyleSheet.create({
     },
     cardPower: {
         position: 'absolute',
-<<<<<<< HEAD
-        top: 10,
-        right: 10,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        width: 24,
-        height: 24,
-        borderRadius: 12,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    postureCirclePlayer: {
-        position: 'absolute',
-        top: '20%',
-        right: '25%',
-        backgroundColor: colors.primary,
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 2,
-        borderColor: colors.white,
-    },
-    postureIconSmall: {
-        fontSize: 14,
-    },
-    handArea: {
-        height: 250,
-        backgroundColor: 'rgba(0,0,0,0.3)',
-        paddingVertical: spacing.md,
-        zIndex: 50,
-        elevation: 50,
-        overflow: 'visible',
-    },
-    handTitle: {
-        color: colors.white,
-        fontSize: 12,
-        textAlign: 'center',
-        marginBottom: spacing.sm,
-        opacity: 0.6,
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-    },
-    handScroll: {
-        paddingHorizontal: spacing.lg,
-        alignItems: 'center',
-        gap: spacing.md,
-        overflow: 'visible',
-    },
-    cardInHand: {
-        width: 150,
-        overflow: 'visible',
-        zIndex: 100,
-        elevation: 100,
-    },
-    resultOverlay: {
-        position: 'absolute',
-        top: '50%',
-        left: 0,
-        right: 0,
-        alignItems: 'center',
-=======
         bottom: 2,
         right: 2,
->>>>>>> d2b5491fb1c5e965f5f21fd4536b5a53a1c5f57a
         backgroundColor: 'rgba(0,0,0,0.7)',
         color: colors.secondary,
         fontSize: 10,
