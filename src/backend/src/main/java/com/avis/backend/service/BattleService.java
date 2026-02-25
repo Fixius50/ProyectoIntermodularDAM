@@ -55,6 +55,7 @@ public class BattleService {
 
     /**
      * Processes a battle action asynchronously.
+     * Actions are held until BOTH players have submitted for the round.
      */
     public Mono<BattleSession> processAction(BattleAction action) {
         BattleSession session = activeBattles.get(action.getSessionId());
@@ -65,17 +66,39 @@ public class BattleService {
 
         boolean isPlayerOne = action.getPlayerId().equals(session.getPlayerOneId());
 
-        // Relational Damage Calculation (Simplified)
-        int damage = action.getSeedsSpent() * 15;
-
+        // Store the action
         if (isPlayerOne) {
-            session.setPlayerTwoHealth(Math.max(0, session.getPlayerTwoHealth() - damage));
+            session.setPlayerOnePendingAction(action.getSeedsSpent());
         } else {
-            session.setPlayerOneHealth(Math.max(0, session.getPlayerOneHealth() - damage));
+            session.setPlayerTwoPendingAction(action.getSeedsSpent());
         }
 
-        checkWinner(session);
+        // Check if both players have submitted their actions for this round
+        if (session.getPlayerOnePendingAction() != null && session.getPlayerTwoPendingAction() != null) {
+            resolveRound(session);
+        }
+
         return Mono.just(session);
+    }
+
+    /**
+     * Resolves the round once both actions are present.
+     */
+    private void resolveRound(BattleSession session) {
+        // Relational Damage Calculation (Simplified for now)
+        int p1Damage = session.getPlayerOnePendingAction() * 15;
+        int p2Damage = session.getPlayerTwoPendingAction() * 15;
+
+        // Apply damage simultaneously
+        session.setPlayerTwoHealth(Math.max(0, session.getPlayerTwoHealth() - p1Damage));
+        session.setPlayerOneHealth(Math.max(0, session.getPlayerOneHealth() - p2Damage));
+
+        // Advance round and clear actions
+        session.setCurrentRound(session.getCurrentRound() + 1);
+        session.setPlayerOnePendingAction(null);
+        session.setPlayerTwoPendingAction(null);
+
+        checkWinner(session);
     }
 
     private void checkWinner(BattleSession session) {
