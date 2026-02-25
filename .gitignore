@@ -1,6 +1,4 @@
-.agent
-.vscode
-./target
+target
 .env
 .mvn
 src\backend\src\main\resources\application.yml

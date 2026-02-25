@@ -6,7 +6,7 @@ if (-not $ScriptDir) { $ScriptDir = Get-Location }
 
 $BACKEND_DIR = "$ScriptDir"
 $FRONTEND_DIR = "$ScriptDir\src\frontend"
-$MVNW = "$ScriptDir\src\backend\mvnw.cmd"
+$MVNW = "$ScriptDir\mvnw.cmd"
 
 Write-Host " Verificando rutas..." -ForegroundColor Gray
 Write-Host "   Ruta Base: $ScriptDir"
@@ -23,6 +23,8 @@ else {
 
 Write-Host " Construyendo Frontend (Build)..." -ForegroundColor Green
 Push-Location "$FRONTEND_DIR"
+Write-Host "   Instalando dependencias (npm install)..." -ForegroundColor DarkGray
+npm install
 npm run build
 Pop-Location
 
