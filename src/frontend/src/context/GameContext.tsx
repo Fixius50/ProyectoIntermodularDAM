@@ -36,7 +36,7 @@ const mockBirds: BirdCard[] = [
     {
         id: 'bird-1',
         name: 'Gorrión Común',
-        photo: 'https://nuthatch.lastelm.software/assets/images/passer_domesticus.jpg',
+        photo: 'https://images.unsplash.com/photo-1551085254-e96b210db32e?q=80&w=1000',
         cost: 1,
         preferredPosture: 'CANTO',
         passiveAbility: 'Si hace sol, gana +1 en Ataque',
@@ -51,7 +51,7 @@ const mockBirds: BirdCard[] = [
     {
         id: 'bird-2',
         name: 'Martín Pescador',
-        photo: 'https://nuthatch.lastelm.software/assets/images/alcedo_atthis.jpg',
+        photo: 'https://images.unsplash.com/photo-1470114755716-696615b671a5?q=80&w=1000',
         cost: 3,
         preferredPosture: 'VUELO',
         passiveAbility: 'Si llueve, gana +2 en Velocidad',
@@ -66,7 +66,7 @@ const mockBirds: BirdCard[] = [
     {
         id: 'bird-3',
         name: 'Águila Real',
-        photo: 'https://nuthatch.lastelm.software/assets/images/aquila_chrysaetos.jpg',
+        photo: 'https://images.unsplash.com/photo-1611771341253-dad2397127b8?q=80&w=1000',
         cost: 5,
         preferredPosture: 'VUELO',
         passiveAbility: 'Si hay viento, gana +2 en Vuelo',
@@ -81,7 +81,7 @@ const mockBirds: BirdCard[] = [
     {
         id: 'bird-4',
         name: 'Petirrojo',
-        photo: 'https://nuthatch.lastelm.software/assets/images/erithacus_rubecula.jpg',
+        photo: 'https://images.unsplash.com/photo-1518992028580-6d57bd80f2dd?q=80&w=1000',
         cost: 2,
         preferredPosture: 'CANTO',
         passiveAbility: 'Si es de noche, gana +1 en Defensa',
@@ -96,7 +96,7 @@ const mockBirds: BirdCard[] = [
     {
         id: 'bird-5',
         name: 'Gaviota Patiamarilla',
-        photo: 'https://nuthatch.lastelm.software/assets/images/larus_michahellis.jpg',
+        photo: 'https://images.unsplash.com/photo-1511910849309-0d5b2c18aca8?q=80&w=1000',
         cost: 2,
         preferredPosture: 'PLUMAJE',
         passiveAbility: 'Si llueve, gana +1 en Defensa',
@@ -111,7 +111,7 @@ const mockBirds: BirdCard[] = [
     {
         id: 'bird-6',
         name: 'Mirlo Común',
-        photo: 'https://nuthatch.lastelm.software/assets/images/turdus_merula.jpg',
+        photo: 'https://images.unsplash.com/photo-1521663049156-427963d7eaba?q=80&w=1000',
         cost: 2,
         preferredPosture: 'CANTO',
         passiveAbility: 'Si está nublado, gana +2 en Canto',
@@ -124,6 +124,7 @@ const mockBirds: BirdCard[] = [
         curiosity: 'El macho es negro con el pico amarillo, mientras que la hembra es de color marrón.',
     },
 ];
+
 
 
 const initialState: GameState = {

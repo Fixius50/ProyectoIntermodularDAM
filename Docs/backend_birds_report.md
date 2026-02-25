@@ -15,9 +15,9 @@ El atributo predominante se mapea al campo `preferredPosture` existente:
 - **CANTO** (Predomina Ataque Mágico/Influencia)
 - **PLUMAJE** (Predomina Defensa/Resistencia)
 
-## Listado de Aves (Referencias Nuthatch API)
+## Listado de Aves (Imágenes y Referencias)
 
-Se han definido las siguientes 6 aves iniciales. Las imágenes deben servirse desde el CDN de Nuthatch: `https://nuthatch.lastelm.software/assets/images/{scientific_name_underscored}.jpg`
+Actualmente, el frontend utiliza imágenes de alta calidad de Unsplash como marcadores de posición premium. Una vez que el backend esté integrado, las imágenes deberán obtenerse dinámicamente de la Nuthatch API (campo `images` o similar en la respuesta JSON).
 
 | Nombre Común | Nombre Científico | Atributo | Hábitat |
 | :--- | :--- | :--- | :--- |
@@ -27,6 +27,7 @@ Se han definido las siguientes 6 aves iniciales. Las imágenes deben servirse de
 | Petirrojo | Erithacus rubecula | CANTO | BOSQUE |
 | Gaviota Patiamarilla | Larus michahellis | PLUMAJE | AGUA |
 | Mirlo Común | Turdus merula | CANTO | BOSQUE |
+
 
 ## Cambios Sugeridos en Backend
 
