@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView, PanResponder } from 'react-native';
 import { GlassCard } from '../components/GlassCard';
 import { ResourceCounter } from '../components/ResourceCounter';
 import { useGame } from '../context/GameContext';
@@ -22,6 +22,15 @@ const expedicionAnimCSS = `
 @keyframes rainDropBiome {
   0%, 100% { transform: translateY(0); opacity: 0.8; }
   50%      { transform: translateY(3px); opacity: 1; }
+}
+@keyframes focusPulse {
+  0% { transform: scale(1); border-color: ${colors.primary}; }
+  50% { transform: scale(1.02); border-color: ${colors.secondary}; }
+  100% { transform: scale(1); border-color: ${colors.primary}; }
+}
+@keyframes scanline {
+  0% { top: 0%; }
+  100% { top: 100%; }
 }
 `;
 
@@ -65,50 +74,48 @@ export function ExpedicionScreen() {
     const isRaining = weather.condition === 'LLUVIA';
     const [showMinigame, setShowMinigame] = useState(false);
     const [sliderValue, setSliderValue] = useState(0);
+    const lastValue = React.useRef(0);
+    const startValue = React.useRef(0);
     const [focusResult, setFocusResult] = useState<'none' | 'success' | 'fail'>('none');
-    const [timeLeft, setTimeLeft] = useState(0);
 
-    // Timer para expedición en progreso
+    // Automatic success detection when focus is perfect
     useEffect(() => {
-        if (expedition.status === 'IN_PROGRESS' && timeLeft > 0) {
-            const timer = setInterval(() => {
-                setTimeLeft((t) => {
-                    if (t <= 1) {
-                        dispatch({ type: 'COMPLETE_EXPEDITION' });
-                        return 0;
-                    }
-                    return t - 1;
-                });
-            }, 1000);
-            return () => clearInterval(timer);
+        if (expedition.status === 'IN_PROGRESS' && sliderValue >= 65 && sliderValue <= 85) {
+            // Brief delay to "confirm" focus before success
+            const timer = setTimeout(() => {
+                dispatch({ type: 'UPDATE_FIELD_NOTES', payload: 1 });
+                dispatch({ type: 'COMPLETE_EXPEDITION' });
+            }, 800);
+            return () => clearTimeout(timer);
         }
-    }, [expedition.status, timeLeft, dispatch]);
+    }, [sliderValue, expedition.status, dispatch]);
 
     const handleStartExpedition = useCallback(() => {
         if (!selectedBiome || !selectedBait) return;
         dispatch({ type: 'START_EXPEDITION', payload: { biome: selectedBiome, bait: selectedBait } });
-        setTimeLeft(120); // 2 minutos
     }, [selectedBiome, selectedBait, dispatch]);
 
-    const handleFocusAttempt = useCallback(() => {
-        // El "punto perfecto" de enfoque está en 70-80%
-        const isSuccess = sliderValue >= 65 && sliderValue <= 85;
-        setFocusResult(isSuccess ? 'success' : 'fail');
-        if (isSuccess) {
-            dispatch({ type: 'UPDATE_FIELD_NOTES', payload: 1 });
-        }
-        setTimeout(() => {
-            setFocusResult('none');
-            setShowMinigame(false);
-            setSliderValue(0);
-        }, 2000);
-    }, [sliderValue, dispatch]);
+    // PanResponder for drag manipulation (Vertical)
+    const panResponder = useMemo(() => PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onPanResponderGrant: () => {
+            startValue.current = lastValue.current;
+        },
+        onPanResponderMove: (_, gestureState) => {
+            if (expedition.status !== 'IN_PROGRESS') return;
+            const sensitivity = 0.5;
+            const newValue = startValue.current - (gestureState.dy * sensitivity);
+            const clampedValue = Math.min(100, Math.max(0, newValue));
+            setSliderValue(clampedValue);
+            lastValue.current = clampedValue;
+        },
+    }), [expedition.status]);
 
     const handleReset = useCallback(() => {
         dispatch({ type: 'RESET_EXPEDITION' });
         setSelectedBiome(null);
         setSelectedBait(null);
-        setTimeLeft(0);
+        setSliderValue(0);
     }, [dispatch]);
 
     const formatTime = (s: number) => {
@@ -199,7 +206,9 @@ export function ExpedicionScreen() {
                 <View style={styles.tabContent}>
                     <Text style={styles.sectionHeading}>🔭 En Curso...</Text>
                     <GlassCard style={styles.timerCard}>
-                        <Text style={styles.timerValue}>{formatTime(timeLeft)}</Text>
+                        <Text style={styles.timerValue}>
+                            {sliderValue >= 65 && sliderValue <= 85 ? '🎯 ENFOCADO' : '🔍 BUSCANDO...'}
+                        </Text>
                         <Text style={styles.timerBiome}>
                             {BIOMES.find((b) => b.type === expedition.selectedBiome)?.icon}{' '}
                             Explorando {expedition.selectedBiome}
@@ -213,21 +222,44 @@ export function ExpedicionScreen() {
                     ) : (
                         <View style={styles.minigameZone}>
                             <Text style={styles.minigameTitle}>🔍 ¡Mantén el enfoque!</Text>
-                            <View style={styles.photoZone}>
-                                <Text style={[styles.photoEmoji, { opacity: 0.2 + (sliderValue / 100) * 0.8 }]}>🐦</Text>
+
+                            {/* SVG Filter Definition */}
+                            <View style={{ height: 0, width: 0, position: 'absolute' }}>
+                                <svg width="0" height="0">
+                                    <defs>
+                                        <filter id="pixelate" x="0" y="0">
+                                            <feMorphology in="SourceGraphic" operator="dilate" radius={(Math.max(0, 10 - Math.abs(sliderValue - 75) / 2.5)).toString()} />
+                                            <feColorMatrix type="saturate" values={Math.min(1, sliderValue / 75).toString()} />
+                                        </filter>
+                                    </defs>
+                                </svg>
+                            </View>
+
+                            <View
+                                style={styles.photoZone}
+                                {...panResponder.panHandlers}
+                            >
+                                <View style={[styles.focusTarget, { opacity: sliderValue >= 65 && sliderValue <= 85 ? 1 : 0.3 }]}>
+                                    <View style={styles.focusCornerTL} />
+                                    <View style={styles.focusCornerTR} />
+                                    <View style={styles.focusCornerBL} />
+                                    <View style={styles.focusCornerBR} />
+                                </View>
+                                <Text style={[styles.photoEmoji, {
+                                    opacity: 0.4 + (sliderValue / 100) * 0.6,
+                                    transform: [{ scale: 0.7 + (sliderValue / 100) * 0.6 }],
+                                    // @ts-ignore - filter is supported in web/SVG contexts
+                                    filter: `url(#pixelate)`,
+                                }]}>🐦</Text>
+                                <View style={[styles.scanLine, { top: `${Math.sin(Date.now() / 500) * 50 + 50}%` }]} />
                             </View>
                             <View style={styles.sliderControls}>
-                                <TouchableOpacity style={styles.sliderBtn} onPress={() => setSliderValue(Math.max(0, sliderValue - 10))}>
-                                    <Text>◀</Text>
-                                </TouchableOpacity>
-                                <Text style={styles.sliderValueText}>{sliderValue}%</Text>
-                                <TouchableOpacity style={styles.sliderBtn} onPress={() => setSliderValue(Math.min(100, sliderValue + 10))}>
-                                    <Text>▶</Text>
-                                </TouchableOpacity>
+                                <View style={styles.focusBarContainer}>
+                                    <View style={styles.focusSweetSpot} />
+                                    <View style={[styles.focusCursor, { left: `${sliderValue}%` }]} />
+                                </View>
+                                <Text style={styles.instructionText}>Desliza arriba/abajo para enfocar</Text>
                             </View>
-                            <TouchableOpacity style={styles.shutterButton} onPress={handleFocusAttempt}>
-                                <Text style={styles.shutterButtonText}>📸 ¡FOTO!</Text>
-                            </TouchableOpacity>
                         </View>
                     )}
                 </View>
@@ -610,37 +642,91 @@ const styles = StyleSheet.create({
         color: colors.primary,
     },
     photoZone: {
-        width: 160,
-        height: 160,
-        backgroundColor: colors.white,
-        borderRadius: 80,
+        width: 200,
+        height: 200,
+        backgroundColor: '#1a1a1a',
+        borderRadius: 20,
         justifyContent: 'center',
         alignItems: 'center',
         overflow: 'hidden',
-        borderWidth: 4,
+        borderWidth: 2,
         borderColor: colors.primary,
+        position: 'relative',
+    },
+    focusTarget: {
+        position: 'absolute',
+        width: 100,
+        height: 100,
+        zIndex: 2,
+    },
+    focusCornerTL: { position: 'absolute', top: 0, left: 0, width: 20, height: 20, borderTopWidth: 2, borderLeftWidth: 2, borderColor: colors.white },
+    focusCornerTR: { position: 'absolute', top: 0, right: 0, width: 20, height: 20, borderTopWidth: 2, borderRightWidth: 2, borderColor: colors.white },
+    focusCornerBL: { position: 'absolute', bottom: 0, left: 0, width: 20, height: 20, borderBottomWidth: 2, borderLeftWidth: 2, borderColor: colors.white },
+    focusCornerBR: { position: 'absolute', bottom: 0, right: 0, width: 20, height: 20, borderBottomWidth: 2, borderRightWidth: 2, borderColor: colors.white },
+    scanLine: {
+        position: 'absolute',
+        width: '100%',
+        height: 1,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        zIndex: 1,
     },
     photoEmoji: {
-        fontSize: 80,
+        fontSize: 100,
     },
     sliderControls: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: spacing.xl,
+        gap: spacing.md,
+        width: '100%',
+    },
+    focusBarContainer: {
+        flex: 1,
+        height: 12,
+        backgroundColor: 'rgba(0,0,0,0.1)',
+        borderRadius: 6,
+        position: 'relative',
+        overflow: 'hidden',
+    },
+    focusSweetSpot: {
+        position: 'absolute',
+        left: '65%',
+        width: '20%',
+        height: '100%',
+        backgroundColor: 'rgba(76, 175, 80, 0.3)',
+    },
+    focusCursor: {
+        position: 'absolute',
+        top: 0,
+        width: 4,
+        height: '100%',
+        backgroundColor: colors.primary,
+        borderRadius: 2,
     },
     sliderBtn: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
+        width: 36,
+        height: 36,
+        borderRadius: 18,
         backgroundColor: colors.white,
         justifyContent: 'center',
         alignItems: 'center',
         ...shadows.card,
     },
+    sliderBtnText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: colors.primary,
+    },
+    instructionText: {
+        fontSize: 12,
+        color: colors.primary,
+        fontStyle: 'italic',
+        marginTop: spacing.xs,
+        opacity: 0.8,
+    },
     sliderValueText: {
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: typography.weightBold,
-        width: 60,
+        width: 40,
         textAlign: 'center',
     },
     shutterButton: {
@@ -649,6 +735,7 @@ const styles = StyleSheet.create({
         paddingVertical: spacing.md,
         borderRadius: borders.radiusFull,
         ...shadows.card,
+        marginTop: spacing.md,
     },
     shutterButtonText: {
         color: colors.white,
