@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aery - The Workshop</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#5ee830",
+                        "primary-dark": "#4ac224",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#152111",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1e2f19",
+                        "text-main": "#111b0e",
+                        "text-secondary": "#60974e",
+                        "slot-bg": "#eaf3e7",
+                        "slot-border": "#dce8d9",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(94, 232, 48, 0.15)',
+                        'glow': '0 0 15px rgba(94, 232, 48, 0.5)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for inventory */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #dce8d9;
+            border-radius: 20px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #2c4225;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-main dark:text-gray-100 font-display transition-colors duration-200 min-h-screen flex flex-col">
+<!-- Top Navbar -->
+<header class="w-full bg-surface-light dark:bg-surface-dark border-b border-slot-border dark:border-[#2c4225] sticky top-0 z-50">
+<div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<!-- Logo & Nav -->
+<div class="flex items-center gap-8">
+<a class="flex items-center gap-3 group" href="#">
+<div class="w-8 h-8 text-primary group-hover:scale-110 transition-transform duration-300">
+<svg class="w-full h-full" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M42.4379 44C42.4379 44 36.0744 33.9038 41.1692 24C46.8624 12.9336 42.2078 4 42.2078 4L7.01134 4C7.01134 4 11.6577 12.932 5.96912 23.9969C0.876273 33.9029 7.27094 44 7.27094 44L42.4379 44Z" fill="currentColor"></path>
+</svg>
+</div>
+<span class="text-xl font-bold tracking-tight text-text-main dark:text-white">Aery</span>
+</a>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-text-secondary hover:text-primary transition-colors text-sm font-medium" href="#">Field Guide</a>
+<a class="text-text-secondary hover:text-primary transition-colors text-sm font-medium" href="#">Map</a>
+<a class="text-text-secondary hover:text-primary transition-colors text-sm font-medium" href="#">Collection</a>
+<a class="text-primary font-medium text-sm border-b-2 border-primary pb-0.5" href="#">Workshop</a>
+<a class="text-text-secondary hover:text-primary transition-colors text-sm font-medium" href="#">Profile</a>
+</nav>
+</div>
+<!-- Right Actions -->
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center h-10 w-64 bg-slot-bg dark:bg-[#2c4225] rounded-xl px-3 transition-colors focus-within:ring-2 focus-within:ring-primary/50">
+<span class="material-symbols-outlined text-text-secondary dark:text-gray-400">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full text-text-main dark:text-white placeholder-text-secondary dark:placeholder-gray-500" placeholder="Search resources..." type="text"/>
+</div>
+<button class="w-10 h-10 rounded-full bg-cover bg-center ring-2 ring-primary/20 hover:ring-primary/50 transition-all" data-alt="User profile avatar showing a smiling woman" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBU1KsSJCCItxugHMDBkqTkaLjpZf7_RDstEa3XdJJy-bhe4eay97xnQFbyq4HBYdvHrb-qA_NtvndEVud7m2_xTa-1lc0Sp-HW7wYK_n6-qXNMGKhBGBu-zaggpbMjz_WkmwKcT98DUi72-9SisclC2wJL3mOefVuHqQv0q9_1iM3UeThWwXk7PSP6PlI0fegjutmDAJB6VnoBaI3j4SUYVp3IN-and4XXUbbAknkCg2gH2myYMuIcptvuoVYFjkwbESmwZO9M8Ir6");'>
+</button>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow flex flex-col lg:flex-row max-w-[1440px] mx-auto w-full p-4 sm:p-6 lg:p-8 gap-6">
+<!-- Left Column: Crafting Table -->
+<section class="flex-grow flex flex-col gap-6">
+<!-- Breadcrumbs & Header -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-2 text-sm text-text-secondary dark:text-gray-400">
+<a class="hover:text-primary transition-colors" href="#">Home</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-text-main dark:text-white font-medium">Workshop</span>
+</div>
+<div class="flex justify-between items-end">
+<div>
+<h1 class="text-4xl sm:text-5xl font-black text-text-main dark:text-white tracking-tight mb-2">El Taller</h1>
+<p class="text-lg text-text-secondary dark:text-gray-400">Craft equipment to attract rare birds.</p>
+</div>
+<div class="hidden sm:flex gap-2 items-center bg-primary/10 px-3 py-1.5 rounded-lg border border-primary/20">
+<span class="material-symbols-outlined text-primary">eco</span>
+<span class="text-sm font-bold text-primary-dark dark:text-primary">Level 12 Crafter</span>
+</div>
+</div>
+</div>
+<!-- Crafting Area -->
+<div class="flex-grow bg-white dark:bg-surface-dark rounded-2xl p-6 sm:p-10 border border-slot-border dark:border-[#2c4225] shadow-sm relative overflow-hidden">
+<!-- Background decorative elements mimicking wood grain/natural texture subtly -->
+<div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none" style="background-image: radial-gradient(#111b0e 1px, transparent 1px); background-size: 24px 24px;"></div>
+<div class="relative z-10 h-full flex flex-col justify-center">
+<!-- Slots Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+<!-- Slot 1: Base -->
+<div class="group cursor-pointer">
+<div class="relative aspect-square rounded-2xl bg-slot-bg dark:bg-[#1a2615] border-2 border-dashed border-primary/30 hover:border-primary transition-all duration-300 flex items-center justify-center mb-4 overflow-hidden">
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="w-32 h-32 bg-center bg-no-repeat bg-contain opacity-80 group-hover:scale-110 transition-transform duration-500" data-alt="Piece of oak wood for crafting base" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDpigKvkVQZjwM1BK7INkSExmtYDRCxmkoDPQRybElcAryTipVBdUxKrzPBN3F2UOcpk4EoNOAazmXiOh2ESMlZNnwG31vbEQ-QR9uKBUWFlQgYckZa8JUUZ8mrpTvXPwbxJfoQr78WhLX9k3Flg7j2XspsTP9L-pP0Xxb5nJ40HA_gXSB9aYRRG6MBXIbXy-XRPYzC7HEShjbv_veth-L4wFIyeCt5zsyII_i8SkCa2y7-uMK0EcRvdyvCTwpgdPcDg0DlfS5nZod_');"></div>
+<div class="absolute top-3 right-3 bg-white dark:bg-surface-dark shadow-sm rounded-full p-1.5 text-primary opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
+<span class="material-symbols-outlined text-sm">edit</span>
+</div>
+</div>
+<div class="text-center">
+<h3 class="text-lg font-bold text-text-main dark:text-white mb-1">Base Material</h3>
+<p class="text-sm text-text-secondary dark:text-gray-400">Oak Wood Block</p>
+</div>
+</div>
+<!-- Slot 2: Size -->
+<div class="group cursor-pointer">
+<div class="relative aspect-square rounded-2xl bg-slot-bg dark:bg-[#1a2615] border-2 border-dashed border-primary/30 hover:border-primary transition-all duration-300 flex items-center justify-center mb-4 overflow-hidden">
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="w-32 h-32 bg-center bg-no-repeat bg-contain opacity-40 group-hover:opacity-60 transition-opacity" data-alt="Blueprint outline showing medium trap size" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC76WYKcaov1joEhcfwPBgbpHFJ1qm71Flc0qOR69gDL3vdMm-ZYuUEgtL6z7rqsDcarMYnhwuJOl-2TRluCinSjXCyHrJQpvrVN2HYET6vYi0HnUtwOf-EBauqrW0aNq7wsdShkJzbSmAaBwuweKzCbWQEJ4223pBbVPdpG56ytgdqfUpbrJo0PAdVY4YX1PugKU_s_zDPltwy9e2Oz0EPk7P_-STmLGdM7s30Oic01-7wGQslvOJTRoQCk_DA85hbVhjauVhpexf2');"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-text-secondary/50 group-hover:text-primary transition-colors">add_circle</span>
+</div>
+</div>
+<div class="text-center">
+<h3 class="text-lg font-bold text-text-main dark:text-white mb-1">Trap Size</h3>
+<p class="text-sm text-primary font-medium">Select Size</p>
+</div>
+</div>
+<!-- Slot 3: Bait -->
+<div class="group cursor-pointer">
+<div class="relative aspect-square rounded-2xl bg-slot-bg dark:bg-[#1a2615] border-2 border-dashed border-primary/30 hover:border-primary transition-all duration-300 flex items-center justify-center mb-4 overflow-hidden">
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="w-32 h-32 bg-center bg-no-repeat bg-contain opacity-80 group-hover:scale-110 transition-transform duration-500" data-alt="Handful of mixed bird seeds" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAMNGYy4-TRlvvmmyVfXHkaJUULtOeYerA6pFs0Z9o85akc4M00j7Eal8OLSwCFuzNS2DPo0Iw1wsHNlsajYfNSF1HPCTFNy3oyn84UICz91mypKjMaP3YzBuqsAffXcehrKJvpXQEO3ott4h8rkODm1OD4y1JoU3dwF9Jvsw-61G8eiGwSiG8g2L9SD3H9LyrKZj_c-pUFm3wgYTBFq1lG86khUwUdgkFYENTqJKZZhhVTZlq-fXipfa1lpvxrb-m2XIGZ0jlVeJgk');"></div>
+<div class="absolute top-3 right-3 bg-white dark:bg-surface-dark shadow-sm rounded-full p-1.5 text-primary opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
+<span class="material-symbols-outlined text-sm">edit</span>
+</div>
+</div>
+<div class="text-center">
+<h3 class="text-lg font-bold text-text-main dark:text-white mb-1">Bait Type</h3>
+<p class="text-sm text-text-secondary dark:text-gray-400">Premium Seeds</p>
+</div>
+</div>
+</div>
+<!-- Action Area -->
+<div class="flex flex-col items-center justify-center gap-4">
+<div class="flex items-center gap-4 text-sm text-text-secondary dark:text-gray-400 bg-background-light dark:bg-background-dark py-2 px-4 rounded-full border border-slot-border dark:border-[#2c4225]">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-lg">timer</span>
+<span>2h 30m</span>
+</span>
+<span class="w-1 h-1 bg-current rounded-full"></span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-lg">bolt</span>
+<span>15 Energy</span>
+</span>
+</div>
+<button class="group relative flex items-center justify-center gap-3 bg-primary hover:bg-primary-dark text-text-main font-bold py-4 px-12 rounded-xl text-lg transition-all duration-300 hover:shadow-glow hover:-translate-y-1 w-full sm:w-auto overflow-hidden">
+<div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+<span class="material-symbols-outlined group-hover:rotate-12 transition-transform">construction</span>
+<span class="relative">Craft Item</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Column: Inventory Drawer -->
+<aside class="w-full lg:w-96 bg-surface-light dark:bg-surface-dark rounded-2xl border border-slot-border dark:border-[#2c4225] flex flex-col h-[600px] lg:h-auto shadow-sm">
+<div class="p-6 border-b border-slot-border dark:border-[#2c4225] flex justify-between items-center bg-slot-bg/30 dark:bg-black/20 rounded-t-2xl">
+<h2 class="text-xl font-bold text-text-main dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">backpack</span>
+                    Resources
+                </h2>
+<button class="text-text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+<!-- Tabs -->
+<div class="flex p-2 gap-1 border-b border-slot-border dark:border-[#2c4225]">
+<button class="flex-1 py-2 text-sm font-medium rounded-lg bg-primary/10 text-primary-dark dark:text-primary transition-colors">All</button>
+<button class="flex-1 py-2 text-sm font-medium rounded-lg text-text-secondary hover:bg-background-light dark:hover:bg-white/5 transition-colors">Organic</button>
+<button class="flex-1 py-2 text-sm font-medium rounded-lg text-text-secondary hover:bg-background-light dark:hover:bg-white/5 transition-colors">Mineral</button>
+</div>
+<!-- Inventory Grid -->
+<div class="flex-grow overflow-y-auto p-4 custom-scrollbar">
+<div class="grid grid-cols-2 gap-3">
+<!-- Item Card 1 -->
+<div class="bg-background-light dark:bg-[#1a2615] p-3 rounded-xl border border-transparent hover:border-primary/50 cursor-pointer transition-all hover:shadow-md group">
+<div class="aspect-square rounded-lg bg-white dark:bg-black/20 mb-3 bg-center bg-no-repeat bg-contain" data-alt="Stack of small twigs bound together" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAoK_TA9eraX36F5JN8f2HfOBX2eiXUaoM8bUKQ3IBwTX5bC2b0mrnkNHStlV2nZgcWwNqeh_XxfOKtEJouCMmBMEzuxzFA6DfGAVjXvVPOS5-h06OMYGhym_pig_o1V2I5xYY2e01QPQ9CigXDw0aB-ykgGXvYTuA8n9ZgRdnYyC_PgnmtiNngNXHgp6nQayAVZfIVIKYw83pNgdyNzHC2V38MXk8TNUhDCfi7OJDkJCkTxLMr_dhIProkdwZWPXPGlTWU0DgKCIBt');"></div>
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm font-bold text-text-main dark:text-white leading-tight">Birch Twigs</p>
+<p class="text-xs text-text-secondary mt-0.5">Common</p>
+</div>
+<span class="text-xs font-bold bg-white dark:bg-surface-dark px-1.5 py-0.5 rounded text-text-main dark:text-gray-300 border border-slot-border dark:border-white/10">x24</span>
+</div>
+</div>
+<!-- Item Card 2 -->
+<div class="bg-background-light dark:bg-[#1a2615] p-3 rounded-xl border border-transparent hover:border-primary/50 cursor-pointer transition-all hover:shadow-md group">
+<div class="aspect-square rounded-lg bg-white dark:bg-black/20 mb-3 bg-center bg-no-repeat bg-contain" data-alt="Pile of mixed wild seeds" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAa6Xq_Hlr8s-21O_en2SQVV5K9b2JTBaWp-e4scrSPSM5OUv6cpleuCGKjYkracoamhyRBTXoUQgX-dek-aYOUsYOloPaDxtCupSnb-_dtEwj3Wiqt5XpjBxF0o0UTHXqkzmc3o494mjWHLPBZ7A3Ubzre0kajPwn2e2GXvWsGYzNGWhxnjKUILKklgnQh9fAPt3pFocRI8iPkddQuRXwJrBm8ZPCSdpabQp-vuJS_Dl4N_YLAXlTWtE5kMClX9t4M5jUNmDcieVR3');"></div>
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm font-bold text-text-main dark:text-white leading-tight">Wild Seeds</p>
+<p class="text-xs text-text-secondary mt-0.5">Common</p>
+</div>
+<span class="text-xs font-bold bg-white dark:bg-surface-dark px-1.5 py-0.5 rounded text-text-main dark:text-gray-300 border border-slot-border dark:border-white/10">x150</span>
+</div>
+</div>
+<!-- Item Card 3 -->
+<div class="bg-background-light dark:bg-[#1a2615] p-3 rounded-xl border border-transparent hover:border-primary/50 cursor-pointer transition-all hover:shadow-md group">
+<div class="aspect-square rounded-lg bg-white dark:bg-black/20 mb-3 bg-center bg-no-repeat bg-contain" data-alt="Colorful jay feather" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAI_2-LLVcva0F7AJwT6JOr-WrfWtTAZVLB3w6Za6Vbdy_eM9fj6_TvI-CMYrBUrNlIAL8wcqf3LWiIDNF8FL9c8tBN3--SijhhInYEDFBiFWTyGSzTWHAXiUr4C10m8Q3Lfzzb5pRtdwH-wL4YZ1Vq79U0xdqd-D4Kzh45KqM6jVAa-zJzY9HN3VM7n7VfALkKoO4wslthMN2n2oVCae_vIPQERd98vx7KlJ-1v0zhLnTNHzxdJUZJlvgBXSnSKh6P30Oa-yKyg3Bu');"></div>
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm font-bold text-text-main dark:text-white leading-tight">Jay Feather</p>
+<p class="text-xs text-primary font-medium mt-0.5">Rare</p>
+</div>
+<span class="text-xs font-bold bg-white dark:bg-surface-dark px-1.5 py-0.5 rounded text-text-main dark:text-gray-300 border border-slot-border dark:border-white/10">x3</span>
+</div>
+</div>
+<!-- Item Card 4 -->
+<div class="bg-background-light dark:bg-[#1a2615] p-3 rounded-xl border border-transparent hover:border-primary/50 cursor-pointer transition-all hover:shadow-md group">
+<div class="aspect-square rounded-lg bg-white dark:bg-black/20 mb-3 bg-center bg-no-repeat bg-contain" data-alt="Small round smooth pebbles" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDie9Nm5TqPSzNcfP0zsrdYisjUuOkC9Pl5rJQke6KBTz04O4Jo1sqYZhrwR_ZlNdirJ9Uz_WoklvHHFVIjmpbDoc0DKZQAEvi4mRWQigHch-9DRkss1uGmrG6zF3oknN_gwhb9XyN8onUOnnemmzF6HoGkHtgakiWQeAVW6cNhrI_rJG--2aJq5SS1G36OEkwkEoY4yciR32_BxKq0sFix6_guv6A0Fo6YBKILE9rQvvK9-lBnbCeRIL2_hL0zmRYAMugtF0FByv0j');"></div>
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm font-bold text-text-main dark:text-white leading-tight">River Stone</p>
+<p class="text-xs text-text-secondary mt-0.5">Uncommon</p>
+</div>
+<span class="text-xs font-bold bg-white dark:bg-surface-dark px-1.5 py-0.5 rounded text-text-main dark:text-gray-300 border border-slot-border dark:border-white/10">x12</span>
+</div>
+</div>
+<!-- Item Card 5 -->
+<div class="bg-background-light dark:bg-[#1a2615] p-3 rounded-xl border border-transparent hover:border-primary/50 cursor-pointer transition-all hover:shadow-md group">
+<div class="aspect-square rounded-lg bg-white dark:bg-black/20 mb-3 bg-center bg-no-repeat bg-contain" data-alt="Dried pine cone" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAVl1MJc9hCDzfiCbiRL2LObFt8AiKwNyE3TzhL1uFHnNuwpLdIydu4adHWJ7PjINAcaTEDEeoq2l75ufHO3IjkkXoPQqkMmxkyQiI_V6TKcQvemtVmWm6XvMEG9AY6BbGQc0IqW_6mH9Y99qtFpXmfS7d0c4dljnbKNqwcMVQPZ6Ak-X2-kG_Gd4GabPXDPh4YWabZOtq48CoiPT8B2TYVbShZB87P9ggvSbiNWWV2a4xZXuLbZnqbkq-hO_-RQINwIU4R2zdkoFMD');"></div>
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm font-bold text-text-main dark:text-white leading-tight">Pine Cone</p>
+<p class="text-xs text-text-secondary mt-0.5">Common</p>
+</div>
+<span class="text-xs font-bold bg-white dark:bg-surface-dark px-1.5 py-0.5 rounded text-text-main dark:text-gray-300 border border-slot-border dark:border-white/10">x8</span>
+</div>
+</div>
+<!-- Item Card 6 -->
+<div class="bg-background-light dark:bg-[#1a2615] p-3 rounded-xl border border-transparent hover:border-primary/50 cursor-pointer transition-all hover:shadow-md group">
+<div class="aspect-square rounded-lg bg-white dark:bg-black/20 mb-3 bg-center bg-no-repeat bg-contain" data-alt="Ball of natural twine" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD0nVGJowqI4OYptxv3ZP2_M0LchWfJ_fOBYSV32f-V-K5VzaymxxI1iSCDCYfdOTKpc86s80b_0tojW2Igq-NWIp3mzgSIbyFUTfEP_ThqueMJqVcG6KHgbxIgyxqD9D-jDuoCdf4cXh-IgYB2RCnWC1uVWI_A3y6yH6wk7q32SAvtett31ZMBUeZd12arwAlB6W_L4XvxN9l5n46mXwO_ToRecZd2cfyTLGy18ujRV3yP5gb8zKrma1evJvBe8FZmu3zVAmvkNJC4');"></div>
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm font-bold text-text-main dark:text-white leading-tight">Twine</p>
+<p class="text-xs text-text-secondary mt-0.5">Crafted</p>
+</div>
+<span class="text-xs font-bold bg-white dark:bg-surface-dark px-1.5 py-0.5 rounded text-text-main dark:text-gray-300 border border-slot-border dark:border-white/10">x5</span>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-slot-border dark:border-[#2c4225] bg-slot-bg/30 dark:bg-black/20 rounded-b-2xl">
+<button class="w-full py-2.5 rounded-xl border border-slot-border dark:border-[#2c4225] text-text-main dark:text-white text-sm font-bold hover:bg-white dark:hover:bg-white/5 transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">add</span>
+                    Gather More Resources
+                </button>
+</div>
+</aside>
+</main>
+</body></html>
