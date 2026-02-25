@@ -41,7 +41,7 @@ export const renderHome = (container: HTMLElement) => {
 <h3 class="text-3xl font-bold mt-1 text-sage-800 dark:text-white">22°C</h3>
 <p class="text-sm font-medium text-slate-600 dark:text-slate-300 mt-1">Sunny, Gentle Breeze</p>
 </div>
-<span class="material-symbols-outlined text-4xl text-amber-400">sunny</span>
+<span class="material-symbols-outlined text-4xl text-amber-400 hover:rotate-180 transition-transform duration-1000 cursor-default animate-pulse" style="animation-duration: 4s;">sunny</span>
 </div>
 <div class="h-px bg-slate-200 dark:bg-slate-700 w-full"></div>
 <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
@@ -89,7 +89,8 @@ export const renderHome = (container: HTMLElement) => {
 <div class="absolute inset-0 flex flex-col justify-between p-8">
 <div class="flex justify-between items-start">
 <div class="glass-panel px-4 py-2 rounded-full text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-<span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+<span class="w-2 h-2 rounded-full bg-green-400 absolute opacity-75 animate-ping"></span>
+<span class="w-2 h-2 rounded-full bg-green-500 relative"></span>
                                 Live Sanctuary
                              </div>
 <button class="bg-white/20 hover:bg-white/40 backdrop-blur-md text-white p-2 rounded-full transition-colors">
@@ -97,17 +98,17 @@ export const renderHome = (container: HTMLElement) => {
 </button>
 </div>
 <!-- Interactive "Bird" Markers (Simulated) -->
-<div class="absolute top-1/3 left-1/4 transform -translate-x-1/2">
+<div class="absolute top-1/3 left-1/4 transform -translate-x-1/2 animate-float">
 <div class="relative group/bird cursor-pointer">
-<div class="w-12 h-12 rounded-full border-2 border-white bg-cover bg-center shadow-lg transition-transform hover:scale-110" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDUii_Kcyu760HVv3IZoyGiWpXKEiFyFgFUyEODq5k2BZK4cghMY9CSndwOd9hg-hUKACBkrtW0VZFncVuVWBDvkf7kFT3IR-Q3ot3eRIjBI9tu9TpuuJkiJVYWY5v38kB5b1ZbVufVuok-n9GeUTn9kb-OITfy79NSybdirxXP2L-lId3L-YP1rZ4OzYU7PmGfbU-yL92VfAuLS3Bbs4s7KSqUZ40g-Cdb0jC3le09qBEimyHNIDdMPKEvYBjq7A2zr97Eg1vVwaYW');"></div>
+<div class="w-12 h-12 rounded-full border-2 border-white/80 bg-cover bg-center shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all duration-300 hover:scale-110 hover:shadow-[0_0_25px_rgba(255,255,255,0.6)]" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDUii_Kcyu760HVv3IZoyGiWpXKEiFyFgFUyEODq5k2BZK4cghMY9CSndwOd9hg-hUKACBkrtW0VZFncVuVWBDvkf7kFT3IR-Q3ot3eRIjBI9tu9TpuuJkiJVYWY5v38kB5b1ZbVufVuok-n9GeUTn9kb-OITfy79NSybdirxXP2L-lId3L-YP1rZ4OzYU7PmGfbU-yL92VfAuLS3Bbs4s7KSqUZ40g-Cdb0jC3le09qBEimyHNIDdMPKEvYBjq7A2zr97Eg1vVwaYW');"></div>
 <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-slate-900 text-xs font-bold px-3 py-1 rounded-lg opacity-0 group-hover/bird:opacity-100 transition-opacity whitespace-nowrap shadow-md pointer-events-none">
                                     Blue Jay (Lvl 5)
                                 </div>
 </div>
 </div>
-<div class="absolute top-1/2 right-1/4 transform translate-x-1/2">
+<div class="absolute top-1/2 right-1/4 transform translate-x-1/2 animate-float" style="animation-delay: -3s;">
 <div class="relative group/bird cursor-pointer">
-<div class="w-10 h-10 rounded-full border-2 border-primary bg-cover bg-center shadow-lg transition-transform hover:scale-110" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDoWNJ--afyE10GKDvQCjW-4vSd3gn_hlTevKpj9ItImAMi1pR5j_C7KFkc-_5jkbi0PbHJKhpBUc3pP9-aJUVxFQ3SZDC7O6CsAVN8l5flE_x5omCyB-N_Eeu6YNTW1LCtHEe89-_5FzpbvC7ewycZNDddATe3fGRB2J8_JjVvLClUzCa0T8zlMWGhTK87138hOxACTOBQ1GIVfqHsFhxPxVBP6uMe3S8Mf8FNXm87T8VF-y3sgBuVX6nzwLBmQW1udbeWFutLBIg1');"></div>
+<div class="w-10 h-10 rounded-full border-2 border-primary/80 bg-cover bg-center shadow-[0_0_15px_rgba(94,232,48,0.3)] transition-all duration-300 hover:scale-110 hover:shadow-[0_0_25px_rgba(94,232,48,0.6)]" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDoWNJ--afyE10GKDvQCjW-4vSd3gn_hlTevKpj9ItImAMi1pR5j_C7KFkc-_5jkbi0PbHJKhpBUc3pP9-aJUVxFQ3SZDC7O6CsAVN8l5flE_x5omCyB-N_Eeu6YNTW1LCtHEe89-_5FzpbvC7ewycZNDddATe3fGRB2J8_JjVvLClUzCa0T8zlMWGhTK87138hOxACTOBQ1GIVfqHsFhxPxVBP6uMe3S8Mf8FNXm87T8VF-y3sgBuVX6nzwLBmQW1udbeWFutLBIg1');"></div>
 <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-slate-900 text-xs font-bold px-3 py-1 rounded-lg opacity-0 group-hover/bird:opacity-100 transition-opacity whitespace-nowrap shadow-md pointer-events-none">
                                     Cardinal (Lvl 2)
                                 </div>
@@ -137,12 +138,12 @@ export const renderHome = (container: HTMLElement) => {
 </div>
 <div class="grid grid-cols-1 gap-4">
 <!-- API Test Button -->
-<button id="test-api-btn" class="group flex items-center justify-center gap-2 bg-primary/20 hover:bg-primary/40 text-primary-dark dark:text-primary-light p-3 rounded-2xl shadow-sm border border-primary/30 transition-all font-bold">
-    <span class="material-symbols-outlined">wifi_tethering</span>
+<button id="test-api-btn" class="group flex items-center justify-center gap-2 bg-primary/20 hover:bg-primary/40 text-primary-dark dark:text-primary-light p-3 rounded-2xl shadow-sm border border-primary/30 transition-all duration-300 font-bold hover:-translate-y-1 hover:shadow-md">
+    <span class="material-symbols-outlined group-hover:animate-spin">wifi_tethering</span>
     <span>Test Backend Connection</span>
 </button>
 <!-- Expedition Button -->
-<button class="nav-button group flex items-center gap-4 bg-white dark:bg-sage-800 p-4 rounded-2xl shadow-sm border border-sage-100 dark:border-sage-700 hover:border-primary/50 transition-all text-left" data-screen="expedition">
+<button class="nav-button group flex items-center gap-4 bg-white/70 dark:bg-sage-800/70 backdrop-blur-md p-4 rounded-2xl shadow-sm border border-white/40 dark:border-sage-700 hover:border-primary/50 hover:bg-white dark:hover:bg-sage-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-md text-left" data-screen="expedition">
 <div class="h-16 w-16 rounded-full bg-cover bg-center shrink-0 shadow-md group-hover:scale-105 transition-transform" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAG35UEyhxnawmk5lGt8ksJPnWEMni_m-HBOCUatvMFz8_hI6wBr1NjWfHvfreiXe7jSbp8CRTfz7W5Q94mDIwiXAnuFEzbpp9QTWeRZN4XGqnemFmr97yeDtImqLe1gqZm2TEYG36Nh2UZoxp2g5qhCRPUa5m1yOYzQe0tF0WBhbEFuQLNsZsb8fyF_vRovx0l7Jemrt4YkRR7gwyKnXRY0TS2CK5blapbL6B2N7Tvc60kRkJUGKNZJvsolW77E7aI2KDD4rXEdavp');">
 <div class="w-full h-full rounded-full bg-black/10 group-hover:bg-transparent transition-colors"></div>
 </div>
@@ -153,7 +154,7 @@ export const renderHome = (container: HTMLElement) => {
 <span class="material-symbols-outlined text-slate-300 group-hover:text-primary">chevron_right</span>
 </button>
 <!-- The Album Button -->
-<button class="nav-button group flex items-center gap-4 bg-white dark:bg-sage-800 p-4 rounded-2xl shadow-sm border border-sage-100 dark:border-sage-700 hover:border-primary/50 transition-all text-left" data-screen="album">
+<button class="nav-button group flex items-center gap-4 bg-white/70 dark:bg-sage-800/70 backdrop-blur-md p-4 rounded-2xl shadow-sm border border-white/40 dark:border-sage-700 hover:border-primary/50 hover:bg-white dark:hover:bg-sage-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-md text-left" data-screen="album">
 <div class="h-16 w-16 rounded-full bg-cover bg-center shrink-0 shadow-md group-hover:scale-105 transition-transform" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBgoiI2KFyAsD_rGNauGPDiwbPSTmiymQIR4o8UPqD2uCf2Q0CrgHFLHQO9x56vZbjkXhnLoafK_qf1dLx8715hV48tvEZSIkO-LwuUmhkutY1d3n2INAKbV8hkCocZ5OdLwg_-AdBdslZZQ3EbxXJgcn73ntlxvQ23loNpeM4-xqNWwCD6oM2-yHth0ot-FPCyZTPR8ctN_u26f807l0dmbchWfJhtxU1svd_9ndHOzzHJF_dpTdV5kJcGhDLoZX4hPhs-h7bTNc0r');">
 <div class="w-full h-full rounded-full bg-black/10 group-hover:bg-transparent transition-colors"></div>
 </div>
@@ -164,7 +165,7 @@ export const renderHome = (container: HTMLElement) => {
 <span class="material-symbols-outlined text-slate-300 group-hover:text-primary">chevron_right</span>
 </button>
 <!-- Workshop Button -->
-<button class="nav-button group flex items-center gap-4 bg-white dark:bg-sage-800 p-4 rounded-2xl shadow-sm border border-sage-100 dark:border-sage-700 hover:border-primary/50 transition-all text-left" data-screen="workshop">
+<button class="nav-button group flex items-center gap-4 bg-white/70 dark:bg-sage-800/70 backdrop-blur-md p-4 rounded-2xl shadow-sm border border-white/40 dark:border-sage-700 hover:border-primary/50 hover:bg-white dark:hover:bg-sage-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-md text-left" data-screen="workshop">
 <div class="h-16 w-16 rounded-full bg-cover bg-center shrink-0 shadow-md group-hover:scale-105 transition-transform" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBU1KsSJCCItxugHMDBkqTkaLjpZf7_RDstEa3XdJJy-bhe4eay97xnQFbyq4HBYdvHrb-qA_NtvndEVud7m2_xTa-1lc0Sp-HW7wYK_n6-qXNMGKhBGBu-zaggpbMjz_WkmwKcT98DUi72-9SisclC2wJL3mOefVuHqQv0q9_1iM3UeThWwXk7PSP6PlI0fegjutmDAJB6VnoBaI3j4SUYVp3IN-and4XXUbbAknkCg2gH2myYMuIcptvuoVYFjkwbESmwZO9M8Ir6');">
 <div class="w-full h-full rounded-full bg-black/10 group-hover:bg-transparent transition-colors"></div>
 </div>

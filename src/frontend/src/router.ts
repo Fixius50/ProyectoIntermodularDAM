@@ -15,9 +15,17 @@ export class Router {
     async navigate(name: Screen) {
         const loader = this.screens.get(name);
         if (loader) {
+            // Apply fade-out or clear immediately 
+            this.container.classList.remove('animate-fade-in-up');
+            // Small hack to restart CSS animation:
+            void this.container.offsetWidth;
+
             this.container.innerHTML = ''; // Clear container
             await loader();
             window.location.hash = name;
+
+            // Trigger enter animation
+            this.container.classList.add('animate-fade-in-up');
         }
     }
 
