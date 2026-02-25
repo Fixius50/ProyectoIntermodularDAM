@@ -83,6 +83,30 @@ export function ExpedicionScreen() {
         if (expedition.status === 'IN_PROGRESS' && sliderValue >= 65 && sliderValue <= 85) {
             // Brief delay to "confirm" focus before success
             const timer = setTimeout(() => {
+                // Random reward: FOTO, PLUMA, or NOTAS
+                const rewardTypes: CraftItemType[] = ['FOTO', 'PLUMA', 'NOTAS'];
+                const randomType = rewardTypes[Math.floor(Math.random() * rewardTypes.length)];
+
+                const rewardLabels: Record<CraftItemType, string> = {
+                    'FOTO': 'Foto de Avistamiento',
+                    'PLUMA': 'Pluma Recolectada',
+                    'NOTAS': 'Apuntes de Campo',
+                };
+
+                const rewardIcons: Record<CraftItemType, string> = {
+                    'FOTO': '📸',
+                    'PLUMA': '🪶',
+                    'NOTAS': '📝',
+                };
+
+                const newReward: CraftItem = {
+                    id: `reward-${Date.now()}`,
+                    type: randomType,
+                    label: rewardLabels[randomType],
+                    icon: rewardIcons[randomType],
+                };
+
+                dispatch({ type: 'ADD_CRAFT_ITEM', payload: newReward });
                 dispatch({ type: 'UPDATE_FIELD_NOTES', payload: 1 });
                 dispatch({ type: 'COMPLETE_EXPEDITION' });
             }, 800);
@@ -138,50 +162,64 @@ export function ExpedicionScreen() {
             return (
                 <View style={styles.tabContent}>
                     <Text style={styles.sectionHeading}>📍 Nueva Exploración</Text>
-                    <Text style={styles.sectionSub}>Elige un bioma y un cebo para enviar a tu observador</Text>
+                    <Text style={styles.sectionSub}>Prepara tu equipo y elige el destino de hoy</Text>
 
                     {/* Selector de Bioma */}
-                    <Text style={styles.miniLabel}>Bioma</Text>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.selectorRow}>
+                    <Text style={styles.miniLabel}>Selecciona el Entorno</Text>
+                    <View style={styles.biomeGrid}>
                         {BIOMES.map((biome) => {
                             const isSelected = selectedBiome === biome.type;
                             return (
                                 <TouchableOpacity
                                     key={biome.type}
                                     style={[
-                                        styles.biomeCard,
-                                        isSelected && { borderColor: biome.color, borderWidth: 3 },
+                                        styles.bigBiomeCard,
+                                        { backgroundColor: biome.color + '10' },
+                                        isSelected && { borderColor: biome.color, borderWidth: 2, backgroundColor: biome.color + '20' },
                                     ]}
                                     onPress={() => setSelectedBiome(biome.type)}
                                 >
-                                    <Text style={styles.biomeIcon}>{biome.icon}</Text>
-                                    {isRaining && (
-                                        <Text style={{ position: 'absolute', top: 6, right: 6, fontSize: 14 }}>💧</Text>
-                                    )}
-                                    <Text style={[styles.biomeLabel, isSelected && { color: biome.color, fontWeight: typography.weightBold }]}>
+                                    <View style={[styles.biomeIconBg, { backgroundColor: biome.color + '25' }]}>
+                                        <Text style={styles.bigBiomeIcon}>{biome.icon}</Text>
+                                    </View>
+                                    <Text style={[styles.bigBiomeLabel, isSelected && { color: biome.color }]}>
                                         {biome.label}
                                     </Text>
+                                    {isRaining && (
+                                        <Text style={styles.weatherBadge}>💧 Lluvia</Text>
+                                    )}
+                                    {isSelected && <View style={[styles.selectDot, { backgroundColor: biome.color }]} />}
                                 </TouchableOpacity>
                             );
                         })}
-                    </ScrollView>
+                    </View>
 
-                    {/* Selector de Cebo */}
-                    <Text style={styles.miniLabel}>Cebo</Text>
-                    <View style={styles.baitRow}>
+                    {/* Selector de Cebo (Estilo Kit) */}
+                    <Text style={styles.miniLabel}>Cebo & Equipamiento</Text>
+                    <View style={styles.baitKitGrid}>
                         {BAITS.map((bait) => {
                             const isSelected = selectedBait === bait.type;
                             return (
                                 <TouchableOpacity
                                     key={bait.type}
                                     style={[
-                                        styles.baitCard,
-                                        isSelected && styles.baitCardSelected,
+                                        styles.baitKitItem,
+                                        isSelected && styles.baitKitItemSelected
                                     ]}
                                     onPress={() => setSelectedBait(bait.type)}
                                 >
-                                    <Text style={styles.baitIcon}>{bait.icon}</Text>
-                                    <Text style={[styles.baitLabel, isSelected && styles.baitLabelSelected]}>{bait.label}</Text>
+                                    <View style={styles.baitKitIconWrapper}>
+                                        <Text style={styles.baitKitIcon}>{bait.icon}</Text>
+                                    </View>
+                                    <View style={styles.baitKitInfo}>
+                                        <Text style={styles.baitKitLabel}>{bait.label}</Text>
+                                        <Text style={styles.baitKitStock}>En el morral: 12</Text>
+                                    </View>
+                                    {isSelected && (
+                                        <View style={styles.kitCheckMark}>
+                                            <Text style={{ fontSize: 10, color: colors.white }}>✓</Text>
+                                        </View>
+                                    )}
                                 </TouchableOpacity>
                             );
                         })}
@@ -189,13 +227,14 @@ export function ExpedicionScreen() {
 
                     <TouchableOpacity
                         style={[
-                            styles.sendButton,
-                            (!selectedBiome || !selectedBait) && styles.sendButtonDisabled,
+                            styles.premiumStartBtn,
+                            (!selectedBiome || !selectedBait) && styles.disabledBtn
                         ]}
-                        onPress={handleStartExpedition}
                         disabled={!selectedBiome || !selectedBait}
+                        onPress={handleStartExpedition}
                     >
-                        <Text style={styles.sendButtonText}>🔭 Enviar Observador</Text>
+                        <Text style={styles.premiumStartBtnText}>INICIAR EXPEDICIÓN</Text>
+                        <Text style={styles.premiumStartBtnSub}>Gasto: 1 Nota de Campo</Text>
                     </TouchableOpacity>
                 </View>
             );
@@ -538,56 +577,116 @@ const styles = StyleSheet.create({
         letterSpacing: 1,
         marginBottom: spacing.sm,
     },
-    selectorRow: {
-        paddingBottom: spacing.lg,
-        gap: spacing.md,
+    // --- Explora Redesign Styles ---
+    biomeGrid: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: spacing.sm,
+        marginBottom: spacing.lg,
     },
-    biomeCard: {
-        backgroundColor: colors.glass,
-        borderRadius: borders.radiusLarge,
+    bigBiomeCard: {
+        flex: 1,
         padding: spacing.md,
+        borderRadius: 20,
+        backgroundColor: colors.white,
         alignItems: 'center',
-        width: 100,
+        justifyContent: 'center',
         borderWidth: 1,
-        borderColor: colors.glassBorder,
+        borderColor: 'transparent',
+        ...shadows.card,
     },
-    biomeIcon: {
-        fontSize: 32,
-        marginBottom: 4,
+    biomeIconBg: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: spacing.sm,
     },
-    biomeLabel: {
-        fontSize: 11,
+    bigBiomeIcon: { fontSize: 28 },
+    bigBiomeLabel: {
+        fontSize: 13,
+        fontWeight: typography.weightBold,
         color: colors.text,
     },
-    baitRow: {
+    weatherBadge: {
+        fontSize: 9,
+        color: colors.primary,
+        marginTop: 4,
+        fontWeight: 'bold',
+    },
+    selectDot: {
+        position: 'absolute',
+        top: 8,
+        right: 8,
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+    },
+    baitKitGrid: {
+        gap: spacing.sm,
+        marginBottom: spacing.xl,
+    },
+    baitKitItem: {
         flexDirection: 'row',
-        gap: spacing.md,
-        marginBottom: spacing.xxl,
-    },
-    baitCard: {
-        flex: 1,
-        backgroundColor: colors.glass,
-        borderRadius: borders.radiusMedium,
-        padding: spacing.md,
         alignItems: 'center',
+        padding: spacing.md,
+        backgroundColor: 'rgba(0,0,0,0.03)',
+        borderRadius: 16,
         borderWidth: 1,
-        borderColor: colors.glassBorder,
+        borderColor: 'rgba(0,0,0,0.05)',
     },
-    baitCardSelected: {
-        backgroundColor: 'rgba(217, 160, 139, 0.15)',
-        borderColor: colors.secondary,
+    baitKitItemSelected: {
+        borderColor: colors.primary,
+        backgroundColor: colors.white,
+        ...shadows.card,
     },
-    baitIcon: {
-        fontSize: 24,
+    baitKitIconWrapper: {
+        width: 44,
+        height: 44,
+        backgroundColor: colors.white,
+        borderRadius: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: spacing.md,
+        ...shadows.card,
     },
-    baitLabel: {
+    baitKitIcon: { fontSize: 24 },
+    baitKitInfo: { flex: 1 },
+    baitKitLabel: { fontSize: 14, fontWeight: 'bold', color: colors.text },
+    baitKitStock: { fontSize: 11, opacity: 0.6 },
+    kitCheckMark: {
+        width: 18,
+        height: 18,
+        borderRadius: 9,
+        backgroundColor: colors.primary,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    premiumStartBtn: {
+        backgroundColor: colors.primary,
+        paddingVertical: spacing.lg,
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        ...shadows.card,
+    },
+    premiumStartBtnText: {
+        color: colors.white,
+        fontSize: 16,
+        fontWeight: 'bold',
+        letterSpacing: 1,
+    },
+    premiumStartBtnSub: {
+        color: 'rgba(255,255,255,0.7)',
         fontSize: 10,
         marginTop: 2,
     },
-    baitLabelSelected: {
-        fontWeight: typography.weightBold,
-        color: colors.secondaryDark,
+    disabledBtn: {
+        opacity: 0.5,
+        backgroundColor: '#ccc',
     },
+    // --- End Explora Redesign Styles ---
     sendButton: {
         backgroundColor: colors.primary,
         borderRadius: borders.radiusFull,
