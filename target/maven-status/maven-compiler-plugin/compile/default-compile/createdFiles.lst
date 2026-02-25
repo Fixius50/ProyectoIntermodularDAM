@@ -1,6 +1,7 @@
 com\example\backend\domain\BirdCard.class
 com\example\backend\dto\AuctionItem.class
 com\example\backend\service\UnsplashService$UnsplashResponse$Urls.class
+com\example\backend\service\WikimediaCommonsService.class
 com\example\backend\service\NuthatchService.class
 com\example\backend\controller\TestConnectionController.class
 com\example\backend\controller\AuthController.class
@@ -13,6 +14,7 @@ com\example\backend\dto\BattleAction.class
 com\example\backend\domain\BirdRecord.class
 com\example\backend\domain\Bandada$BandadaBuilder.class
 com\example\backend\repository\InventoryRepository.class
+com\example\backend\service\impl\WeatherServiceImpl.class
 com\example\backend\service\UnsplashService$UnsplashResponse.class
 com\example\backend\domain\BirdCard$BirdCardBuilder.class
 com\example\backend\service\EventPublisherService.class
@@ -27,9 +29,11 @@ com\example\backend\service\CraftingService.class
 com\example\backend\controller\BirdCatalogController.class
 com\example\backend\controller\MarketplaceController.class
 com\example\backend\security\JwtUtil.class
+com\example\backend\service\impl\WeatherServiceImpl$WeatherResponse.class
 com\avis\backend\AvisBackendApplication.class
 com\example\backend\controller\BattleRSocketController.class
 com\example\backend\service\BirdCatalogService.class
+com\example\backend\service\WikidataBirdService.class
 com\example\backend\repository\BandadaRepository.class
 com\example\backend\dto\CraftingRequest.class
 com\example\backend\controller\CraftingController.class
@@ -40,9 +44,11 @@ com\example\backend\repository\BirdCardRepository.class
 com\example\backend\dto\RewardEvent.class
 com\example\backend\dto\AuthResponse.class
 com\example\backend\dto\RewardEvent$RewardEventBuilder.class
+com\example\backend\service\impl\MarketplaceServiceImpl.class
 com\example\backend\domain\BattleSession.class
 com\example\backend\service\InventoryService.class
 com\example\backend\config\RabbitConfig.class
 com\example\backend\dto\AuthRequest.class
 com\example\backend\domain\BattleSession$BattleSessionBuilder.class
 com\example\backend\security\JwtAuthenticationManager.class
+com\example\backend\service\impl\WeatherServiceImpl$WeatherResponse$CurrentWeather.class

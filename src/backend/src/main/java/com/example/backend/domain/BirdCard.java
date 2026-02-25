@@ -31,6 +31,7 @@ public class BirdCard {
     private String tipo;
     private int velocidad;
     private String imagenUrl;
+    private String descripcion;
 
     private LocalDateTime fechaObtencion;
 

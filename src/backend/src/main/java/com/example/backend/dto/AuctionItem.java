@@ -1,7 +1,6 @@
 package com.example.backend.dto;
 
 import lombok.Builder;
-import lombok.Builder;
 import lombok.Data;
 import java.util.UUID;
 
@@ -27,4 +26,7 @@ public class AuctionItem {
 
     // Status: AVAILABLE, SOLD, CANCELLED
     private String status;
+
+    // The ID of the user who bought the card (null if not sold)
+    private UUID buyerId;
 }

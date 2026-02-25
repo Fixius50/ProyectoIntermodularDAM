@@ -21,5 +21,6 @@ public class BirdRecord {
     private int suerte;
     private int velocidad;
     private String imagenUrl;
+    private String descripcion;
 
 }
