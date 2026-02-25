@@ -15,14 +15,14 @@ interface BottomBarProps {
  */
 export function BottomBar({ currentTab, onTabChange, isMoreOpen }: BottomBarProps) {
     const tabs = [
-        { id: 'santuario', label: 'Santuario', icon: '🏡' },
+        { id: 'coleccion', label: 'Colección', icon: '🏡' },
         { id: 'expedicion', label: 'Expedición', icon: '🔭' },
         { id: 'certamen', label: 'Certamen', icon: '⚔️' },
         { id: '_more', label: 'Más', icon: '☰' },
     ];
 
     // Secondary screen IDs that should highlight the "Más" tab
-    const secondaryScreens = ['album', 'bandada', 'mercado', 'coop', 'perfil', 'avisos'];
+    const secondaryScreens = ['bandada', 'mercado', 'coop', 'perfil', 'avisos'];
 
     return (
         <View style={styles.container}>

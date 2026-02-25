@@ -27,6 +27,8 @@ export function WeatherBackground({ condition, children }: WeatherBackgroundProp
             {condition === 'NOCHE' && <NightEffect />}
             {condition === 'VIENTO' && <WindEffect />}
             {condition === 'NUBLADO' && <CloudEffect />}
+            {condition === 'NIEVE' && <SnowEffect />}
+            {condition === 'TORMENTA' && <StormEffect />}
 
             {/* Inyectar CSS animations (web) */}
             <style>{weatherAnimationsCSS}</style>
@@ -42,15 +44,19 @@ export function WeatherBackground({ condition, children }: WeatherBackgroundProp
 function getBackgroundColors(condition: WeatherCondition) {
     switch (condition) {
         case 'SOL':
-            return { top: '#87CEEB', bottom: '#C8E6C9' };
+            return { top: colors.weatherSol, bottom: '#C8E6C9' };
         case 'LLUVIA':
-            return { top: '#546E7A', bottom: '#78909C' };
+            return { top: colors.weatherLluvia, bottom: '#78909C' };
         case 'NOCHE':
-            return { top: '#0D1B2A', bottom: '#1B2838' };
+            return { top: colors.weatherNoche, bottom: '#1B2838' };
         case 'VIENTO':
-            return { top: '#90A4AE', bottom: '#B0BEC5' };
+            return { top: colors.weatherViento, bottom: '#B0BEC5' };
         case 'NUBLADO':
-            return { top: '#90A4AE', bottom: '#B0BEC5' };
+            return { top: colors.weatherNublado, bottom: '#CFD8DC' };
+        case 'NIEVE':
+            return { top: colors.weatherNieve, bottom: '#ECEFF1' };
+        case 'TORMENTA':
+            return { top: colors.weatherTormenta, bottom: '#263238' };
         default:
             return { top: '#87CEEB', bottom: colors.primaryLight };
     }
@@ -153,6 +159,43 @@ function WindEffect() {
     );
 }
 
+/* ─── Nieve: copos suaves ────────────────────────────────── */
+function SnowEffect() {
+    return (
+        <View style={styles.effectOverlay}>
+            {Array.from({ length: 30 }).map((_, i) => (
+                <div key={i} style={{
+                    position: 'absolute',
+                    left: `${Math.random() * 100}%`,
+                    top: `${-5 - Math.random() * 10}%`,
+                    width: 4 + Math.random() * 4,
+                    height: 4 + Math.random() * 4,
+                    background: 'white',
+                    borderRadius: '50%',
+                    opacity: 0.6 + Math.random() * 0.4,
+                    filter: 'blur(1px)',
+                    animation: `snowFall ${3 + Math.random() * 3}s linear ${Math.random() * 5}s infinite`,
+                }} />
+            ))}
+        </View>
+    );
+}
+
+/* ─── Tormenta: rayos y lluvia intensa ───────────────────── */
+function StormEffect() {
+    return (
+        <View style={styles.effectOverlay}>
+            <RainEffect />
+            <div style={{
+                position: 'absolute',
+                inset: 0,
+                backgroundColor: 'rgba(255, 255, 255, 0)',
+                animation: 'lightningFlash 5s ease-in-out infinite',
+            }} />
+        </View>
+    );
+}
+
 /* ─── Nublado: nubes flotantes ────────────────────────────── */
 function CloudEffect() {
     return (
@@ -213,6 +256,18 @@ const weatherAnimationsCSS = `
 @keyframes sunRay {
   0%, 100% { opacity: 0.05; height: 40px; }
   50%      { opacity: 0.15; height: 60px; }
+}
+
+@keyframes snowFall {
+  0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 0.8; }
+  100% { transform: translate(20vw, 110vh) rotate(360deg); opacity: 0; }
+}
+
+@keyframes lightningFlash {
+  0%, 94%, 96%, 100% { background-color: rgba(255, 255, 255, 0); }
+  95%, 97%             { background-color: rgba(255, 255, 255, 0.4); }
 }
 
 @keyframes heartFloat {

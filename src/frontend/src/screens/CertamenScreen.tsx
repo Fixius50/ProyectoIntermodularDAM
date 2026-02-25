@@ -1,252 +1,265 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, ScrollView, Image, Dimensions } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView, Image, useWindowDimensions } from 'react-native';
 import { GlassCard } from '../components/GlassCard';
 import { useGame } from '../context/GameContext';
-import { BirdCard, PostureType, DuelResult } from '../types/types';
-import { colors, typography, spacing, borders, shadows } from '../theme/theme';
-import { DraggableCard } from '../components/DraggableCard';
+import { BirdCard } from '../types/types';
+import { colors, spacing, borders, shadows } from '../theme/theme';
+import { BirdCardView } from '../components/BirdCardView';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+// Eliminamos SCREEN_WIDTH estático para usar useWindowDimensions
 
-// ─── CONFIGURACIÓN DE PARTIDA ──────────────────────────────
+// ─── CONFIGURACIÓN SIMPLE ──────────────────────────────
 const MAX_ROUNDS = 5;
+const SLOT_COUNT = 6;
 
-// CSS animations for Certamen effects
-const certamenAnimCSS = `
-@keyframes woodGrain {
-  0%   { background-position: 0% 0%; }
-  100% { background-position: 100% 100%; }
-}
-@keyframes tableFloating {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
-`;
-
-// ─── CONFIGURACIÓN DE POSTURAS ─────────────────────────────
-const POSTURES: {
-    type: PostureType;
-    icon: string;
-    label: string;
-    color: string;
-    beats: PostureType;
-    beatsLabel: string;
-}[] = [
-        { type: 'CANTO', icon: '🎤', label: 'Canto', color: colors.canto, beats: 'PLUMAJE', beatsLabel: 'Plumaje' },
-        { type: 'PLUMAJE', icon: '🪶', label: 'Plumaje', color: colors.plumaje, beats: 'VUELO', beatsLabel: 'Vuelo' },
-        { type: 'VUELO', icon: '💨', label: 'Vuelo', color: colors.vuelo, beats: 'CANTO', beatsLabel: 'Canto' },
-    ];
-
-const RIVAL_BIRDS: BirdCard[] = [
+const RIVAL_BIRDS_POOL: BirdCard[] = [
     {
         id: 'rival-1',
         name: 'Búho Real',
         photo: 'https://images.unsplash.com/photo-1543542245-316823ca86e0?q=80&w=1000',
         cost: 3,
-        preferredPosture: 'VUELO',
-        passiveAbility: 'De noche, gana +2 en Ataque',
         stats: { attack: 7, defense: 6, speed: 5 },
         level: 8,
+        preferredPosture: 'VUELO',
+        passiveAbility: 'Gana +2 en ataque',
         xp: 0,
         xpToNextLevel: 1000,
         scientificName: 'Bubo bubo',
         habitat: 'MONTAÑA',
         curiosity: '',
     },
+    {
+        id: 'rival-2',
+        name: 'Águila Pescadora',
+        photo: 'https://images.unsplash.com/photo-1565118531796-763e5082d113?q=80&w=1000',
+        cost: 2,
+        stats: { attack: 6, defense: 4, speed: 8 },
+        level: 6,
+        preferredPosture: 'PLUMAJE',
+        passiveAbility: 'Gana +1 de maná',
+        xp: 0,
+        xpToNextLevel: 1000,
+        scientificName: 'Pandion haliaetus',
+        habitat: 'MONTAÑA',
+        curiosity: '',
+    },
+    {
+        id: 'rival-3',
+        name: 'Halcón Peregrino',
+        photo: 'https://images.unsplash.com/photo-1612170153139-6f881ff067e0?q=80&w=1000',
+        cost: 4,
+        stats: { attack: 8, defense: 2, speed: 10 },
+        level: 9,
+        preferredPosture: 'VUELO',
+        passiveAbility: 'Ataca primero',
+        xp: 0,
+        xpToNextLevel: 1000,
+        scientificName: 'Falco peregrinus',
+        habitat: 'MONTAÑA',
+        curiosity: '',
+    }
 ];
 
-function resolvePostureDuel(player: PostureType, rival: PostureType): DuelResult {
-    if (player === rival) return 'DRAW';
-    const playerPosture = POSTURES.find((p) => p.type === player)!;
-    return playerPosture.beats === rival ? 'WIN' : 'LOSE';
-}
-
 export function CertamenScreen() {
-    const { state, dispatch } = useGame();
-    const { player, weather } = state;
+    const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
+    const { state } = useGame();
+    const { player } = state;
 
-    const [phase, setPhase] = useState<'BATTLE' | 'RESULT' | 'FINAL'>('BATTLE');
-    const [selectedBird, setSelectedBird] = useState<BirdCard | null>(null);
-    const [rivalBird] = useState<BirdCard>(RIVAL_BIRDS[0]);
+    // Cálculos Responsivos
+    const tableMargin = spacing.md;
+    const tablePadding = spacing.sm;
+    const gridGap = 8;
+    const slotWidth = (SCREEN_WIDTH - (tableMargin * 2) - (tablePadding * 2) - (gridGap * 2)) / 3;
+    const slotHeight = Math.min(slotWidth * 1.4, SCREEN_HEIGHT * 0.15);
+
+    // Estado del Tablero
+    const [playerTable, setPlayerTable] = useState<(BirdCard | null)[]>(new Array(SLOT_COUNT).fill(null));
+    const [rivalTable, setRivalTable] = useState<(BirdCard | null)[]>(() => {
+        // Pre-poblamos con 2 pájaros rivales para la primera ronda
+        const initial = new Array(SLOT_COUNT).fill(null);
+        initial[0] = { ...RIVAL_BIRDS_POOL[0], id: 'rival-init-1' };
+        initial[1] = { ...RIVAL_BIRDS_POOL[1], id: 'rival-init-2' };
+        return initial;
+    });
+
+    // Estado de la Partida
     const [turn, setTurn] = useState(1);
     const [playerRep, setPlayerRep] = useState(0);
     const [rivalRep, setRivalRep] = useState(0);
-    const [lastResult, setLastResult] = useState<DuelResult | null>(null);
-    const [chosenPosture, setChosenPosture] = useState<PostureType | null>(null);
-    const [rivalPosture, setRivalPosture] = useState<PostureType | null>(null);
-    const [isDragging, setIsDragging] = useState(false);
+    const [lastMessage, setLastMessage] = useState("¡Bienvenido al Certamen! Toca un pájaro de tu mano para jugar.");
+    const [selectedPlayerIdx, setSelectedPlayerIdx] = useState<number | null>(null);
+    const [phase, setPhase] = useState<'BATTLE' | 'FINAL'>('BATTLE');
 
-    const mana = turn;
-
-    const affordableBirds = useMemo(() =>
-        player.collection.filter((b) => b.cost <= mana),
-        [player.collection, mana]
-    );
-
-    const handleDropBird = useCallback((bird: BirdCard) => {
-        setSelectedBird(bird);
-        // Automáticamente elige postura preferida para agilizar el MVP del drag-and-drop
-        const rivalChoice = POSTURES[Math.floor(Math.random() * 3)].type;
-        const playerChoice = bird.preferredPosture;
-
-        setChosenPosture(playerChoice);
-        setRivalPosture(rivalChoice);
-
-        const result = resolvePostureDuel(playerChoice, rivalChoice);
-        setLastResult(result);
-
-        if (result === 'WIN') setPlayerRep(r => r + 2);
-        else if (result === 'LOSE') setRivalRep(r => r + 2);
-
-        setTimeout(() => setPhase('RESULT'), 1500);
-    }, []);
-
-    const handleNextRound = useCallback(() => {
-        if (turn >= MAX_ROUNDS) {
-            setPhase('FINAL');
+    // Función para añadir pájaro al tablero
+    const handlePlayCard = (bird: BirdCard) => {
+        console.log("Playing card:", bird.name);
+        const emptyIdx = playerTable.findIndex(slot => slot === null);
+        if (emptyIdx === -1) {
+            setLastMessage("Tu tablero está lleno");
             return;
         }
-        setTurn(t => t + 1);
-        setSelectedBird(null);
-        setChosenPosture(null);
-        setRivalPosture(null);
-        setLastResult(null);
-        setPhase('BATTLE');
-    }, [turn]);
 
-    const renderTable = () => (
-        <View style={styles.tableArea}>
-            {/* Rival Zone */}
-            <View style={styles.rivalSlot}>
-                <Image source={{ uri: rivalBird.photo }} style={styles.cardOnTable} />
-                <View style={styles.nameTagRival}>
-                    <Text style={styles.tagText}>{rivalBird.name}</Text>
-                    <Text style={styles.tagLevel}>Nf. {rivalBird.level}</Text>
-                </View>
-                {rivalPosture && (
-                    <View style={styles.postureCircleRival}>
-                        <Text style={styles.postureIconSmall}>
-                            {POSTURES.find(p => p.type === rivalPosture)?.icon}
-                        </Text>
-                    </View>
-                )}
-            </View>
+        const newPlayerTable = [...playerTable];
+        newPlayerTable[emptyIdx] = bird;
+        setPlayerTable(newPlayerTable);
+        setLastMessage(`¡Has jugado a ${bird.name}! Toca tu carta para atacar.`);
 
-            {/* Duel Zone (Empty if no bird selected) */}
-            <View style={[
-                styles.duelZone,
-                isDragging && styles.duelZoneActive
-            ]}>
-                {selectedBird ? (
-                    <Image source={{ uri: selectedBird.photo }} style={styles.cardOnTablePlayer} />
-                ) : (
-                    <View style={styles.dropZoneHint}>
-                        <Text style={styles.hintText}>
-                            {isDragging ? '¡Suelta aquí!' : 'Arrastra tu pájaro aquí'}
-                        </Text>
-                    </View>
-                )}
-                {chosenPosture && (
-                    <View style={styles.postureCirclePlayer}>
-                        <Text style={styles.postureIconSmall}>
-                            {POSTURES.find(p => p.type === chosenPosture)?.icon}
-                        </Text>
-                    </View>
-                )}
-            </View>
+        // El rival responde posicionando uno aleatorio
+        setTimeout(() => {
+            const emptyRivalIdx = rivalTable.findIndex(slot => slot === null);
+            if (emptyRivalIdx !== -1) {
+                const randomRival = RIVAL_BIRDS_POOL[Math.floor(Math.random() * RIVAL_BIRDS_POOL.length)];
+                const newRivalTable = [...rivalTable];
+                newRivalTable[emptyRivalIdx] = { ...randomRival, id: `rival-${Date.now()}` };
+                setRivalTable(newRivalTable);
+                setLastMessage(`El rival ha jugado a ${randomRival.name}`);
+            }
+        }, 500);
+    };
 
-            {lastResult && (
-                <View style={styles.resultOverlay}>
-                    <Text style={styles.resultTextBig}>
-                        {lastResult === 'WIN' ? '¡VICTORIA!' : lastResult === 'LOSE' ? 'DERROTA' : 'EMPATE'}
-                    </Text>
-                </View>
-            )}
-        </View>
-    );
+    // Función de Ataque
+    const handleAttack = (rivalIdx: number) => {
+        console.log("Attacking rival at:", rivalIdx);
+        if (selectedPlayerIdx === null) {
+            setLastMessage("Selecciona primero uno de tus pájaros (borde dorado)");
+            return;
+        }
+
+        const playerBird = playerTable[selectedPlayerIdx];
+        const rivalBird = rivalTable[rivalIdx];
+
+        if (!playerBird || !rivalBird) return;
+
+        const damage = Math.max(1, playerBird.stats.attack - rivalBird.stats.defense);
+        const points = damage * 10;
+        setPlayerRep(prev => prev + points);
+        setLastMessage(`¡${playerBird.name} ataca! Ganas ${points} puntos.`);
+
+        // El rival contraataca
+        const counterDamage = Math.max(1, rivalBird.stats.attack - playerBird.stats.defense);
+        setRivalRep(prev => prev + counterDamage * 10);
+
+        setSelectedPlayerIdx(null);
+    };
+
+    const handleNextPhase = () => {
+        if (turn >= MAX_ROUNDS) {
+            setPhase('FINAL');
+        } else {
+            setTurn(prev => prev + 1);
+            setPlayerTable(new Array(SLOT_COUNT).fill(null));
+
+            // Nueva ronda: Rival con pájaros frescos
+            const newRivalTable = new Array(SLOT_COUNT).fill(null);
+            newRivalTable[0] = { ...RIVAL_BIRDS_POOL[Math.floor(Math.random() * 3)], id: `rival-r${turn}-1` };
+            newRivalTable[1] = { ...RIVAL_BIRDS_POOL[Math.floor(Math.random() * 3)], id: `rival-r${turn}-2` };
+            setRivalTable(newRivalTable);
+
+            setLastMessage(`Ronda ${turn + 1}: ¡Prepárate!`);
+        }
+    };
 
     return (
         <View style={styles.container}>
-            <style>{certamenAnimCSS}</style>
-
-            {/* HUD / Header */}
+            {/* HUD */}
             <View style={styles.hud}>
-                <View style={styles.roundTracker}>
-                    <Text style={styles.roundText}>Ronda {turn}/{MAX_ROUNDS}</Text>
-                </View>
-                <View style={styles.repContainer}>
-                    <Text style={styles.repText}>🏆 Tú: {playerRep} | 🤖 Rival: {rivalRep}</Text>
-                </View>
-                <View style={styles.manaContainer}>
-                    <Text style={styles.manaText}>🌰 {turn}</Text>
-                </View>
+                <Text style={styles.hudText}>Ronda: {turn}/{MAX_ROUNDS}</Text>
+                <Text style={styles.hudText}>🏆 Tú: {playerRep} | 🤖 Rival: {rivalRep}</Text>
             </View>
 
             {phase === 'BATTLE' ? (
                 <>
-                    {renderTable()}
+                    <View style={styles.table}>
+                        <Text style={styles.sideLabel}>LADO RIVAL</Text>
+                        {/* RIVAL SIDE */}
+                        <View style={styles.grid}>
+                            {rivalTable.map((bird, idx) => (
+                                <TouchableOpacity
+                                    key={`rival-${idx}`}
+                                    style={[
+                                        styles.slot,
+                                        { width: slotWidth, height: slotHeight },
+                                        bird && styles.occupiedRival,
+                                        (selectedPlayerIdx !== null && bird) && styles.targetable
+                                    ]}
+                                    onPress={() => handleAttack(idx)}
+                                // Cambiado: No disableamos para que el usuario reciba el feedback si no tiene seleccionado nada
+                                >
+                                    {bird ? (
+                                        <Image source={{ uri: bird.photo }} style={styles.cardImg} />
+                                    ) : (
+                                        <View style={styles.emptySlot} />
+                                    )}
+                                    {bird && <Text style={styles.cardPower}>⚔️ {bird.stats.attack}</Text>}
+                                </TouchableOpacity>
+                            ))}
+                        </View>
 
-                    {/* Player Hand Area */}
-                    <View style={styles.handArea}>
-                        <Text style={styles.handTitle}>Tu Mano (Arrastra para jugar)</Text>
-                        <ScrollView
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={styles.handScroll}
-                            scrollEnabled={!isDragging}
-                        >
-                            {affordableBirds.map(bird => (
-                                <View key={bird.id} style={styles.cardInHand}>
-                                    <DraggableCard
-                                        card={bird}
-                                        onDrop={handleDropBird}
-                                        onDragStart={() => setIsDragging(true)}
-                                        onDragEnd={() => setIsDragging(false)}
-                                    />
-                                </View>
+                        <View style={styles.divider} />
+
+                        <Text style={styles.sideLabel}>TU LADO</Text>
+                        {/* PLAYER SIDE */}
+                        <View style={styles.grid}>
+                            {playerTable.map((bird, idx) => (
+                                <TouchableOpacity
+                                    key={`player-${idx}`}
+                                    style={[
+                                        styles.slot,
+                                        { width: slotWidth, height: slotHeight },
+                                        bird && styles.occupiedPlayer,
+                                        selectedPlayerIdx === idx && styles.selected
+                                    ]}
+                                    onPress={() => {
+                                        if (bird) {
+                                            setSelectedPlayerIdx(idx === selectedPlayerIdx ? null : idx);
+                                            if (idx !== selectedPlayerIdx) setLastMessage("Pájaro seleccionado. ¡Toca un rival para atacar!");
+                                        }
+                                    }}
+                                >
+                                    {bird ? (
+                                        <Image source={{ uri: bird.photo }} style={styles.cardImg} />
+                                    ) : (
+                                        <View style={styles.emptySlot} />
+                                    )}
+                                    {bird && <Text style={styles.cardPower}>⚔️ {bird.stats.attack}</Text>}
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    </View>
+
+                    <View style={styles.messageArea}>
+                        <Text style={styles.messageText}>{lastMessage}</Text>
+                    </View>
+
+                    {/* MANO */}
+                    <View style={styles.handContainer}>
+                        <Text style={styles.handHint}>Toca una carta para posicionarla:</Text>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.handPadding}>
+                            {(player.collection.length > 0 ? player.collection : RIVAL_BIRDS_POOL).map((bird, idx) => (
+                                <TouchableOpacity
+                                    key={`${bird.id}-${idx}`}
+                                    style={styles.handCard}
+                                    onPress={() => handlePlayCard(bird)}
+                                >
+                                    <BirdCardView card={bird} mode="mini" />
+                                </TouchableOpacity>
                             ))}
                         </ScrollView>
+                        <TouchableOpacity style={styles.nextBtn} onPress={handleNextPhase}>
+                            <Text style={styles.nextBtnText}>Finalizar Ronda y Avanzar ⚔️</Text>
+                        </TouchableOpacity>
                     </View>
                 </>
-            ) : phase === 'RESULT' ? (
-                <View style={styles.resultPhase}>
-                    <GlassCard style={styles.resultSummary}>
-                        <Text style={styles.resultSummaryTitle}>Resultados de la Ronda {turn}</Text>
-                        <View style={styles.comparisonRow}>
-                            <View style={styles.compareCol}>
-                                <Text style={styles.colLabel}>Tú</Text>
-                                <Text style={styles.colIcon}>{POSTURES.find(p => p.type === chosenPosture)?.icon}</Text>
-                            </View>
-                            <Text style={styles.vsText}>VS</Text>
-                            <View style={styles.compareCol}>
-                                <Text style={styles.colLabel}>Rival</Text>
-                                <Text style={styles.colIcon}>{POSTURES.find(p => p.type === rivalPosture)?.icon}</Text>
-                            </View>
-                        </View>
-                        <TouchableOpacity style={styles.nextBtn} onPress={handleNextRound}>
-                            <Text style={styles.nextBtnText}>
-                                {turn < MAX_ROUNDS ? 'Siguiente Ronda' : 'Ver Resultado Final'}
-                            </Text>
-                        </TouchableOpacity>
-                    </GlassCard>
-                </View>
             ) : (
-                <View style={styles.resultPhase}>
-                    <GlassCard style={styles.resultSummary}>
-                        <Text style={styles.resultSummaryTitle}>¡Certamen Finalizado!</Text>
-                        <View style={styles.finalScore}>
-                            <Text style={styles.finalScoreText}>Puntuación Final</Text>
-                            <Text style={styles.finalScoreValue}>{playerRep} - {rivalRep}</Text>
-                        </View>
-                        <Text style={styles.matchVerdict}>
-                            {playerRep > rivalRep ? '¡HAS GANADO EL CERTAMEN!' :
-                                playerRep < rivalRep ? 'EL RIVAL HA GANADO' : '¡EMPATE TÉCNICO!'}
+                <View style={styles.finalPhase}>
+                    <GlassCard style={styles.finalResult}>
+                        <Text style={styles.finalTitle}>¡Certamen Finalizado!</Text>
+                        <Text style={styles.finalScore}>{playerRep} - {rivalRep}</Text>
+                        <Text style={styles.finalVerdict}>
+                            {playerRep > rivalRep ? "¡VICTORIA!" : playerRep < rivalRep ? "DERROTA" : "EMPATE"}
                         </Text>
-                        <TouchableOpacity
-                            style={styles.nextBtn}
-                            onPress={() => {/* Aquí volvería al mapa o dashboard */ }}
-                        >
-                            <Text style={styles.nextBtnText}>Volver al Refugio</Text>
+                        <TouchableOpacity style={styles.resetBtn} onPress={() => {/* Back to map */ }}>
+                            <Text style={styles.resetBtnText}>Volver al Refugio</Text>
                         </TouchableOpacity>
                     </GlassCard>
                 </View>
@@ -258,126 +271,93 @@ export function CertamenScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#4E342E', // Color madera oscura base
+        backgroundColor: '#4E342E',
+        paddingTop: 40,
     },
     hud: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingTop: 50,
-        paddingHorizontal: spacing.lg,
-        zIndex: 10,
+        padding: spacing.md,
+        backgroundColor: 'rgba(0,0,0,0.3)',
     },
-    repContainer: {
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: borders.radiusFull,
-    },
-    roundTracker: {
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: borders.radiusFull,
-    },
-    roundText: {
-        color: colors.secondary,
-        fontSize: 12,
-        fontWeight: 'bold',
-    },
-    repText: {
+    hudText: {
         color: colors.white,
-        fontSize: 12,
         fontWeight: 'bold',
+        fontSize: 14,
     },
-    manaContainer: {
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 2,
-        borderColor: colors.secondary,
-    },
-    manaText: {
-        color: colors.secondary,
-        fontWeight: 'bold',
-    },
-    tableArea: {
+    table: {
         flex: 1,
         margin: spacing.md,
-        backgroundColor: '#5D4037', // Tinte de madera
+        backgroundColor: '#5D4037',
         borderRadius: 20,
-        borderWidth: 8,
+        borderWidth: 4,
         borderColor: '#3E2723',
+<<<<<<< HEAD
         ...shadows.card,
         elevation: 10,
         zIndex: 10,
         padding: spacing.md,
         justifyContent: 'space-between',
+=======
+        padding: spacing.sm,
+        justifyContent: 'center',
+>>>>>>> d2b5491fb1c5e965f5f21fd4536b5a53a1c5f57a
     },
-    rivalSlot: {
-        alignItems: 'center',
+    grid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        alignContent: 'center',
+        gap: 8,
+    },
+    slot: {
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.2)',
+        backgroundColor: 'rgba(0,0,0,0.1)',
+        overflow: 'hidden',
         position: 'relative',
     },
-    duelZone: {
+    emptySlot: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderWidth: 2,
-        borderStyle: 'dashed',
-        borderColor: 'rgba(255,255,255,0.2)',
-        borderRadius: 20,
-        marginVertical: spacing.lg,
     },
-    duelZoneActive: {
-        borderColor: colors.secondary,
+    cardImg: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
+    },
+    divider: {
+        height: 1,
         backgroundColor: 'rgba(255,255,255,0.1)',
-        transform: [{ scale: 1.02 }],
+        marginVertical: spacing.sm,
+        width: '100%',
     },
-    cardOnTable: {
-        width: 100,
-        height: 140,
-        borderRadius: 10,
+    occupiedPlayer: {
+        borderColor: 'rgba(255,255,255,0.5)',
+    },
+    occupiedRival: {
+        borderColor: 'rgba(255,100,100,0.5)',
+    },
+    selected: {
+        borderColor: colors.secondary,
         borderWidth: 3,
-        borderColor: colors.canto,
     },
-    cardOnTablePlayer: {
-        width: 120,
-        height: 160,
-        borderRadius: 12,
-        borderWidth: 4,
-        borderColor: colors.primary,
-        ...shadows.glass,
+    targetable: {
+        borderColor: colors.error,
+        borderWidth: 2,
+        backgroundColor: 'rgba(255,0,0,0.1)',
     },
-    dropZoneHint: {
-        opacity: 0.3,
-    },
-    hintText: {
-        color: colors.white,
-        fontSize: 14,
-        fontStyle: 'italic',
-    },
-    nameTagRival: {
-        position: 'absolute',
-        bottom: -10,
-        backgroundColor: colors.canto,
-        paddingHorizontal: 8,
-        borderRadius: 4,
-    },
-    tagText: {
-        color: colors.white,
+    sideLabel: {
+        color: 'rgba(255,255,255,0.4)',
         fontSize: 10,
         fontWeight: 'bold',
-    },
-    tagLevel: {
-        color: colors.white,
-        fontSize: 8,
-        opacity: 0.8,
         textAlign: 'center',
+        marginBottom: 5,
+        letterSpacing: 2,
     },
-    postureCircleRival: {
+    cardPower: {
         position: 'absolute',
+<<<<<<< HEAD
         top: 10,
         right: 10,
         backgroundColor: 'rgba(0,0,0,0.5)',
@@ -438,81 +418,99 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         alignItems: 'center',
+=======
+        bottom: 2,
+        right: 2,
+>>>>>>> d2b5491fb1c5e965f5f21fd4536b5a53a1c5f57a
         backgroundColor: 'rgba(0,0,0,0.7)',
-        paddingVertical: spacing.md,
+        color: colors.secondary,
+        fontSize: 10,
+        paddingHorizontal: 4,
+        borderRadius: 4,
+        fontWeight: 'bold',
     },
-    resultTextBig: {
+    messageArea: {
+        paddingVertical: spacing.sm,
+        paddingHorizontal: spacing.md,
+        alignItems: 'center',
+    },
+    messageText: {
         color: colors.white,
-        fontSize: 32,
-        fontWeight: 'bold',
-        letterSpacing: 4,
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 20,
+        fontSize: 13,
+        textAlign: 'center',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.2)',
     },
-    resultPhase: {
-        flex: 1,
-        justifyContent: 'center',
-        padding: spacing.xl,
+    handContainer: {
+        flex: 0.6, // Altura relativa para la mano
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        padding: spacing.md,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
     },
-    resultSummary: {
-        padding: spacing.xl,
-        alignItems: 'center',
-        gap: spacing.lg,
-    },
-    resultSummaryTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: colors.text,
-    },
-    comparisonRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: spacing.xl,
-    },
-    compareCol: {
-        alignItems: 'center',
-        gap: spacing.sm,
-    },
-    colLabel: {
+    handHint: {
+        color: colors.secondary,
         fontSize: 12,
-        opacity: 0.6,
-    },
-    colIcon: {
-        fontSize: 48,
-    },
-    vsText: {
-        fontSize: 24,
+        marginBottom: 10,
+        textAlign: 'center',
         fontWeight: 'bold',
-        color: colors.primary,
+    },
+    handPadding: {
+        paddingBottom: 10,
+        alignItems: 'center',
+    },
+    handCard: {
+        marginRight: spacing.sm,
+        height: '100%',
     },
     nextBtn: {
         backgroundColor: colors.primary,
-        paddingHorizontal: 24,
-        paddingVertical: 12,
-        borderRadius: borders.radiusFull,
+        padding: spacing.md,
+        borderRadius: 12,
+        marginTop: spacing.sm,
+        alignItems: 'center',
     },
     nextBtnText: {
         color: colors.white,
         fontWeight: 'bold',
     },
-    finalScore: {
+    finalPhase: {
+        flex: 1,
+        justifyContent: 'center',
+        padding: spacing.xl,
+    },
+    finalResult: {
+        padding: spacing.xl,
         alignItems: 'center',
-        marginVertical: spacing.lg,
     },
-    finalScoreText: {
-        fontSize: 16,
-        color: colors.text,
-        opacity: 0.7,
+    finalTitle: {
+        fontSize: 24,
+        color: colors.white,
+        fontWeight: 'bold',
     },
-    finalScoreValue: {
+    finalScore: {
         fontSize: 48,
-        fontWeight: 'bold',
-        color: colors.primary,
-    },
-    matchVerdict: {
-        fontSize: 18,
-        fontWeight: 'bold',
         color: colors.secondary,
-        textAlign: 'center',
-        marginBottom: spacing.xl,
+        marginVertical: 20,
+        fontWeight: 'bold',
     },
+    finalVerdict: {
+        fontSize: 20,
+        color: colors.white,
+        marginBottom: 30,
+    },
+    resetBtn: {
+        backgroundColor: colors.secondary,
+        paddingHorizontal: 30,
+        paddingVertical: 15,
+        borderRadius: borders.radiusFull,
+    },
+    resetBtnText: {
+        color: '#3E2723',
+        fontWeight: 'bold',
+    }
 });
-

@@ -37,6 +37,15 @@ export const colors = {
   glass: 'rgba(253, 251, 247, 0.7)',       // Glassmorphism
   glassBorder: 'rgba(255, 255, 255, 0.5)', // Borde glassmorphism
   disabled: 'rgba(44, 62, 80, 0.3)',
+
+  // Clima (Fondo / UI)
+  weatherSol: '#87CEEB',
+  weatherLluvia: '#546E7A',
+  weatherNoche: '#0D1B2A',
+  weatherViento: '#90A4AE',
+  weatherNublado: '#B0BEC5',
+  weatherNieve: '#E1F5FE',
+  weatherTormenta: '#37474F',
 };
 
 // ─── TIPOGRAFÍA ────────────────────────────────────────────

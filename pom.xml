@@ -115,16 +115,18 @@
 	</dependencies>
 
 	<build>
-		<sourceDirectory>src/backend/src/main/java</sourceDirectory>
-		<testSourceDirectory>src/backend/src/test/java</testSourceDirectory>
+		<sourceDirectory>${project.basedir}/src/backend/src/main/java</sourceDirectory>
+		<testSourceDirectory>${project.basedir}/src/backend/src/test/java</testSourceDirectory>
 		<resources>
 			<resource>
-				<directory>src/backend/src/main/resources</directory>
+				<directory>${project.basedir}/src/backend/src/main/resources</directory>
+				<filtering>false</filtering>
 			</resource>
 		</resources>
 		<testResources>
 			<testResource>
-				<directory>src/backend/src/test/resources</directory>
+				<directory>${project.basedir}/src/backend/src/test/resources</directory>
+				<filtering>false</filtering>
 			</testResource>
 		</testResources>
 
