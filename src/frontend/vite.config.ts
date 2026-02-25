@@ -5,8 +5,10 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
     plugins: [react()],
     define: {
-        // Necesario para algunas librerías de React Native
+        // Necesario para algunas librerías de React Native y RSocket
         global: 'window',
+        'process.env': {},
+        Buffer: ['buffer', 'Buffer'],
     },
     resolve: {
         alias: {

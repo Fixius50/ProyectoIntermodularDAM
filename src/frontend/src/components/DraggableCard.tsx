@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Animated, PanResponder, StyleSheet, View } from 'react-native';
+import { Animated, PanResponder, StyleSheet, View, Dimensions } from 'react-native';
 import { BirdCard } from '../types/types';
 import { BirdCardView } from './BirdCardView';
 

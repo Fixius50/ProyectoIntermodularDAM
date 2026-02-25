@@ -14,8 +14,10 @@
   },
   "dependencies": {
     "@react-native/new-app-screen": "0.84.0",
+    "buffer": "^6.0.3",
     "lucide-react": "^0.575.0",
     "lucide-react-native": "^0.575.0",
+    "process": "^0.11.10",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-native": "0.84.0",
@@ -23,6 +25,9 @@
     "react-native-svg": "^15.15.3",
     "react-native-web": "^0.21.2",
     "react-router-dom": "^7.13.1",
+    "rsocket-core": "^0.0.29-alpha.0",
+    "rsocket-websocket-client": "^0.0.29-alpha.0",
+    "rxjs": "^7.8.2",
     "zustand": "^5.0.11"
   },
   "devDependencies": {
@@ -41,6 +46,8 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.0.0",
     "@types/react-test-renderer": "^19.1.0",
+    "@types/rsocket-core": "^0.0.11",
+    "@types/rsocket-websocket-client": "^0.0.7",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^9.13.0",
     "eslint-plugin-react": "^7.37.2",
