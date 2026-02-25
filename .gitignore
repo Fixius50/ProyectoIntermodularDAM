@@ -3,3 +3,4 @@
 ./target
 .env
 .mvn
+src\backend\src\main\resources\application.yml
