@@ -1,3 +1,5 @@
+import { authApi } from '../../api/auth';
+
 export const renderHome = (container: HTMLElement) => {
     container.innerHTML = `
 <div class="bg-cream dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display transition-colors duration-200 min-h-screen flex flex-col relative overflow-x-hidden">
@@ -134,6 +136,11 @@ export const renderHome = (container: HTMLElement) => {
 <button class="text-primary text-sm font-medium hover:underline">Edit</button>
 </div>
 <div class="grid grid-cols-1 gap-4">
+<!-- API Test Button -->
+<button id="test-api-btn" class="group flex items-center justify-center gap-2 bg-primary/20 hover:bg-primary/40 text-primary-dark dark:text-primary-light p-3 rounded-2xl shadow-sm border border-primary/30 transition-all font-bold">
+    <span class="material-symbols-outlined">wifi_tethering</span>
+    <span>Test Backend Connection</span>
+</button>
 <!-- Expedition Button -->
 <button class="nav-button group flex items-center gap-4 bg-white dark:bg-sage-800 p-4 rounded-2xl shadow-sm border border-sage-100 dark:border-sage-700 hover:border-primary/50 transition-all text-left" data-screen="expedition">
 <div class="h-16 w-16 rounded-full bg-cover bg-center shrink-0 shadow-md group-hover:scale-105 transition-transform" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAG35UEyhxnawmk5lGt8ksJPnWEMni_m-HBOCUatvMFz8_hI6wBr1NjWfHvfreiXe7jSbp8CRTfz7W5Q94mDIwiXAnuFEzbpp9QTWeRZN4XGqnemFmr97yeDtImqLe1gqZm2TEYG36Nh2UZoxp2g5qhCRPUa5m1yOYzQe0tF0WBhbEFuQLNsZsb8fyF_vRovx0l7Jemrt4YkRR7gwyKnXRY0TS2CK5blapbL6B2N7Tvc60kRkJUGKNZJvsolW77E7aI2KDD4rXEdavp');">
@@ -189,4 +196,22 @@ export const renderHome = (container: HTMLElement) => {
             }
         });
     });
+
+    // Attach API Test Listener
+    const testBtn = container.querySelector('#test-api-btn');
+    if (testBtn) {
+        testBtn.addEventListener('click', async () => {
+            const originalText = testBtn.innerHTML;
+            testBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span><span>Testing...</span>';
+
+            try {
+                const response = await authApi.testConnection();
+                alert('Backend Response: ' + response);
+            } catch (err) {
+                alert('Connection Failed. Is the backend running on port 8080?');
+            } finally {
+                testBtn.innerHTML = originalText;
+            }
+        });
+    }
 };
