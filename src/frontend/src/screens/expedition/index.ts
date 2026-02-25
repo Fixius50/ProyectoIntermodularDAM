@@ -31,34 +31,44 @@ export const renderExpedition = (container: HTMLElement) => {
 <!-- Left Sidebar -->
 <div class="relative z-10 p-6 flex flex-col justify-between w-full md:w-[420px] h-full pointer-events-none">
 <div class="pointer-events-auto space-y-4">
-<div class="glass-panel rounded-2xl p-4 shadow-lg animate-fade-in-down">
+<div class="glass-panel border-white/20 dark:border-sage-700/50 rounded-2xl p-4 shadow-lg animate-fade-in-down hover:shadow-xl hover:border-white/40 transition-all duration-300">
 <div class="flex items-center gap-3 mb-2">
-<span class="material-symbols-outlined text-primary">explore</span>
+<span class="material-symbols-outlined text-primary animate-pulse">explore</span>
 <h3 class="font-bold text-lg">Current Location</h3>
 </div>
 <p class="text-sm text-text-muted dark:text-slate-400">Coastal Cliffs Biome • 48.4° N, 124.6° W</p>
 <div class="mt-4 flex gap-2">
-<button class="flex-1 bg-surface-light dark:bg-surface-dark hover:bg-primary/10 text-xs font-medium py-2 px-3 rounded-lg border border-border-light dark:border-border-dark transition-colors">Filter: All</button>
-<button class="flex-1 bg-primary text-white text-xs font-medium py-2 px-3 rounded-lg shadow-md hover:bg-primary-dark">Scan Area</button>
+<button class="flex-1 bg-surface-light/50 dark:bg-surface-dark/50 backdrop-blur-sm hover:bg-primary/20 text-xs font-medium py-2 px-3 rounded-lg border border-border-light/50 dark:border-border-dark/50 transition-colors">Filter: All</button>
+<button class="flex-1 bg-primary/90 hover:bg-primary text-white text-xs font-medium py-2 px-3 rounded-lg shadow-md hover:shadow-primary/30 transition-shadow">Scan Area</button>
 </div>
 </div>
 </div>
 <div class="pointer-events-auto my-auto py-6">
-<div class="glass-panel rounded-2xl p-5 shadow-xl border-l-4 border-primary transform transition-all hover:scale-[1.02]">
+<div class="glass-panel bg-white/70 dark:bg-surface-dark/60 backdrop-blur-lg rounded-2xl p-5 shadow-xl border-l-4 border-l-primary transform transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl">
 <div class="flex justify-between items-start mb-4">
 <div>
-<span class="inline-block px-2 py-0.5 rounded-full bg-primary/20 text-primary-dark text-[10px] font-bold uppercase tracking-wider mb-1">Detected</span>
+<span class="inline-block px-2 py-0.5 rounded-full bg-primary/20 text-primary-dark text-[10px] font-bold uppercase tracking-wider mb-1 shadow-sm">Detected</span>
 <h2 class="text-xl font-bold leading-tight">Peregrine Falcon</h2>
 <p class="text-sm text-text-muted dark:text-slate-400">85% Rarity • Diving</p>
 </div>
-<button class="size-8 rounded-full bg-surface-light dark:bg-surface-dark flex items-center justify-center text-text-muted hover:text-primary shadow-sm">
+<button class="size-8 rounded-full bg-surface-light/50 dark:bg-surface-dark/50 backdrop-blur-sm flex items-center justify-center text-text-muted hover:text-primary shadow-sm transition-transform hover:scale-110">
 <span class="material-symbols-outlined text-lg">info</span>
 </button>
 </div>
-<div class="w-full aspect-video rounded-xl bg-cover bg-center mb-4 relative overflow-hidden group cursor-pointer" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCqy_-86G-dJEzPTMbaxNmPIeG8RNWcKarNwUiyTyOZe93FirrPC1AFTl5O0uzWtr75SkmS8MORykZ9Mj4GHtt_NatqPcABrhlKzH1g4dcSaBloqgjFA-GUcIQ66tF3wEmesL6E_YNK3wK6qt-_Oa-QVghbHMZHabQCGPHeES1sp8G6eH_bEeHdiB1HPazB6TwPJRKIKU1x_7K2omcfPNHHk5eWEdOSZ90EID5WE3-8R5uHWMyDjDypOPEwf8sJfJbyYpojko_pzyIT");'>
-<div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">Live</div>
+<div class="w-full aspect-video rounded-xl bg-cover bg-center mb-4 relative overflow-hidden group cursor-pointer shadow-inner" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCqy_-86G-dJEzPTMbaxNmPIeG8RNWcKarNwUiyTyOZe93FirrPC1AFTl5O0uzWtr75SkmS8MORykZ9Mj4GHtt_NatqPcABrhlKzH1g4dcSaBloqgjFA-GUcIQ66tF3wEmesL6E_YNK3wK6qt-_Oa-QVghbHMZHabQCGPHeES1sp8G6eH_bEeHdiB1HPazB6TwPJRKIKU1x_7K2omcfPNHHk5eWEdOSZ90EID5WE3-8R5uHWMyDjDypOPEwf8sJfJbyYpojko_pzyIT");'>
+<div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
+<div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
+    <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+    Live
 </div>
-<button class="w-full mt-2 py-3 bg-primary hover:bg-primary-dark text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2">Capture Photo</button>
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+    <span class="material-symbols-outlined text-4xl text-white drop-shadow-lg">center_focus_strong</span>
+</div>
+</div>
+<button class="w-full mt-2 py-3 bg-primary/90 hover:bg-primary text-slate-900 border border-transparent hover:border-white/20 font-bold rounded-xl shadow-lg hover:shadow-primary/40 flex items-center justify-center gap-2 transition-all transform hover:-translate-y-1">
+    <span class="material-symbols-outlined">photo_camera</span>
+    Capture Photo
+</button>
 </div>
 </div>
 </div>

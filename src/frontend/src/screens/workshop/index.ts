@@ -35,7 +35,7 @@ export const renderWorkshop = (container: HTMLElement) => {
 <main class="flex-grow flex flex-col lg:flex-row p-6 md:p-8 w-full max-w-[1440px] mx-auto z-10 gap-8 h-[calc(100vh-65px)] overflow-hidden">
 <!-- Left Side: Crafting Bench -->
 <div class="flex-grow flex flex-col gap-6 overflow-hidden">
-<div class="glass-panel rounded-3xl p-8 flex flex-col gap-8 shadow-journal relative overflow-hidden">
+<div class="glass-panel bg-white/70 dark:bg-background-dark/70 backdrop-blur-lg rounded-3xl p-8 flex flex-col gap-8 shadow-journal relative overflow-hidden transition-all hover:shadow-xl border border-white/40 dark:border-sage-700/50">
 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-primary-dark to-primary"></div>
 <div class="flex justify-between items-end">
 <div>
@@ -50,24 +50,25 @@ export const renderWorkshop = (container: HTMLElement) => {
 <!-- Crafting Slots -->
 <div class="flex flex-col md:flex-row items-center justify-center gap-8 py-10">
 <div class="flex flex-col items-center gap-3">
-<div class="size-24 rounded-2xl border-2 border-dashed border-primary/30 bg-primary/5 flex items-center justify-center group cursor-pointer hover:bg-primary/10 transition-colors">
-<span class="material-symbols-outlined text-primary/40 text-4xl group-hover:scale-110 transition-transform">add</span>
+<div class="size-24 rounded-2xl border-2 border-dashed border-primary/50 bg-primary/5 flex items-center justify-center group cursor-pointer hover:bg-primary/20 hover:border-primary transition-all duration-300 transform hover:scale-105 hover:shadow-glow">
+<span class="material-symbols-outlined text-primary/60 text-4xl group-hover:scale-125 transition-transform duration-300">add</span>
 </div>
-<span class="text-xs font-bold uppercase text-slate-400">Ingredient 1</span>
+<span class="text-xs font-bold uppercase text-slate-400 group-hover:text-primary transition-colors">Ingredient 1</span>
 </div>
-<span class="material-symbols-outlined text-primary/40 text-3xl">add</span>
+<span class="material-symbols-outlined text-primary/40 text-3xl animate-pulse">add</span>
 <div class="flex flex-col items-center gap-3">
-<div class="size-24 rounded-2xl border-2 border-dashed border-primary/30 bg-primary/5 flex items-center justify-center group cursor-pointer hover:bg-primary/10 transition-colors">
-<span class="material-symbols-outlined text-primary/40 text-4xl group-hover:scale-110 transition-transform">add</span>
+<div class="size-24 rounded-2xl border-2 border-dashed border-primary/50 bg-primary/5 flex items-center justify-center group cursor-pointer hover:bg-primary/20 hover:border-primary transition-all duration-300 transform hover:scale-105 hover:shadow-glow">
+<span class="material-symbols-outlined text-primary/60 text-4xl group-hover:scale-125 transition-transform duration-300">add</span>
 </div>
-<span class="text-xs font-bold uppercase text-slate-400">Ingredient 2</span>
+<span class="text-xs font-bold uppercase text-slate-400 group-hover:text-primary transition-colors">Ingredient 2</span>
 </div>
-<span class="material-symbols-outlined text-primary/40 text-3xl">keyboard_double_arrow_right</span>
-<div class="flex flex-col items-center gap-3">
-<div class="size-32 rounded-3xl border-2 border-primary bg-primary/10 flex items-center justify-center shadow-glow">
-<span class="material-symbols-outlined text-primary text-5xl">inventory_2</span>
+<span class="material-symbols-outlined text-primary/40 text-3xl animate-pulse" style="animation-delay: 0.5s;">keyboard_double_arrow_right</span>
+<div class="flex flex-col items-center gap-3 relative">
+<div class="absolute inset-0 bg-primary/20 rounded-3xl blur-xl animate-pulse group-hover:opacity-100 transition-opacity"></div>
+<div class="size-32 rounded-3xl border-2 border-primary bg-primary/10 flex items-center justify-center shadow-glow group cursor-pointer hover:bg-primary/20 transition-all duration-300 hover:scale-105 z-10 relative">
+<span class="material-symbols-outlined text-primary text-5xl group-hover:rotate-12 transition-transform duration-300">inventory_2</span>
 </div>
-<span class="text-xs font-bold uppercase text-primary">Resulting Item</span>
+<span class="text-xs font-bold uppercase text-primary tracking-widest mt-2">Resulting Item</span>
 </div>
 </div>
 <!-- Action Buttons -->
@@ -104,7 +105,7 @@ export const renderWorkshop = (container: HTMLElement) => {
 </div>
 <!-- Right Side: Inventory -->
 <div class="w-full lg:w-[400px] flex flex-col gap-6 overflow-hidden">
-<div class="glass-panel rounded-3xl p-6 flex flex-col h-full shadow-journal overflow-hidden border border-primary/10">
+<div class="glass-panel bg-white/70 dark:bg-background-dark/70 backdrop-blur-lg rounded-3xl p-6 flex flex-col h-full shadow-journal overflow-hidden border border-white/40 dark:border-sage-700/50 transition-all hover:shadow-xl">
 <div class="flex items-center justify-between mb-6">
 <h3 class="text-xl font-bold flex items-center gap-2">
 <span class="material-symbols-outlined text-primary">backpack</span> Inventory

@@ -28,8 +28,8 @@ export const renderArena = (container: HTMLElement) => {
 </div>
 <div class="flex items-center gap-4 justify-end">
 <div class="hidden sm:flex gap-2">
-<button class="flex items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-primary text-secondary text-sm font-bold shadow-sm hover:opacity-90 transition-opacity">
-<span class="material-symbols-outlined text-[18px] mr-2">history</span>
+<button class="flex items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-primary text-secondary text-sm font-bold shadow-sm hover:opacity-90 transition-all hover:scale-105 hover:shadow-primary/30 active:scale-95">
+<span class="material-symbols-outlined text-[18px] mr-2 group-hover:animate-spin">history</span>
 <span class="truncate">Battle Log</span>
 </button>
 </div>
@@ -72,7 +72,7 @@ export const renderArena = (container: HTMLElement) => {
 <div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
 <!-- Player 1 (User) -->
 <div class="lg:col-span-5 flex flex-col gap-4">
-<div class="bg-background-light dark:bg-background-dark border border-primary/20 rounded-2xl overflow-hidden shadow-card transition-all hover:shadow-journal">
+<div class="bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border border-primary/20 rounded-2xl overflow-hidden shadow-card transition-all duration-300 hover:shadow-2xl hover:scale-[1.01]">
 <!-- Card Image Area -->
 <div class="relative aspect-[4/3] w-full bg-slate-100 dark:bg-slate-800">
 <img alt="Peregrine Falcon" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLGrpeUIyzgRhQ3f7SL7InZFI5JSW6fe_hOuWII9OnA6Cz-x6YIoTEXmcsWE4BgybeRJwRDon12Un_we5qx-IA2Pks1SHPyl0B05k4E8vfiW3caYWDTmVA7PBZvqm67oC3OfIUNMa7oSyqy1K2aiRaQqwIYGp7pFmwKqNbyI7ufOJ5BMWjFyPeRtIiGQ32t8nSFciZ_2xKTGWqJbCRjR6l35Waqhkyf8-3DC5dPNCvEw1ZUxyj9NfM8-Jz6I_WIyPpy0aSaqBbfqqF"/>
@@ -111,11 +111,11 @@ export const renderArena = (container: HTMLElement) => {
 </div>
 <!-- Actions -->
 <div class="grid grid-cols-2 gap-3 pt-2">
-<button class="flex items-center justify-center gap-2 rounded-xl h-10 px-4 bg-primary text-secondary text-sm font-bold shadow-sm hover:translate-y-[-1px] transition-transform">
-<span class="material-symbols-outlined text-lg">swords</span> Attack
+<button class="group flex items-center justify-center gap-2 rounded-xl h-10 px-4 bg-primary text-secondary text-sm font-bold shadow-sm hover:bg-primary-dark transition-all duration-300 hover:translate-y-[-2px] hover:shadow-primary/40 active:scale-95">
+<span class="material-symbols-outlined text-lg group-hover:scale-125 transition-transform">swords</span> Attack
                             </button>
-<button class="flex items-center justify-center gap-2 rounded-xl h-10 px-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-bold border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-<span class="material-symbols-outlined text-lg">shield</span> Defend
+<button class="group flex items-center justify-center gap-2 rounded-xl h-10 px-4 bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm text-slate-700 dark:text-slate-200 text-sm font-bold border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all duration-300 hover:translate-y-[-2px] hover:border-slate-400 active:scale-95">
+<span class="material-symbols-outlined text-lg group-hover:scale-110 transition-transform">shield</span> Defend
                             </button>
 </div>
 </div>
@@ -123,15 +123,15 @@ export const renderArena = (container: HTMLElement) => {
 </div>
 <!-- VS Badge -->
 <div class="lg:col-span-2 flex flex-col items-center justify-center lg:h-full py-4 lg:py-0 relative z-10">
-<div class="bg-background-light dark:bg-background-dark rounded-full p-2 shadow-journal border-4 border-slate-100 dark:border-slate-800">
-<div class="bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 w-12 h-12 rounded-full flex items-center justify-center font-black text-xl italic tracking-tighter">
+<div class="bg-background-light dark:bg-background-dark rounded-full p-2 shadow-journal border-4 border-slate-100 dark:border-slate-800 animate-pulse">
+<div class="bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 w-12 h-12 rounded-full flex items-center justify-center font-black text-xl italic tracking-tighter shadow-inner">
                         VS
                     </div>
 </div>
 </div>
 <!-- Player 2 (Opponent) -->
 <div class="lg:col-span-5 flex flex-col gap-4">
-<div class="bg-background-light dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-card opacity-90">
+<div class="bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-card opacity-90 transition-all duration-300 hover:opacity-100 hover:shadow-xl hover:scale-[1.01]">
 <!-- Card Image Area -->
 <div class="relative aspect-[4/3] w-full bg-slate-100 dark:bg-slate-800">
 <img alt="European Robin" class="w-full h-full object-cover filter saturate-[0.8]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVUt5Www2obd4AeXHz31ZQlYbfv4S9TkIuQbCA31uPBq_l8qoikIVVk3sf7e0y9KEBA6ZSFfFprQ8UOGmcW1G4fwaLyayjSe25I7UDuoM4iUbDw1vDJhJIV_UBzAVRiRnBIpmak4vpYMmdORbHfCrSIwcweoMSBQoHpiN2fUFjnfp8HmxNQ3kbCbsIn0GE0fsRCI3A-gN0ce2Kka42wdndFr35JwCOvPlRMDVEGamXGo6A4R4swm_iA8clE_30U7lwFB6tIhOnYwrr"/>
