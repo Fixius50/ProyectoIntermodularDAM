@@ -1,9 +1,12 @@
 spring:
   application:
-    name: avis-backend
+    name: AvisBackend
+
+  # 1. Conexión a Supabase (Reactiva)
   r2dbc:
     url: r2dbc:postgresql://db.shmutxsmjokamnxrkufe.supabase.co:5432/postgres
     username: postgres
+<<<<<<< Updated upstream
     password: ${SUPABASE_DB_PASSWORD:postgres}
     initialization-mode: always
   
@@ -27,12 +30,18 @@ avis:
       mapping-path: /rsocket
       transport: tcp
       
+=======
+    password: AleAdriRober
+
+  # 2. Configuración de RabbitMQ (Local en Lubuntu)
+>>>>>>> Stashed changes
   rabbitmq:
     host: localhost
     port: 5672
     username: guest
     password: guest
 
+<<<<<<< Updated upstream
   weather:
     # Open-Meteo doesnt require API Key
     provider: open-meteo
@@ -56,3 +65,38 @@ logging:
     org.springframework.data.r2dbc: DEBUG
     org.springframework.security: TRACE
     org.springframework.web: DEBUG
+=======
+  # 3. Configuración de Redis (Para Subastas / Locks)
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  # 4. Configuración del Servidor y RSocket (Para Tailscale)
+  rsocket:
+    server:
+      port: 7000
+      transport: tcp
+      address: 0.0.0.0
+
+server:
+  port: 8080
+  address: 0.0.0.0
+
+# 5. APIs Externas
+api:
+  weather:
+    url: "https://api.openweathermap.org/data/2.5"
+    key: "0f3fe973a050b2df639fab82f3c33ca6"
+  unsplash:
+    url: "https://api.unsplash.com"
+    key: "LMN6wkrs9pnlyoE29fZVTVqLmfJD6UwU7p1384OUw0E"
+  nuthatch:
+    url: "https://nuthatch.lastelm.software"
+    key: "2ad0ea65-505a-4102-a804-d1a4f72406b8"
+
+# 6. Seguridad JWT
+jwt:
+  secret: "UnaClaveSecretaMuyLargaYComplejaParaFirmarLosTokensDeAvis2026"
+  expiration: 86400000
+>>>>>>> Stashed changes

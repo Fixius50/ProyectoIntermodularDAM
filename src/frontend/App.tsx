@@ -5,10 +5,9 @@ import { GameProvider } from './src/context/GameContext';
 import { FlockProvider } from './src/context/FlockContext';
 import { MarketProvider } from './src/context/MarketContext';
 import { CoopProvider } from './src/context/CoopContext';
-import { SantuarioScreen } from './src/screens/SantuarioScreen';
+import { CollectionScreen } from './src/screens/CollectionScreen';
 import { ExpedicionScreen } from './src/screens/ExpedicionScreen';
 import { CertamenScreen } from './src/screens/CertamenScreen';
-import { AlbumScreen } from './src/screens/AlbumScreen';
 import { FlockScreen } from './src/screens/FlockScreen';
 import { MarketScreen } from './src/screens/MarketScreen';
 import { ProfileScreen } from './src/screens/ProfileScreen';
@@ -51,14 +50,12 @@ function GameContent() {
 
   const renderScreen = () => {
     switch (currentTab) {
-      case 'santuario':
-        return <SantuarioScreen />;
+      case 'coleccion':
+        return <CollectionScreen />;
       case 'expedicion':
         return <ExpedicionScreen />;
       case 'certamen':
         return <CertamenScreen />;
-      case 'album':
-        return <AlbumScreen />;
       case 'bandada':
         return <FlockScreen />;
       case 'mercado':
@@ -68,7 +65,7 @@ function GameContent() {
       case 'avisos':
         return <NotificationsScreen />;
       default:
-        return <SantuarioScreen />;
+        return <CollectionScreen />;
     }
   };
 

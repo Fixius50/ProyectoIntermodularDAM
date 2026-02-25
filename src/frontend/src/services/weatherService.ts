@@ -15,8 +15,8 @@ function mapWmoToCondition(wmoCode: number, isDay: boolean): WeatherCondition {
     if (wmoCode === 0 || wmoCode === 1) return 'SOL';
     if (wmoCode === 2 || wmoCode === 3 || wmoCode === 45 || wmoCode === 48) return 'NUBLADO';
     if (wmoCode >= 51 && wmoCode <= 67) return 'LLUVIA';
-    if (wmoCode >= 71 && wmoCode <= 86) return 'LLUVIA'; // Consideramos nieve como lluvia por ahora o añadimos NIEVE luego
-    if (wmoCode >= 95) return 'VIENTO'; // Tormentas = viento y mala clima
+    if (wmoCode >= 71 && wmoCode <= 86) return 'NIEVE';
+    if (wmoCode >= 95) return 'TORMENTA';
 
     return 'SOL'; // Fallback
 }

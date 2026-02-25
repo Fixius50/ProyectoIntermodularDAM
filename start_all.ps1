@@ -6,7 +6,7 @@ if (-not $ScriptDir) { $ScriptDir = Get-Location }
 
 $BACKEND_DIR = "$ScriptDir"
 $FRONTEND_DIR = "$ScriptDir\src\frontend"
-$MVNW = "$ScriptDir\src\backend\mvnw.cmd"
+$MVNW = "$ScriptDir\mvnw.cmd"
 
 Write-Host " Verificando rutas..." -ForegroundColor Gray
 Write-Host "   Ruta Base: $ScriptDir"

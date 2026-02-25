@@ -3,7 +3,7 @@
  */
 
 // ─── CLIMA ─────────────────────────────────────────────────
-export type WeatherCondition = 'SOL' | 'LLUVIA' | 'VIENTO' | 'NOCHE' | 'NUBLADO';
+export type WeatherCondition = 'SOL' | 'LLUVIA' | 'VIENTO' | 'NOCHE' | 'NUBLADO' | 'NIEVE' | 'TORMENTA';
 
 export interface Weather {
     condition: WeatherCondition;
