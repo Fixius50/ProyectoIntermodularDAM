@@ -19,6 +19,7 @@
 - [x] Módulo 2: Autenticación con Supabase Auth e Integración de Persistencia (Backend).
 - [x] Módulo 3: Motor de Expedición y Crafting (Backend - Integración Clima Real).
 - [x] Módulo 4: Sistema de Certamen (Backend - RSocket Battle Core).
+  - [x] Integración de cliente y tipados RSocket en Frontend (`battleSocket.ts`).
 - [ ] Módulo 5: Configuración de PWA (Service Workers, Offline mode, Manifest).
 
 ### Fase 4: Refinamiento e Integración Externa (Completado ✅)
