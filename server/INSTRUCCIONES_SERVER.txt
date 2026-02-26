@@ -1,0 +1,41 @@
+===============================================================
+A V I S  -  G U Í A   D E   D E S P L I E G U E   S E R V I D O R
+===============================================================
+
+Este documento explica cómo el desarrollador debe arrancar y gestionar el Backend Reactivo Spring Boot alojado en la carpeta `server/`.
+
+--- 1. REQUISITOS PREVIOS ---
+1. Java 17 o superior instalado.
+2. Maven instalado (`mvn -version`).
+3. Una cuenta y un proyecto en Supabase (PostgreSQL).
+4. Un servidor RabbitMQ ejecutándose localmente o en un contenedor.
+5. Un servidor Redis ejecutándose localmente o en un contenedor.
+6. Tailscale instalado y configurado en esta misma máquina si actuará como servidor de los clientes.
+
+--- 2. INSTRUCCIONES DE BASE DE DATOS (SUPABASE) ---
+1. Abre el panel de tu proyecto en Supabase.
+2. Ve al "SQL Editor".
+3. Copia el contenido del archivo `server/supabase_schema.sql` y ejecútalo para crear las tablas y restricciones (Jugadores, Cartas e Inventario).
+4. Tus contraseñas y conexión se gestionan en `server/src/main/resources/application.yml`. Modifica las contraseñas reales ('AleAdriRober' u otra) antes de producción si es necesario.
+
+--- 3. EJECUCIÓN (DESARROLLO) ---
+Abre una terminal en esta misma carpeta (`server/`):
+1. Instala dependencias y compila:
+   `mvn clean install -DskipTests`
+2. Arranca el servidor Spring WebFlux y RSocket:
+   `mvn spring-boot:run`
+
+Por defecto, el servidor levantará en:
+- API REST: puerto `8080` (0.0.0.0 accesible en red privada y tailscale)
+- RSocket (Batallas Tiempo Real): puerto `7000` (tcp)
+
+--- 4. INTEGRACIÓN POSTERIOR ---
+- **Endpoints Públicos (`/api/public/**`)**: no requieren JWT de portador.
+- **Endpoints de Autenticación (`/api/auth/**`)**: Login y Registro.
+- **Seguridad**: Se requiere cabecera "Authorization: Bearer <TUTOKEN>" para acceder al resto de llamadas HTTP.
+- **Microservicios/APIs (Fase 5 pendiente, a añadir aquí en el código)**: Gestionarán climas y pájaros conectándose al exterior. 
+
+--- 5. DESPLIEGUE (PRODUCCIÓN - UBUNTU) ---
+1. Ejecutar `mvn clean package -DskipTests`
+2. Esto generará un .jar en `server/target/`.
+3. Levanta este jar en tu Ubuntu bajo Tailscale usando: `java -jar nombre_del_archivo.jar` (se recomienda crear un servicio systemd).
