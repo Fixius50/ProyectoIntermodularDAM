@@ -1,6 +1,6 @@
 # 00 Reglas Maestras
 
-**Autor:** Roberto Monedero Alonso
+**Autor:** Roberto Monedero, Adrián úrsula, Alejandro Gonzalo
 **Proyecto:** "El Cuaderno de Campo Vivo" (App Ornitológica)
 
 ## Visión del Proyecto

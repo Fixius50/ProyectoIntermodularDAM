@@ -57,7 +57,7 @@ const DEFAULT_PINNED_LINKS: QuickLink[] = [
 
 export const useAppStore = create<CombinedState>()(
     persist(
-        (set) => ({
+        (set, get) => ({
             // Initial State
             playerBirds: [],
             opponentBirds: [],
@@ -116,6 +116,13 @@ export const useAppStore = create<CombinedState>()(
                         },
                         currentScreen: 'home'
                     });
+
+                    get().addNotification({
+                        type: 'system',
+                        title: 'Santuario Abierto',
+                        message: `¡Bienvenido de nuevo, ${email.split('@')[0]}! El bosque te echaba de menos.`
+                    });
+
                     return true;
                 }
                 return false;
@@ -138,6 +145,13 @@ export const useAppStore = create<CombinedState>()(
                         },
                         currentScreen: 'home'
                     });
+
+                    get().addNotification({
+                        type: 'achievement',
+                        title: '¡Carnet de Ornitólogo!',
+                        message: `Te damos la bienvenida a AVIS, ${name}. Has recibido tus primeras 10 plumas de inicio.`
+                    });
+
                     return true;
                 }
                 return false;

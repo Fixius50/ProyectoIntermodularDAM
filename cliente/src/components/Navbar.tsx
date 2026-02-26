@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../store/useAppStore';
+import NotificationDropdown from './ui/NotificationDropdown';
 
 const Navbar: React.FC = () => {
     const {
@@ -8,7 +9,6 @@ const Navbar: React.FC = () => {
         currentScreen,
         setCurrentScreen,
         logout,
-        markAllNotificationsAsRead
     } = useAppStore();
 
     const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -83,43 +83,10 @@ const Navbar: React.FC = () => {
                     </button>
 
                     {/* Notifications Dropdown */}
-                    {isNotifOpen && (
-                        <div className="absolute right-0 mt-4 w-80 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 overflow-hidden animate-fade-in-down origin-top-right z-[100]">
-                            <div className="p-4 border-b border-slate-50 dark:border-slate-800 flex justify-between items-center">
-                                <p className="text-xs font-black uppercase tracking-widest text-sage-800 dark:text-white">Notificaciones</p>
-                                {unreadCount > 0 && (
-                                    <button
-                                        className="text-[10px] font-bold text-primary hover:underline"
-                                        onClick={markAllNotificationsAsRead}
-                                    >
-                                        Marcar como leído
-                                    </button>
-                                )}
-                            </div>
-                            <div className="max-h-80 overflow-y-auto p-2">
-                                {notifications.length === 0 ? (
-                                    <div className="p-4 text-center text-slate-500 text-[10px] font-bold uppercase tracking-widest">No tienes notificaciones.</div>
-                                ) : (
-                                    notifications.map(notif => (
-                                        <div
-                                            key={notif.id}
-                                            className={`flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ${!notif.isRead ? 'bg-primary/5 dark:bg-primary/10' : ''}`}
-                                        >
-                                            <div className={`size-8 rounded-lg ${!notif.isRead ? 'bg-primary text-slate-900' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'} flex items-center justify-center flex-shrink-0`}>
-                                                <span className="material-symbols-outlined text-sm">
-                                                    {notif.type === 'achievement' ? 'workspace_premium' : notif.type === 'sighting' ? 'visibility' : notif.type === 'weather' ? 'cloud' : 'notifications'}
-                                                </span>
-                                            </div>
-                                            <div>
-                                                <p className={`text-[11px] font-black ${!notif.isRead ? 'text-sage-800 dark:text-white' : 'text-slate-600 dark:text-slate-300'} leading-tight`}>{notif.title}</p>
-                                                <p className="text-[10px] font-medium text-slate-500 mt-0.5">{notif.message}</p>
-                                            </div>
-                                        </div>
-                                    ))
-                                )}
-                            </div>
-                        </div>
-                    )}
+                    <NotificationDropdown
+                        isOpen={isNotifOpen}
+                        onClose={() => setIsNotifOpen(false)}
+                    />
                 </div>
 
                 <div className="relative" onClick={(e) => e.stopPropagation()}>
