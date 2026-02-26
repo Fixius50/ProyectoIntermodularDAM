@@ -1,0 +1,76 @@
+plugins {
+    id 'com.android.application'
+    id 'dagger.hilt.android.plugin'
+}
+
+android {
+    namespace 'com.avis.client'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.avis.client"
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+        
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    viewBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // REST: Retrofit2 + Gson
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
+
+    // Programacion Reactiva Asincrona: RxJava 3
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.8'
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
+
+    // Tiempo Real: OkHttp WebSockets
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+
+    // Geolocalizacion (Google Play Services)
+    implementation 'com.google.android.gms:play-services-location:21.1.0'
+
+    // Almacenamiento Local Offline: Room Database
+    def room_version = "2.6.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-rxjava3:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+
+    // Inyeccion de Dependencias: Dagger Hilt
+    implementation 'com.google.dagger:hilt-android:2.49'
+    annotationProcessor 'com.google.dagger:hilt-compiler:2.49'
+
+    // Tareas en Segundo Plano: WorkManager
+    def work_version = "2.9.0"
+    implementation "androidx.work:work-runtime:$work_version"
+    implementation "androidx.work:work-rxjava3:$work_version"
+
+    // Seguridad (Auth): EncryptedSharedPreferences
+    implementation "androidx.security:security-crypto:1.1.0-alpha06"
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
