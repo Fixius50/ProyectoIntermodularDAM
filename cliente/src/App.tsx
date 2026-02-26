@@ -1,38 +1,57 @@
 import { useAppStore } from './store/useAppStore';
 import Navbar from './components/Navbar';
 import ElSantuario from './screens/home/ElSantuario';
+import Login from './screens/auth/Login';
+import BottomNav from './components/BottomNav';
+import LaExpedicion from './screens/expedition/LaExpedicion';
+import ElCertamen from './screens/arena/ElCertamen';
 import './App.css';
 
 function App() {
   const { currentScreen } = useAppStore();
 
+  if (!currentUser) {
+    return <Login />;
+  }
+
   const renderContent = () => {
-    // If not logged in, we could redirect to login, but for now we'll just show home
-    // logic simplified as per request to focus on front end implementation
     switch (currentScreen) {
       case 'home':
         return <ElSantuario />;
       case 'arena':
-        return <div className="p-12"><h2>El Certamen (Próximamente)</h2></div>;
+        return <ElCertamen />;
       case 'expedition':
-        return <div className="p-12"><h2>La Expedición (Próximamente)</h2></div>;
+        return <LaExpedicion />;
       case 'social':
-        return <div className="p-12"><h2>Social (Próximamente)</h2></div>;
+        return <div className="p-12 text-center flex flex-col items-center justify-center min-h-[60vh] gap-6 animate-fade-in">
+          <span className="material-symbols-outlined text-6xl text-primary animate-pulse">group</span>
+          <h2 className="text-3xl font-black">Social</h2>
+          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Bandadas y mercado próximamente disponible</p>
+        </div>;
       case 'store':
-        return <div className="p-12"><h2>Tienda (Próximamente)</h2></div>;
+        return <div className="p-12 text-center flex flex-col items-center justify-center min-h-[60vh] gap-6 animate-fade-in">
+          <span className="material-symbols-outlined text-6xl text-primary animate-pulse">shopping_cart</span>
+          <h2 className="text-3xl font-black">Tienda</h2>
+          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Suministros próximamente disponible</p>
+        </div>;
       case 'profile':
-        return <div className="p-12"><h2>Mi Perfil (Próximamente)</h2></div>;
+        return <div className="p-12 text-center flex flex-col items-center justify-center min-h-[60vh] gap-6 animate-fade-in">
+          <span className="material-symbols-outlined text-6xl text-primary animate-pulse">account_circle</span>
+          <h2 className="text-3xl font-black">Mi Perfil</h2>
+          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Estadísticas de explorador próximamente disponible</p>
+        </div>;
       default:
         return <ElSantuario />;
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans">
+    <div className="min-h-screen flex flex-col font-sans pb-24 md:pb-0">
       <Navbar />
       <main className="flex-1 overflow-y-auto">
         {renderContent()}
       </main>
+      <BottomNav />
 
       {/* Background decoration elements */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">

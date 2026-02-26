@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import AvisCore from '../services/avisCore';
 import {
     AppState,
     User,
@@ -17,7 +18,12 @@ interface AppActions {
     markNotificationAsRead: (id: string) => void;
     markAllNotificationsAsRead: () => void;
     setCurrentScreen: (screen: string) => void;
+    login: (email: string, pass: string) => Promise<boolean>;
+    register: (name: string, email: string, pass: string) => Promise<boolean>;
     logout: () => void;
+    syncInventory: () => Promise<void>;
+    syncPlayerBirds: () => Promise<void>;
+    executeAttack: (move: string, birdId: string) => Promise<void>;
 }
 
 type CombinedState = AppState & AppActions & { currentScreen: string };
@@ -67,13 +73,14 @@ export const useAppStore = create<CombinedState>()(
             posts: [],
             guildChats: {},
             availableGuilds: [],
-            currentScreen: 'home',
+            currentScreen: 'login',
+            battleLogs: [],
 
             // Actions
             setWeather: (weather: WeatherData) => set({ weather }),
             setTime: (time: TimeData) => set({ time }),
             setUser: (currentUser: User | null) => set({ currentUser }),
-            addNotification: (notif: Omit<Notification, 'id' | 'timestamp' | 'isRead'>) => set((state: CombinedState) => ({
+            addNotification: (notif: Omit<Notification, 'id' | 'timestamp' | 'isRead'>) => set((state) => ({
                 notifications: [
                     {
                         ...notif,
@@ -84,18 +91,95 @@ export const useAppStore = create<CombinedState>()(
                     ...state.notifications
                 ]
             })),
-            markNotificationAsRead: (id: string) => set((state: CombinedState) => ({
+            markNotificationAsRead: (id: string) => set((state) => ({
                 notifications: state.notifications.map(n => n.id === id ? { ...n, isRead: true } : n)
             })),
-            markAllNotificationsAsRead: () => set((state: CombinedState) => ({
+            markAllNotificationsAsRead: () => set((state) => ({
                 notifications: state.notifications.map(n => ({ ...n, isRead: true }))
             })),
             setCurrentScreen: (currentScreen: string) => set({ currentScreen }),
-            logout: () => set({ currentUser: null, currentScreen: 'home' }),
+
+            login: async (email: string, pass: string) => {
+                console.log('Logging in...', email, pass);
+                if (email && pass) {
+                    set({
+                        currentUser: {
+                            id: 'u1',
+                            name: email.split('@')[0],
+                            rank: 'Ornitólogo Novel',
+                            level: 1,
+                            xp: 0,
+                            maxXp: 100,
+                            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
+                            feathers: 10,
+                            joinDate: new Date().toISOString()
+                        },
+                        currentScreen: 'home'
+                    });
+                    return true;
+                }
+                return false;
+            },
+
+            register: async (name: string, email: string, pass: string) => {
+                console.log('Registering...', name, email, pass);
+                if (name && email && pass) {
+                    set({
+                        currentUser: {
+                            id: 'u1',
+                            name: name,
+                            rank: 'Novato',
+                            level: 1,
+                            xp: 0,
+                            maxXp: 100,
+                            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`,
+                            feathers: 0,
+                            joinDate: new Date().toISOString()
+                        },
+                        currentScreen: 'home'
+                    });
+                    return true;
+                }
+                return false;
+            },
+
+            logout: () => set({ currentUser: null, currentScreen: 'login' }),
+
+            syncInventory: async () => {
+                try {
+                    const { items } = await AvisCore.fetchInventory();
+                    set({ inventory: items });
+                } catch (err) {
+                    console.error('CorePlugin Error: fetchInventory', err);
+                }
+            },
+
+            syncPlayerBirds: async () => {
+                try {
+                    const { birds } = await AvisCore.getPlayerBirds();
+                    set({
+                        playerBirds: birds,
+                        activeBirdsCount: birds.filter(b => b.status === 'Santuario').length
+                    });
+                } catch (err) {
+                    console.error('CorePlugin Error: getPlayerBirds', err);
+                }
+            },
+
+            executeAttack: async (move: string, birdId: string) => {
+                try {
+                    const result = await AvisCore.executeBattleAttack({ move, birdId });
+                    set((state) => ({
+                        battleLogs: [result.log, ...state.battleLogs].slice(0, 10)
+                    }));
+                } catch (err) {
+                    console.error('CorePlugin Error: executeBattleAttack', err);
+                }
+            },
         }),
         {
             name: 'aery-storage',
-            partialize: (state: CombinedState) => ({
+            partialize: (state) => ({
                 playerBirds: state.playerBirds,
                 inventory: state.inventory,
                 activeBirdsCount: state.activeBirdsCount,

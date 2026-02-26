@@ -5,7 +5,7 @@ import { fetchWeather } from '../../services/weather';
 import { getCurrentTimeData } from '../../services/time';
 
 const ElSantuario: React.FC = () => {
-    const { currentUser, weather, time, setWeather, setTime } = useAppStore();
+    const { currentUser, weather, time, setWeather, setTime, syncInventory, syncPlayerBirds, activeBirdsCount } = useAppStore();
 
     useEffect(() => {
         const initData = async () => {
@@ -14,9 +14,13 @@ const ElSantuario: React.FC = () => {
 
             const weatherData = await fetchWeather();
             setWeather(weatherData);
+
+            // Sync native data
+            await syncInventory();
+            await syncPlayerBirds();
         };
         initData();
-    }, [setWeather, setTime]);
+    }, [setWeather, setTime, syncInventory, syncPlayerBirds]);
 
     return (
         <div className="flex flex-col gap-8 p-6 lg:p-12 animate-fade-in max-w-7xl mx-auto">
@@ -50,7 +54,9 @@ const ElSantuario: React.FC = () => {
                         </div>
                     </div>
                     <p className="text-sm text-slate-600 dark:text-slate-400 font-medium leading-relaxed relative z-10">
-                        Tu santuario está tranquilo hoy. No hay aves descansando actualmente. ¡Es un buen momento para una expedición!
+                        {activeBirdsCount > 0
+                            ? `Tienes ${activeBirdsCount} aves descansando en tu santuario.`
+                            : "Tu santuario está tranquilo hoy. No hay aves descansando actualmente. ¡Es un buen momento para una expedición!"}
                     </p>
                     <button className="mt-auto w-full py-4 bg-primary text-slate-900 font-black rounded-2xl shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:translate-y-[-2px] transition-all relative z-10 uppercase tracking-widest text-xs">
                         Explorar Colección
@@ -71,11 +77,16 @@ const ElSantuario: React.FC = () => {
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="w-full h-3 bg-sage-100 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-200 dark:border-slate-800">
-                                <div className="h-full bg-primary w-[5%] rounded-full" />
+                                <div
+                                    className="h-full bg-primary transition-all duration-1000"
+                                    style={{ width: `${(currentUser?.xp || 0) / (currentUser?.maxXp || 100) * 100}%` }}
+                                />
                             </div>
                             <div className="flex justify-between items-center">
-                                <p className="text-[10px] text-slate-400 font-black uppercase tracking-tighter">Progreso Aves</p>
-                                <p className="text-[10px] text-primary font-black uppercase tracking-tighter">0 / 1</p>
+                                <p className="text-[10px] text-slate-400 font-black uppercase tracking-tighter">XP Ornitológica</p>
+                                <p className="text-[10px] text-primary font-black uppercase tracking-tighter">
+                                    {currentUser?.xp || 0} / {currentUser?.maxXp || 100}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -89,13 +100,19 @@ const ElSantuario: React.FC = () => {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="p-4 rounded-2xl bg-white/50 dark:bg-slate-800/50 border border-white/20">
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nivel</p>
-                            <p className="text-2xl font-black text-primary">1</p>
+                            <p className="text-2xl font-black text-primary">{currentUser?.level || 1}</p>
                         </div>
                         <div className="p-4 rounded-2xl bg-white/50 dark:bg-slate-800/50 border border-white/20">
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Plumas</p>
-                            <p className="text-2xl font-black text-amber-500">0</p>
+                            <p className="text-2xl font-black text-amber-500">{currentUser?.feathers || 0}</p>
                         </div>
                     </div>
+                    <button
+                        onClick={() => useAppStore.getState().logout()}
+                        className="mt-4 w-full py-3 bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-red-500 font-black rounded-xl transition-all uppercase tracking-widest text-[10px]"
+                    >
+                        Cerrar Sesión
+                    </button>
                 </GlassPanel>
             </div>
         </div>

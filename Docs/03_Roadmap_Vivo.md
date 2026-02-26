@@ -1,28 +1,31 @@
 # 03 Roadmap Vivo
 
-## Fases del Proyecto
+## 🗺️ Roadmap de Desarrollo
 
-### Fase 1: Investigación y Configuración Documental (Activo 🟢)
-- [x] Extracción de requerimientos de diseño, UX y arquitectura técnica (PDF).
-- [x] Consolidación de información en `Docs/` base suite.
-- [ ] Revisión y aprobación del alcance por el Promotor.
+### Fase 1: Cimientos y Arquitectura [COMPLETO]
+- [x] Definición de Stack Tecnológico (React + Capacitor + Java).
+- [x] Configuración de Workspace de Documentación (`Docs/`).
+- [x] Estructura de Proyecto Base.
 
-### Fase 2: Configuración Inicial del WorkSpace (Completado ✅)
-- [x] Inicialización del proyecto Cliente Híbrido (React + Vite + Capacitor + Android Nativo).
-- [x] Inicialización del proyecto Backend (Spring Boot 3 + WebFlux).
-- [x] Verificación de MCPs y Suite Documental (00-10).
-- [x] Configuración Inicial del Puente JS-Java (Retrofit, RxJava, Room).
+### Fase 2: Configuración Nativa Android (Java) [COMPLETO]
+- [x] Integración de dependencias (Retrofit, Room, RxJava, Hilt).
+- [x] Creación de `AvisCorePlugin.java` (Bridge Capacitor).
+- [x] Generación de APK Inicial de prueba.
 
-### Fase 3: Desarrollo Core MVP (Activo 🟢)
-- [ ] Módulo 1: UI Base (Santuario, Expedición, Taller, Certamen, Álbum) en React + Zustand.
-  - [ ] Refactorización de estilos a unidades relativas (rem, vh).
-- [x] Módulo 2: Autenticación con Supabase Auth e Integración de Persistencia (Backend).
+### Fase 3: Módulo 1: UI Base y Navegación [COMPLETO]
+- [x] Implementación de Sistema de Diseño (Glassmorphism & Mobile-First).
+- [x] Desarrollo de Pantalla de Login y Registro (Mock).
+- [x] Creación de Navbar y Bottom Navigation.
+- [x] Layout principal y enrutado de pantallas core.
+
+### Fase 4: Módulo 2: Vinculación de Datos y Recursos [EN CURSO]
+- [/] Conexión de UI con Zustand Store.
+- [ ] Implementación de `avisCore.ts` calls.
+- [ ] Sistema de Inventario y Plumas.
+- [ ] Persistencia de sesión segura via Native.
 - [x] Módulo 3: Motor de Expedición y Crafting (Backend - Integración Clima Real).
 - [x] Módulo 4: Sistema de Certamen (Backend - RSocket Battle Core).
   - [x] Integración de cliente y tipados RSocket en Frontend (`battleSocket.ts`).
-- [ ] Módulo 5: Configuración de PWA (Service Workers, Offline mode, Manifest).
-
-### Fase 4: Refinamiento e Integración Externa (Completado ✅)
 - [x] Integración de API de Clima (OpenWeatherMap).
 - [x] Integración robusta de APIs (Nuthatch, Unsplash).
 - [x] Módulo Social (Bandadas, Marketplace con Redis y Redisson).

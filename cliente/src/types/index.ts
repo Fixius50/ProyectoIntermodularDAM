@@ -33,6 +33,7 @@ export interface Bird {
     audioUrl?: string;
     origin?: string;
     isStudied?: boolean;
+    status: 'Santuario' | 'Expedicion' | 'Certamen';
 }
 
 export interface InventoryItem {
@@ -123,4 +124,5 @@ export interface AppState {
     posts: SocialPost[];
     guildChats: Record<string, ChatMessage[]>;
     availableGuilds: Guild[];
+    battleLogs: string[];
 }
