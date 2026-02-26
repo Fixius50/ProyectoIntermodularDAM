@@ -18,14 +18,13 @@ export class Router {
             this.container.classList.remove('animate-fade-in');
             this.container.innerHTML = ''; // Clear container
 
+            window.location.hash = name;
             await loader();
 
             // Re-trigger animation
             requestAnimationFrame(() => {
                 this.container.classList.add('animate-fade-in');
             });
-
-            window.location.hash = name;
         }
     }
 
