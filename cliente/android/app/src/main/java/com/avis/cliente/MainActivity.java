@@ -4,19 +4,17 @@ import com.avis.cliente.plugins.AvisCorePlugin;
 import com.avis.cliente.plugins.TailscalePlugin;
 import com.getcapacitor.BridgeActivity;
 
-import dagger.hilt.android.AndroidEntryPoint;
-
 /**
  * MainActivity - Entry point for the Capacitor hybrid Android app.
  *
- * Registers all custom Capacitor plugins so they are available to the
- * React/TypeScript frontend via the Capacitor bridge.
+ * NOTE: We do NOT use @AndroidEntryPoint here because BridgeActivity (Capacitor)
+ * is not a Hilt-aware base class. Instead, the plugins use the @EntryPoint
+ * pattern (EntryPoints.get()) to access Hilt-provided dependencies.
  *
  * Plugins registered:
  *   - AvisCorePlugin  → game data (inventory, birds, battle, auth token)
  *   - TailscalePlugin → Tailscale VPN connectivity (Go/tsnet bridge)
  */
-@AndroidEntryPoint
 public class MainActivity extends BridgeActivity {
 
     @Override
