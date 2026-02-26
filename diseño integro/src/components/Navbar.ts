@@ -39,14 +39,40 @@ export const renderNavbar = (activeScreen: string) => {
         </nav>
         
         <div class="flex items-center gap-4">
-            <button class="relative p-2 text-slate-600 dark:text-slate-300 hover:bg-sage-100 dark:hover:bg-sage-800 rounded-full transition-colors group">
-                <span class="material-symbols-outlined">notifications</span>
-                ${unreadCount > 0 ? `
-                    <span class="absolute top-1 right-1 size-5 bg-red-500 rounded-full border-2 border-white dark:border-background-dark text-[10px] font-black text-white flex items-center justify-center">
-                        ${unreadCount > 9 ? '9+' : unreadCount}
-                    </span>
-                ` : ''}
-            </button>
+            <div class="relative">
+                <button id="nav-notifications-trigger" class="relative p-2 text-slate-600 dark:text-slate-300 hover:bg-sage-100 dark:hover:bg-sage-800 rounded-full transition-colors group">
+                    <span class="material-symbols-outlined">notifications</span>
+                    ${unreadCount > 0 ? `
+                        <span class="absolute top-1 right-1 size-5 bg-red-500 rounded-full border-2 border-white dark:border-background-dark text-[10px] font-black text-white flex items-center justify-center">
+                            ${unreadCount > 9 ? '9+' : unreadCount}
+                        </span>
+                    ` : ''}
+                </button>
+                <!-- Notifications Dropdown -->
+                <div id="nav-notifications-dropdown" class="absolute right-0 mt-4 w-80 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 overflow-hidden hidden animate-fade-in-down origin-top-right z-[100]">
+                    <div class="p-4 border-b border-slate-50 dark:border-slate-800 flex justify-between items-center">
+                        <p class="text-xs font-black uppercase tracking-widest text-sage-800 dark:text-white">Notificaciones</p>
+                        ${unreadCount > 0 ? `<button id="nav-mark-all-read" class="text-[10px] font-bold text-primary hover:underline">Marcar como leído</button>` : ''}
+                    </div>
+                    <div class="max-h-80 overflow-y-auto p-2">
+                        ${notifications.length === 0 ? `
+                            <div class="p-4 text-center text-slate-500 text-[10px] font-bold uppercase tracking-widest">No tienes notificaciones.</div>
+                        ` : notifications.map(notif => `
+                            <div class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ${!notif.isRead ? 'bg-primary/5 dark:bg-primary/10' : ''}">
+                                <div class="size-8 rounded-lg ${!notif.isRead ? 'bg-primary text-slate-900' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'} flex items-center justify-center flex-shrink-0">
+                                    <span class="material-symbols-outlined text-sm">
+                                        ${notif.type === 'achievement' ? 'workspace_premium' : notif.type === 'sighting' ? 'visibility' : notif.type === 'weather' ? 'cloud' : 'notifications'}
+                                    </span>
+                                </div>
+                                <div>
+                                    <p class="text-[11px] font-black ${!notif.isRead ? 'text-sage-800 dark:text-white' : 'text-slate-600 dark:text-slate-300'} leading-tight">${notif.title}</p>
+                                    <p class="text-[10px] font-medium text-slate-500 mt-0.5">${notif.message}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
             <div class="relative">
                 <div id="nav-profile-trigger" class="flex items-center gap-3 group cursor-pointer border-l border-slate-200 dark:border-slate-800 pl-4">
                     <div class="text-right hidden sm:block">
@@ -98,13 +124,48 @@ export const attachNavbarListeners = (container: HTMLElement) => {
     if (trigger && dropdown) {
         trigger.addEventListener('click', (e) => {
             e.stopPropagation();
+            const notifDropdown = container.querySelector('#nav-notifications-dropdown');
+            notifDropdown?.classList.add('hidden'); // Close notif if open
             dropdown.classList.toggle('hidden');
         });
+    }
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', () => {
+    const notifTrigger = container.querySelector('#nav-notifications-trigger');
+    const notifDropdown = container.querySelector('#nav-notifications-dropdown');
+
+    if (notifTrigger && notifDropdown) {
+        notifTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown?.classList.add('hidden'); // Close profile if open
+            notifDropdown.classList.toggle('hidden');
+        });
+    }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+        if (dropdown && !dropdown.contains(e.target as Node) && trigger && !trigger.contains(e.target as Node)) {
             dropdown.classList.add('hidden');
-        }, { once: true });
+        }
+        if (notifDropdown && !notifDropdown.contains(e.target as Node) && notifTrigger && !notifTrigger.contains(e.target as Node)) {
+            notifDropdown.classList.add('hidden');
+        }
+    });
+
+    const markAllReadBtn = container.querySelector('#nav-mark-all-read');
+    if (markAllReadBtn) {
+        markAllReadBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const state = store.getState();
+            const updated = state.notifications.map(n => ({ ...n, isRead: true }));
+            store.setState({ notifications: updated });
+
+            // Re-render navbar since store listeners might only re-render the main content area depending on setup
+            // This is a quick UI refresh trick for the navbar standalone logic
+            if (notifDropdown) notifDropdown.classList.add('hidden');
+
+            // Dispatch a generic app-update event if the router relies on it
+            window.dispatchEvent(new CustomEvent('app-state-changed'));
+        });
     }
 
     if (logoutBtn) {

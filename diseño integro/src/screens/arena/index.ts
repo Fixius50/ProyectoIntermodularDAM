@@ -12,6 +12,7 @@ export const renderArena = (container: HTMLElement) => {
     let currentRound = 1;
     let isRoundAnimating = false;
     let matchFinished = false;
+    let activeBuff: string | null = null;
 
     const renderSelector = () => {
         container.innerHTML = `
@@ -74,8 +75,149 @@ export const renderArena = (container: HTMLElement) => {
             card.addEventListener('click', () => {
                 const id = (card as HTMLElement).dataset.id;
                 selectedPlayerBird = playerBirds.find(b => b.id === id) || null;
-                if (selectedPlayerBird) renderCombat();
+                if (selectedPlayerBird) renderPreparation();
             });
+        });
+    };
+
+    let selectedInventoryItem: string | null = null;
+
+    const renderPreparation = () => {
+        if (!selectedPlayerBird) return;
+        const state = store.getState();
+
+        // Filter out items that make sense as battle consumables: i1, i2, i3, i4
+        const consumables = state.inventory.filter(i => ['i1', 'i2', 'i3', 'i4'].includes(i.id) && i.count > 0);
+
+        container.innerHTML = `
+        <div class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col overflow-x-hidden text-slate-900 dark:text-slate-100 relative">
+            <div class="fixed inset-0 pointer-events-none opacity-40 z-0 bg-paper-texture mix-blend-multiply dark:mix-blend-overlay"></div>
+            <div class="relative z-10 flex flex-col flex-grow w-full max-w-[1440px] mx-auto">
+                ${renderNavbar('arena')}
+                
+                <main class="flex-grow p-6 lg:p-12 flex flex-col items-center">
+                    <div class="text-center mb-10 max-w-2xl animate-fade-in">
+                        <h2 class="text-4xl font-black text-slate-800 dark:text-white tracking-tighter mb-4">Fase de Preparación</h2>
+                        <p class="text-slate-500 dark:text-slate-400 font-medium">Equipa a tu campeón con un objeto antes de comenzar el duelo.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-4xl">
+                        <!-- Bird Info -->
+                        <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border-4 border-primary shadow-xl overflow-hidden text-center p-8">
+                            <img src="${selectedPlayerBird.image}" class="size-48 rounded-3xl object-cover mx-auto mb-6 shadow-md border-4 border-slate-100 dark:border-slate-800">
+                            <h3 class="text-2xl font-black mb-1">${selectedPlayerBird.name}</h3>
+                            <span class="text-xs font-black uppercase text-primary tracking-widest">${selectedPlayerBird.type} - LVL ${selectedPlayerBird.level}</span>
+                            
+                            <div class="flex justify-center gap-6 mt-6">
+                                <div class="text-center">
+                                    <span class="material-symbols-outlined text-amber-500 mb-1">music_note</span>
+                                    <p class="font-bold text-lg leading-none">${selectedPlayerBird.canto}</p>
+                                </div>
+                                <div class="text-center">
+                                    <span class="material-symbols-outlined text-emerald-500 mb-1">shield</span>
+                                    <p class="font-bold text-lg leading-none">${selectedPlayerBird.plumaje}</p>
+                                </div>
+                                <div class="text-center">
+                                    <span class="material-symbols-outlined text-blue-500 mb-1">air</span>
+                                    <p class="font-bold text-lg leading-none">${selectedPlayerBird.vuelo}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Inventory Selection -->
+                        <div class="bg-white/80 dark:bg-slate-900/60 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm p-8 flex flex-col">
+                            <h4 class="text-sm font-black uppercase text-slate-400 tracking-widest mb-6">Tu Inventario (Consumibles)</h4>
+                            
+                            <div class="flex-grow space-y-3 overflow-y-auto mb-6">
+                                ${consumables.length === 0 ? `
+                                    <div class="text-center p-6 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl">
+                                        <span class="material-symbols-outlined text-4xl text-slate-300 mb-2">inventory_2</span>
+                                        <p class="text-sm font-bold text-slate-400">No tienes consumibles compatibles.</p>
+                                    </div>
+                                ` : consumables.map(item => `
+                                    <div class="prep-item-btn cursor-pointer p-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center gap-4 transition-all hover:border-primary group" data-id="${item.id}">
+                                        <div class="size-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                                            ${item.icon}
+                                        </div>
+                                        <div class="flex-grow">
+                                            <h5 class="font-bold text-sm text-sage-800 dark:text-white leading-tight">${item.name}</h5>
+                                            <p class="text-[10px] text-slate-500 uppercase font-black">X${item.count}</p>
+                                        </div>
+                                        <div class="item-check size-6 rounded-full border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center transition-colors">
+                                            <span class="material-symbols-outlined text-sm opacity-0 text-white">check</span>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            
+                            <div class="flex gap-4">
+                                <button id="btn-skip-item" class="flex-1 py-4 bg-slate-100 dark:bg-slate-800 text-slate-500 font-bold rounded-2xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors uppercase text-xs">
+                                    Ir sin objeto
+                                </button>
+                                <button id="btn-confirm-prep" class="flex-1 py-4 bg-primary text-slate-900 font-black rounded-2xl shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all text-xs uppercase tracking-widest disabled:opacity-50 disabled:pointer-events-none" disabled>
+                                    Equipar y Luchar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        `;
+
+        attachNavbarListeners(container);
+
+        const confirmBtn = container.querySelector('#btn-confirm-prep') as HTMLButtonElement;
+        const itemBtns = container.querySelectorAll('.prep-item-btn');
+
+        itemBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const target = e.currentTarget as HTMLElement;
+                const id = target.dataset.id;
+                selectedInventoryItem = id || null;
+
+                itemBtns.forEach(b => {
+                    b.classList.remove('border-primary', 'bg-primary/5');
+                    b.classList.add('border-slate-100', 'dark:border-slate-800');
+                    const check = b.querySelector('.item-check');
+                    check?.classList.remove('bg-primary', 'border-primary');
+                    check?.querySelector('span')?.classList.add('opacity-0');
+                });
+
+                target.classList.add('border-primary', 'bg-primary/5');
+                target.classList.remove('border-slate-100', 'dark:border-slate-800');
+                const check = target.querySelector('.item-check');
+                check?.classList.add('bg-primary', 'border-primary');
+                check?.querySelector('span')?.classList.remove('opacity-0');
+
+                confirmBtn.disabled = false;
+            });
+        });
+
+        const startCombat = (useBuff: string | null) => {
+            activeBuff = useBuff;
+            if (activeBuff) {
+                const st = store.getState();
+                const invIdx = st.inventory.findIndex(i => i.id === activeBuff);
+                if (invIdx >= 0) {
+                    const newInv = [...st.inventory];
+                    if (newInv[invIdx].count > 1) {
+                        newInv[invIdx] = { ...newInv[invIdx], count: newInv[invIdx].count - 1 };
+                    } else {
+                        newInv.splice(invIdx, 1);
+                    }
+                    store.setState({ inventory: newInv });
+                }
+            }
+            renderCombat();
+        };
+
+        confirmBtn?.addEventListener('click', () => {
+            startCombat(selectedInventoryItem);
+        });
+
+        container.querySelector('#btn-skip-item')?.addEventListener('click', () => {
+            startCombat(null);
         });
     };
 
@@ -121,6 +263,19 @@ export const renderArena = (container: HTMLElement) => {
             weatherStatus = "¡Mañana temprana! +15% a Canto";
         }
 
+        // Apply active buff effects
+        if (activeBuff) {
+            if (activeBuff === 'i1') { // Néctar Floral
+                if (userAttr === 'canto') { userScore *= 1.15; weatherStatus += " (+15% Néctar)"; }
+            } else if (activeBuff === 'i2') { // Semillas
+                if (userAttr === 'vuelo') { userScore *= 1.15; weatherStatus += " (+15% Semillas)"; }
+            } else if (activeBuff === 'i3') { // Plumas
+                if (userAttr === 'plumaje') { userScore *= 1.15; weatherStatus += " (+15% Plumas)"; }
+            } else if (activeBuff === 'i4') { // Amuleto
+                userScore *= 1.10; weatherStatus += " (+10% Amuleto)";
+            }
+        }
+
         const winner = userScore > opponentScore ? 'user' : (userScore < opponentScore ? 'opponent' : 'draw');
 
         return { winner, userAttr, opponentAttr, userScore, opponentScore, advantage, weatherStatus };
@@ -139,7 +294,14 @@ export const renderArena = (container: HTMLElement) => {
             <!-- Header Match Status -->
             <div class="w-full flex items-center justify-between mb-8 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl p-6 rounded-[2.5rem] border border-primary/20 shadow-journal">
                 <div class="flex items-center gap-4">
-                    <img src="${selectedPlayerBird.image}" class="size-16 rounded-2xl object-cover border-4 border-primary">
+                    <div class="relative">
+                        <img src="${selectedPlayerBird.image}" class="size-16 rounded-2xl object-cover border-4 border-primary">
+                        ${activeBuff ? `
+                        <div class="absolute -bottom-2 -right-2 size-6 bg-amber-400 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center shadow-lg" title="Objeto Equipado">
+                            <span class="material-symbols-outlined text-[12px] text-white">star</span>
+                        </div>
+                        ` : ''}
+                    </div>
                     <div>
                         <h4 class="text-sm font-black uppercase text-slate-400">Tú</h4>
                         <p class="text-lg font-bold leading-tight">${selectedPlayerBird.name}</p>
