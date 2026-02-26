@@ -4,7 +4,7 @@ import ElSantuario from './screens/home/ElSantuario';
 import './App.css';
 
 function App() {
-  const { currentScreen, currentUser } = useAppStore();
+  const { currentScreen } = useAppStore();
 
   const renderContent = () => {
     // If not logged in, we could redirect to login, but for now we'll just show home

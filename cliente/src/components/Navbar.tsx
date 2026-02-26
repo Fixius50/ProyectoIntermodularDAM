@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../store/useAppStore';
-import GlassPanel from './ui/GlassPanel';
 
 const Navbar: React.FC = () => {
     const {
@@ -54,8 +53,8 @@ const Navbar: React.FC = () => {
                         <a
                             key={item.id}
                             className={`nav-link cursor-pointer text-sm flex items-center gap-2 ${isActive
-                                    ? 'text-primary font-bold border-b-2 border-primary pb-0.5'
-                                    : 'text-slate-600 dark:text-slate-300 font-medium hover:text-primary transition-colors'
+                                ? 'text-primary font-bold border-b-2 border-primary pb-0.5'
+                                : 'text-slate-600 dark:text-slate-300 font-medium hover:text-primary transition-colors'
                                 }`}
                             onClick={() => setCurrentScreen(item.id)}
                         >

@@ -51,7 +51,7 @@ const DEFAULT_PINNED_LINKS: QuickLink[] = [
 
 export const useAppStore = create<CombinedState>()(
     persist(
-        (set: (nextStateOrUpdater: CombinedState | Partial<CombinedState> | ((state: CombinedState) => CombinedState | Partial<CombinedState>), replace?: boolean) => void) => ({
+        (set) => ({
             // Initial State
             playerBirds: [],
             opponentBirds: [],
