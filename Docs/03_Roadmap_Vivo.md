@@ -8,10 +8,10 @@
 - [ ] Revisión y aprobación del alcance por el Promotor.
 
 ### Fase 2: Configuración Inicial del WorkSpace (Completado ✅)
-- [x] Inicialización del proyecto Frontend (Estrategia PWA con React + Vite).
+- [x] Inicialización del proyecto Cliente Híbrido (React + Vite + Capacitor + Android Nativo).
 - [x] Inicialización del proyecto Backend (Spring Boot 3 + WebFlux).
-- [x] Verificación de MCPs y Suite Documental (00-05).
-- [x] Portabilidad de prototipo HTML/CSS a Componentes React.
+- [x] Verificación de MCPs y Suite Documental (00-10).
+- [x] Configuración Inicial del Puente JS-Java (Retrofit, RxJava, Room).
 
 ### Fase 3: Desarrollo Core MVP (Activo 🟢)
 - [ ] Módulo 1: UI Base (Santuario, Expedición, Taller, Certamen, Álbum) en React + Zustand.

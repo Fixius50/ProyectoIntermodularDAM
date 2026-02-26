@@ -15,11 +15,11 @@
 │   ├── 04_Arquitectura_Workspaces.md
 │   ├── 05_Bitacora_Dev.md
 │   └── 06_Arquitectura_Frontend.md
+├── cliente/               (Capacitor + React Frontend)
+│   ├── android/           (Proyecto Nativo Android Java)
+│   └── src/               (Componentes, Screens, Context)
 ├── src/                   (Código Fuente)
-│   ├── backend/           (Spring Boot 3 + WebFlux)
-│   └── frontend/          (React Native + Vite Hybrid)
-│       ├── src/           (Componentes, Screens, Context)
-│       └── App.tsx        (Navegación Core)
+│   └── backend/           (Spring Boot 3 + WebFlux)
 └── avis-dev-tools/        (Scripts y utilidades)
 ```
 
