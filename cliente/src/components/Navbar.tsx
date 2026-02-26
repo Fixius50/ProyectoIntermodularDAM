@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../store/useAppStore';
-<<<<<<< HEAD
 import NotificationDropdown from './ui/NotificationDropdown';
-=======
->>>>>>> ea8cee24fc15f53c1281ab7d34a41cbbd3c5abb4
 
 const Navbar: React.FC = () => {
     const {
