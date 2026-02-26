@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#5ee830",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#152111",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Lexend', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10">
+<div class="flex items-center p-4 justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-700 dark:text-slate-300">menu</span>
+<h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50">Bandada</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="relative p-2 rounded-full hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 flex h-2 w-2 rounded-full bg-primary"></span>
+</button>
+<div class="size-9 rounded-full bg-primary/20 overflow-hidden border border-primary/30">
+<img class="w-full h-full object-cover" data-alt="User profile picture showing a friendly face" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB02e1Zjw5dtvAVVrnwmKgVrGwPKFnzxNtb5Qe4CX4FPUMQM2cHBD4R3mkT0iWdxWGvoUh0eLTi6iwyLHR1ecAUbAvdhUq8MjwayU_v6cS__AH7ugOc_OecFAFHmGWN7IfigQ0Q5iEx83wayJUfdQpg5N7IPQjHCx4R0PZ6YVTXoRom0TWgF0y9KaWO7twSWatDtdfN2MIt58wMfmDQ8FBDahNNnuNmULJoN49gvAGo4HsBeUESOQQZetHbDnZm_Bnk5dtY2LAs9sTb"/>
+</div>
+</div>
+</div>
+<nav class="flex px-4 border-b border-primary/5">
+<a class="flex-1 text-center py-3 border-b-2 border-primary text-slate-900 dark:text-slate-50 font-semibold text-sm" href="#">Mi Bandada</a>
+<a class="flex-1 text-center py-3 border-b-2 border-transparent text-slate-500 dark:text-slate-400 font-medium text-sm hover:text-primary transition-colors" href="#">Explorar</a>
+</nav>
+</header>
+<main class="flex-1 overflow-y-auto pb-24">
+<section class="p-4">
+<h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">location_on</span>
+                Pinto, Madrid
+            </h2>
+<div class="bg-white dark:bg-background-dark/50 rounded-xl p-4 shadow-sm border border-primary/10 mb-6">
+<div class="flex gap-3">
+<div class="shrink-0">
+<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">edit_square</span>
+</div>
+</div>
+<div class="flex-1">
+<textarea class="w-full bg-transparent border-none focus:ring-0 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 resize-none min-h-[60px]" placeholder="¿Qué está pasando en Pinto?"></textarea>
+<div class="flex items-center justify-between mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+<div class="flex gap-2">
+<button class="p-2 rounded-lg hover:bg-primary/10 text-primary transition-colors">
+<span class="material-symbols-outlined text-[22px]">image</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-primary/10 text-primary transition-colors">
+<span class="material-symbols-outlined text-[22px]">location_on</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-primary/10 text-primary transition-colors">
+<span class="material-symbols-outlined text-[22px]">calendar_today</span>
+</button>
+</div>
+<button class="bg-primary text-background-dark px-6 py-2 rounded-lg font-bold text-sm hover:opacity-90 transition-opacity">
+                                Publicar
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<div class="mb-6">
+<div class="flex items-center justify-between mb-3">
+<h3 class="font-bold text-lg">Grupos recomendados</h3>
+<button class="text-primary text-xs font-bold uppercase tracking-wider">Ver todos</button>
+</div>
+<div class="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
+<div class="min-w-[160px] bg-white dark:bg-slate-800/50 p-4 rounded-xl border border-primary/5 shadow-sm">
+<div class="size-12 rounded-lg bg-primary/20 flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-primary text-3xl">flutter_dash</span>
+</div>
+<h4 class="font-bold text-sm mb-1 truncate">Los Albatros</h4>
+<p class="text-slate-500 dark:text-slate-400 text-xs mb-3">248 miembros</p>
+<button class="w-full bg-primary/10 text-primary py-1.5 rounded-lg text-xs font-bold hover:bg-primary hover:text-white transition-all">Unirme</button>
+</div>
+<div class="min-w-[160px] bg-white dark:bg-slate-800/50 p-4 rounded-xl border border-primary/5 shadow-sm">
+<div class="size-12 rounded-lg bg-primary/20 flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-primary text-3xl">eco</span>
+</div>
+<h4 class="font-bold text-sm mb-1 truncate">Pinto Verde</h4>
+<p class="text-slate-500 dark:text-slate-400 text-xs mb-3">1.2k miembros</p>
+<button class="w-full bg-primary/10 text-primary py-1.5 rounded-lg text-xs font-bold hover:bg-primary hover:text-white transition-all">Unirme</button>
+</div>
+<div class="min-w-[160px] bg-white dark:bg-slate-800/50 p-4 rounded-xl border border-primary/5 shadow-sm">
+<div class="size-12 rounded-lg bg-primary/20 flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-primary text-3xl">sports_soccer</span>
+</div>
+<h4 class="font-bold text-sm mb-1 truncate">Deportivo Pinto</h4>
+<p class="text-slate-500 dark:text-slate-400 text-xs mb-3">856 miembros</p>
+<button class="w-full bg-primary/10 text-primary py-1.5 rounded-lg text-xs font-bold hover:bg-primary hover:text-white transition-all">Unirme</button>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="bg-white dark:bg-slate-800/30 rounded-xl overflow-hidden shadow-sm border border-primary/5">
+<div class="p-4 flex gap-3">
+<div class="size-10 rounded-full overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Portrait of a male community member" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHIogVhyFfNao3QL0VszFMpK0vgnrN_AGt3WgoU4_txLZYBG9CE72izH8nwIyDm-0nXuaheh8IXewFhTM6ll2vyytqfqJ36G5cTiBvxKa_aTgB1XBRnXX9arl5iW4PhKapnqcHq7ZlENxhmVqs5seW1uAvJI0aOffVEPdi4hS0DTUHYNieeanizB-zArEN3or02O9X3L1bBMwL4mWl3J2z_aIIrqX5rb1iGCoqTdoCJDLdDac96qSxwWVCcUHuPZu8nUSkSmQjoAVC"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<h4 class="font-bold text-sm">Carlos Ruiz</h4>
+<span class="text-slate-400 text-xs">hace 2h</span>
+</div>
+<p class="text-slate-600 dark:text-slate-300 text-sm mt-1">¡Mañana hay mercadillo solidario en la Plaza Mayor! ¿Alguien se apunta para ir en grupo? 🧺</p>
+<div class="mt-3 rounded-xl overflow-hidden aspect-video relative">
+<img class="w-full h-full object-cover" data-alt="Vibrant outdoor local market with stalls and people" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUKBEeU3fIgmEr81H47zfaPx87ec3zCINIhIrkxK4FDLknzcpPhoBSBPq48fNsS2m9C1IUzXIkbEGt9gb6YDxOPMELeiAGdYpCGGQLK5p7J6SZe5_VR0kCbTYBLkyIutQBSOlyJtidU6e_cWw9kU5sjr8Fvk1NY_1kCpdto3IJ5ikM47Oo3eu1_5wV10q8tBLvlFfJM5Xki-jSEotwzviGS92KNsJu0rU3Ibx8nMppKGwxanh_TFpvKrYWUg1xDJZuC0D17ZqFZHh_"/>
+</div>
+<div class="flex items-center gap-6 mt-4">
+<button class="flex items-center gap-1.5 text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">favorite</span>
+<span class="text-xs font-medium">24</span>
+</button>
+<button class="flex items-center gap-1.5 text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">chat_bubble</span>
+<span class="text-xs font-medium">8</span>
+</button>
+<button class="flex items-center gap-1.5 text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">share</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800/30 rounded-xl overflow-hidden shadow-sm border border-primary/5">
+<div class="p-4 flex gap-3">
+<div class="size-10 rounded-full overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Profile picture of a female local resident" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSoD6i0lQ7vU75V5erXQnWuhQ2fiVM3ilXTQoEZMSCGbAWXb8ndIkjWiSVkEIKw4f7_03oscezwXE93P82RCX7GrzPFaOeSLf0PGLN_TY5F-I5h2k2aRO-OkTdrw3WsDTBRPkXp15Wts9aXdLpCTHXoiLQXKxGPQBRznsxQ_B-FekPc4a6qw5zlO0f62EHybrJhoO8khrpSswZR48vGEgRAwHQkX0owbBh_dEqlCnm_p5meUBExxhQlp2PnyTPaf7ahZt-pZBMyN2l"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<h4 class="font-bold text-sm">Elena Gómez</h4>
+<span class="text-slate-400 text-xs">hace 5h</span>
+</div>
+<p class="text-slate-600 dark:text-slate-300 text-sm mt-1">Recomendación de hoy: El nuevo café orgánico cerca de la estación. ¡El matcha es increíble! 🍵✨</p>
+<div class="flex items-center gap-6 mt-4">
+<button class="flex items-center gap-1.5 text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">favorite</span>
+<span class="text-xs font-medium">42</span>
+</button>
+<button class="flex items-center gap-1.5 text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">chat_bubble</span>
+<span class="text-xs font-medium">12</span>
+</button>
+<button class="flex items-center gap-1.5 text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">share</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<nav class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-background-dark/90 backdrop-blur-lg border-t border-primary/10 px-6 pb-6 pt-3 z-50">
+<div class="flex items-center justify-between max-w-md mx-auto">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined fill-1">home</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Inicio</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Grupos</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Mensajes</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Perfil</span>
+</a>
+</div>
+</nav>
+</body></html>

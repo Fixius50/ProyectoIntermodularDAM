@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#5ee830",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#152111",
+                        "forest-900": "#111b0e",
+                        "forest-600": "#60974e",
+                        "forest-100": "#eaf3e7",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-forest-900 dark:text-slate-100">
+<div class="relative flex h-screen w-full flex-col overflow-hidden max-w-md mx-auto bg-background-light dark:bg-background-dark shadow-2xl">
+<!-- Top Bar -->
+<div class="flex items-center justify-between p-4 bg-background-light dark:bg-background-dark sticky top-0 z-10">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-forest-900 dark:text-slate-100 p-2 rounded-full hover:bg-forest-100 dark:hover:bg-forest-900/50 cursor-pointer">arrow_back</span>
+<h2 class="text-xl font-bold tracking-tight">La Tienda</h2>
+</div>
+<div class="flex items-center bg-primary/20 dark:bg-primary/10 px-3 py-1.5 rounded-full border border-primary/30">
+<span class="material-symbols-outlined text-forest-600 dark:text-primary text-lg mr-1 filled-icon">pergola</span>
+<span class="text-forest-900 dark:text-slate-100 text-sm font-bold">1,250 Plumas</span>
+</div>
+</div>
+<!-- Categories Tabs -->
+<div class="px-4 border-b border-forest-100 dark:border-forest-900/50">
+<div class="flex gap-6 overflow-x-auto no-scrollbar">
+<a class="flex flex-col items-center justify-center border-b-4 border-primary text-forest-900 dark:text-slate-100 pb-3 pt-2" href="#">
+<p class="text-sm font-bold whitespace-nowrap">Destacados</p>
+</a>
+<a class="flex flex-col items-center justify-center border-b-4 border-transparent text-forest-600 dark:text-slate-400 pb-3 pt-2" href="#">
+<p class="text-sm font-medium whitespace-nowrap">Objetos</p>
+</a>
+<a class="flex flex-col items-center justify-center border-b-4 border-transparent text-forest-600 dark:text-slate-400 pb-3 pt-2" href="#">
+<p class="text-sm font-medium whitespace-nowrap">Especial</p>
+</a>
+<a class="flex flex-col items-center justify-center border-b-4 border-transparent text-forest-600 dark:text-slate-400 pb-3 pt-2" href="#">
+<p class="text-sm font-medium whitespace-nowrap">Paquetes</p>
+</a>
+</div>
+</div>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto pb-24">
+<!-- Hero Banner -->
+<div class="p-4">
+<div class="relative h-48 w-full rounded-xl overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent z-10"></div>
+<img alt="Expedition Pass Promo" class="w-full h-full object-cover" data-alt="Lush green tropical forest with morning mist" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4VCfJd7shodkwafjjFE_NvrjtStEs7SRh-U_u4yWxfjWIyEVi3N7rdkK0pZSVD4WLD2H9vSbAJyrNIVJpk8AWThGKfuHl8lDCM8oH8zzYYrZLM-jFyVmui-QeuW1OJ73Jk4V8XRX-0XHHE-Rzwvzoxm1H5D6SmdIijgmbzTH12DkMENBcdx85ELIYwfnqZKy5RnBlTK4B_iGqBu7LMMARm-fTsThJd2sUoZ8pO9CYTvdLej-vMjta5qwuF7_4AQaqwcdgURWfb8Yj"/>
+<div class="absolute bottom-4 left-4 z-20">
+<span class="bg-primary text-forest-900 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider mb-2 inline-block">Recomendado</span>
+<h3 class="text-white text-2xl font-bold leading-tight">Pase de Expedición<br/>Mensual</h3>
+<p class="text-white/80 text-xs mt-1">Desbloquea recompensas únicas cada día</p>
+</div>
+</div>
+</div>
+<!-- Daily Offers Section -->
+<div class="px-4 py-2">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold text-forest-900 dark:text-slate-100">Ofertas del Día</h3>
+<div class="flex items-center gap-1 text-forest-600 dark:text-primary">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span class="text-xs font-medium">14h 22m</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<!-- Item 1 -->
+<div class="bg-white dark:bg-forest-900/30 p-3 rounded-xl border border-forest-100 dark:border-forest-800 shadow-sm flex flex-col">
+<div class="aspect-square bg-forest-100 dark:bg-forest-800 rounded-lg mb-3 flex items-center justify-center relative overflow-hidden">
+<span class="material-symbols-outlined text-4xl text-forest-600 dark:text-primary">mail</span>
+<div class="absolute top-0 right-0 bg-primary/20 px-2 py-1 rounded-bl-lg">
+<span class="text-[10px] font-bold text-forest-600 dark:text-primary">X1</span>
+</div>
+</div>
+<h4 class="text-sm font-bold mb-1 truncate">Sobre de Iniciación</h4>
+<p class="text-[10px] text-forest-600 dark:text-slate-400 mb-3 line-clamp-2 leading-tight">Contiene 5 cartas básicas para tu mazo inicial.</p>
+<button class="mt-auto w-full bg-primary text-forest-900 font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-sm filled-icon">pergola</span>
+                            150
+                        </button>
+</div>
+<!-- Item 2 -->
+<div class="bg-white dark:bg-forest-900/30 p-3 rounded-xl border border-forest-100 dark:border-forest-800 shadow-sm flex flex-col">
+<div class="aspect-square bg-forest-100 dark:bg-forest-800 rounded-lg mb-3 flex items-center justify-center relative overflow-hidden">
+<span class="material-symbols-outlined text-4xl text-forest-600 dark:text-primary">eco</span>
+<div class="absolute top-0 right-0 bg-primary/20 px-2 py-1 rounded-bl-lg">
+<span class="text-[10px] font-bold text-forest-600 dark:text-primary">X3</span>
+</div>
+</div>
+<h4 class="text-sm font-bold mb-1 truncate">Néctar Floral</h4>
+<p class="text-[10px] text-forest-600 dark:text-slate-400 mb-3 line-clamp-2 leading-tight">Acelera el crecimiento de tus plantas raras.</p>
+<button class="mt-auto w-full bg-primary text-forest-900 font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-sm filled-icon">pergola</span>
+                            45
+                        </button>
+</div>
+<!-- Item 3 -->
+<div class="bg-white dark:bg-forest-900/30 p-3 rounded-xl border border-forest-100 dark:border-forest-800 shadow-sm flex flex-col">
+<div class="aspect-square bg-forest-100 dark:bg-forest-800 rounded-lg mb-3 flex items-center justify-center relative overflow-hidden">
+<span class="material-symbols-outlined text-4xl text-forest-600 dark:text-primary">potted_plant</span>
+</div>
+<h4 class="text-sm font-bold mb-1 truncate">Semillas de Vigor</h4>
+<p class="text-[10px] text-forest-600 dark:text-slate-400 mb-3 line-clamp-2 leading-tight">Semillas especiales con alta probabilidad de éxito.</p>
+<button class="mt-auto w-full bg-primary text-forest-900 font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-sm filled-icon">pergola</span>
+                            300
+                        </button>
+</div>
+<!-- Item 4 -->
+<div class="bg-white dark:bg-forest-900/30 p-3 rounded-xl border border-forest-100 dark:border-forest-800 shadow-sm flex flex-col opacity-60 grayscale-[0.5]">
+<div class="aspect-square bg-forest-100 dark:bg-forest-800 rounded-lg mb-3 flex items-center justify-center relative overflow-hidden">
+<span class="material-symbols-outlined text-4xl text-forest-600 dark:text-primary">diamond</span>
+<div class="absolute inset-0 bg-black/5 flex items-center justify-center">
+<span class="bg-forest-900 text-white text-[10px] px-2 py-1 rounded">AGOTADO</span>
+</div>
+</div>
+<h4 class="text-sm font-bold mb-1 truncate">Fragmento Lunar</h4>
+<p class="text-[10px] text-forest-600 dark:text-slate-400 mb-3 line-clamp-2 leading-tight">Elemento místico para evoluciones nocturnas.</p>
+<button class="mt-auto w-full bg-slate-200 dark:bg-forest-800 text-slate-500 font-bold py-2 rounded-lg text-xs" disabled="">
+                            Vendido
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation Bar -->
+<div class="absolute bottom-0 w-full flex gap-2 border-t border-forest-100 dark:border-forest-900 bg-background-light dark:bg-background-dark px-4 pb-6 pt-2 z-20">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-forest-600 dark:text-slate-400" href="#">
+<span class="material-symbols-outlined text-[24px]">home</span>
+<p class="text-xs font-medium">Inicio</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined text-[24px] filled-icon">storefront</span>
+<p class="text-xs font-bold">Tienda</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-forest-600 dark:text-slate-400" href="#">
+<span class="material-symbols-outlined text-[24px]">backpack</span>
+<p class="text-xs font-medium">Mochila</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-forest-600 dark:text-slate-400" href="#">
+<span class="material-symbols-outlined text-[24px]">person</span>
+<p class="text-xs font-medium">Perfil</p>
+</a>
+</div>
+</div>
+</body></html>

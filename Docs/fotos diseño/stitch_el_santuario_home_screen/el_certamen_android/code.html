@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#5ee830",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#152111",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>El Certamen - Battle Arena</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<header class="sticky top-0 z-10 flex items-center bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-4 justify-between border-b border-primary/10">
+<div class="text-slate-900 dark:text-slate-100 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-tight flex-1 text-center">El Certamen</h2>
+<div class="flex w-10 items-center justify-end">
+<button class="flex size-10 items-center justify-center rounded-full hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined">info</span>
+</button>
+</div>
+</header>
+<main class="flex-1 flex flex-col pb-24">
+<section class="p-4 flex flex-col items-center">
+<div class="flex w-full justify-between items-start gap-4">
+<div class="flex flex-col items-center flex-1">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-24 w-24 border-4 border-primary shadow-lg shadow-primary/20" data-alt="A white stork standing in a field" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDy_vffNMzrcLthsvCk4UJaqX1bKWqbOs4l7SlN6OL3Q2hA6Du1EiiKuVVlVRImposdMAWDLXBM3V39Ex_sKkETiv3rD-MWQ0h4v7JjBQR5LTfwJRg8njb9SSG4SR282r_SeENr6tLocb3QACF9YEA8q1zL1XQSxWbbrAPdZE50ATBP9hsMNxXzCSCfSmk-UyaThx5BlXbr6blGP2UztBP2vpmrhVIecTOgjJ2oAF7lG19SLfsUhS4anM7iT0JmYk45sit-l7RTYQag");'></div>
+<div class="absolute -bottom-2 right-0 bg-primary text-background-dark text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Lvl 24</div>
+</div>
+<div class="mt-3 text-center">
+<p class="text-xs font-bold text-primary uppercase tracking-widest">TÚ</p>
+<p class="text-base font-bold leading-tight">Cigüeña Blanca</p>
+<div class="mt-2 w-full h-1.5 bg-primary/20 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[85%]"></div>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center pt-8">
+<span class="text-3xl font-black text-primary italic">VS</span>
+<div class="mt-2 flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-full">
+<span class="material-symbols-outlined text-sm">cloud</span>
+<span class="text-[10px] font-semibold uppercase">Viento</span>
+</div>
+</div>
+<div class="flex flex-col items-center flex-1 text-right">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-24 w-24 border-4 border-slate-300 dark:border-slate-700 shadow-lg" data-alt="A small european robin bird on a branch" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB5dpGQRjXb4qgme_OdDkZx7rguxe0AQ14VsEDR5j_RGAmZgTxdVoZqchX0zyp2dZsmnAY49vwVh8LdjsF2hvm6rGYCF6wLn_pt74dj0DNWKYrr1rX36BThr2Un0DZ5RVIp84ymZ2yZIl_IQhRvoyPEIo29ebk0pDW4NMVBae3ofZwZ5ugga2qDyZX2eDRvgGkOYdr7Xr6HNADoJCAysVM88oMwQ-wy0j_gRDfXFlSh2UwwPblRKOMQKnGs_PN9-BvtSYOks0EkCYCB");'></div>
+<div class="absolute -bottom-2 left-0 bg-slate-800 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Lvl 22</div>
+</div>
+<div class="mt-3 text-center">
+<p class="text-xs font-bold text-slate-500 uppercase tracking-widest">RIVAL</p>
+<p class="text-base font-bold leading-tight">Petirrojo</p>
+<div class="mt-2 w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="bg-red-500 h-full w-[45%]"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="px-4 py-2">
+<div class="grid grid-cols-3 gap-3">
+<div class="flex flex-col items-center justify-center rounded-xl p-3 bg-primary/10 border border-primary/20">
+<span class="material-symbols-outlined text-primary mb-1">music_note</span>
+<p class="text-[10px] font-medium uppercase opacity-60">Canto</p>
+<p class="text-xl font-bold">75</p>
+</div>
+<div class="flex flex-col items-center justify-center rounded-xl p-3 bg-primary/10 border border-primary/20">
+<span class="material-symbols-outlined text-primary mb-1">shield</span>
+<p class="text-[10px] font-medium uppercase opacity-60">Defensa</p>
+<p class="text-xl font-bold">82</p>
+</div>
+<div class="flex flex-col items-center justify-center rounded-xl p-3 bg-primary/10 border border-primary/20">
+<span class="material-symbols-outlined text-primary mb-1">flight</span>
+<p class="text-[10px] font-medium uppercase opacity-60">Vuelo</p>
+<p class="text-xl font-bold">90</p>
+</div>
+</div>
+</section>
+<section class="flex-1 px-4 mt-6">
+<div class="bg-slate-100 dark:bg-slate-900/50 rounded-xl p-4 min-h-[160px] border border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-sm">history</span>
+<h3 class="text-xs font-bold uppercase tracking-wider opacity-60">Registro de Encuentro</h3>
+</div>
+<div class="space-y-3">
+<div class="flex gap-3 text-sm">
+<span class="text-primary font-bold">09:41</span>
+<p>¡El <span class="font-bold">Petirrojo</span> usa Chirrido Agudo!</p>
+</div>
+<div class="flex gap-3 text-sm">
+<span class="text-primary font-bold">09:42</span>
+<p>Tu <span class="font-bold">Cigüeña Blanca</span> ha bloqueado el ataque con éxito.</p>
+</div>
+<div class="flex gap-3 text-sm animate-pulse">
+<span class="text-primary font-bold">...</span>
+<p class="italic text-slate-500">Esperando tu próximo movimiento...</p>
+</div>
+</div>
+</div>
+</section>
+<section class="p-4 grid grid-cols-2 gap-4">
+<button class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-primary text-background-dark font-bold shadow-lg shadow-primary/20 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-3xl">record_voice_over</span>
+                    Cantar
+                </button>
+<button class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-background-light dark:bg-background-dark border-2 border-primary text-primary font-bold active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-3xl">air</span>
+                    Planear
+                </button>
+</section>
+</main>
+<nav class="fixed bottom-0 left-0 right-0 border-t border-primary/10 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md px-4 pb-6 pt-2 z-20">
+<div class="flex justify-around items-center max-w-md mx-auto">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined text-[28px] fill-current">swords</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Arena</p>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-600" href="#">
+<span class="material-symbols-outlined text-[28px]">flutter_dash</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Aves</p>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-600" href="#">
+<span class="material-symbols-outlined text-[28px]">trophy</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Liga</p>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-600" href="#">
+<span class="material-symbols-outlined text-[28px]">account_circle</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Perfil</p>
+</a>
+</div>
+</nav>
+</div>
+</body></html>

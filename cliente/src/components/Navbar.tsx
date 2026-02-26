@@ -35,15 +35,15 @@ const Navbar: React.FC = () => {
     }, []);
 
     return (
-        <header className="sticky top-0 z-50 px-6 py-4 lg:px-12 flex items-center justify-between glass-panel mt-4 mx-4 rounded-xl shadow-sm">
+        <header className="sticky top-0 z-50 px-4 py-3 md:px-6 md:py-4 lg:px-12 flex items-center justify-between glass-card md:glass-panel mt-2 md:mt-4 mx-2 md:mx-4 rounded-xl shadow-sm">
             <div
                 className="flex items-center gap-3 cursor-pointer"
                 onClick={() => setCurrentScreen('home')}
             >
-                <div className="size-8 text-primary flex items-center justify-center bg-sage-100 dark:bg-sage-800 rounded-full">
+                <div className="size-8 text-primary flex items-center justify-center bg-primary/10 rounded-full">
                     <span className="material-symbols-outlined text-[20px]">flutter_dash</span>
                 </div>
-                <h1 className="text-xl font-bold tracking-tight text-sage-800 dark:text-sage-100">Aery</h1>
+                <h1 className="text-xl font-display font-bold tracking-tight text-slate-900 dark:text-slate-100">Aery</h1>
             </div>
 
             <nav className="hidden md:flex items-center gap-8">
@@ -52,20 +52,20 @@ const Navbar: React.FC = () => {
                     return (
                         <a
                             key={item.id}
-                            className={`nav-link cursor-pointer text-sm flex items-center gap-2 ${isActive
+                            className={`cursor-pointer text-sm flex items-center gap-2 transition-all ${isActive
                                 ? 'text-primary font-bold border-b-2 border-primary pb-0.5'
-                                : 'text-slate-600 dark:text-slate-300 font-medium hover:text-primary transition-colors'
+                                : 'text-slate-600 dark:text-slate-300 font-medium hover:text-primary'
                                 }`}
                             onClick={() => setCurrentScreen(item.id)}
                         >
-                            <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+                            <span className="material-symbols-outlined text-[20px]">{item.icon === 'swords' ? 'swords' : item.icon}</span>
                             {item.label}
                         </a>
                     );
                 })}
             </nav>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
                 <div className="relative" onClick={(e) => e.stopPropagation()}>
                     <button
                         className="relative p-2 text-slate-600 dark:text-slate-300 hover:bg-sage-100 dark:hover:bg-sage-800 rounded-full transition-colors group"

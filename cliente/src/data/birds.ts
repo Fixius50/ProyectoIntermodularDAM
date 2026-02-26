@@ -36,7 +36,8 @@ export const BIRD_CATALOG: CatalogBird[] = [
         lat: 40.2425,
         lng: -3.7005,
         rarity: 'rare',
-        upgradeItems: ['feather', 'metal-scrap']
+        upgradeItems: ['feather', 'metal-scrap'],
+        status: 'Santuario'
     },
     {
         id: 'pinto-2',
@@ -61,7 +62,8 @@ export const BIRD_CATALOG: CatalogBird[] = [
         lat: 40.2415,
         lng: -3.6985,
         rarity: 'uncommon',
-        upgradeItems: ['feather', 'flower-petal']
+        upgradeItems: ['feather', 'flower-petal'],
+        status: 'Santuario'
     },
     {
         id: 'pinto-3',
@@ -86,7 +88,8 @@ export const BIRD_CATALOG: CatalogBird[] = [
         lat: 40.2455,
         lng: -3.6975,
         rarity: 'common',
-        upgradeItems: ['flower-petal', 'sugar']
+        upgradeItems: ['flower-petal', 'sugar'],
+        status: 'Santuario'
     },
     {
         id: 'pinto-4',
@@ -111,7 +114,8 @@ export const BIRD_CATALOG: CatalogBird[] = [
         lat: 40.250,
         lng: -3.705,
         rarity: 'uncommon',
-        upgradeItems: ['feather', 'metal-scrap']
+        upgradeItems: ['feather', 'metal-scrap'],
+        status: 'Santuario'
     },
     {
         id: 'pinto-5',
@@ -136,7 +140,8 @@ export const BIRD_CATALOG: CatalogBird[] = [
         lat: 40.243,
         lng: -3.699,
         rarity: 'common',
-        upgradeItems: ['flower-petal']
+        upgradeItems: ['flower-petal'],
+        status: 'Santuario'
     },
     {
         id: 'pinto-6',
@@ -161,7 +166,8 @@ export const BIRD_CATALOG: CatalogBird[] = [
         lat: 40.244,
         lng: -3.702,
         rarity: 'common',
-        upgradeItems: ['flower-petal', 'sugar']
+        upgradeItems: ['flower-petal', 'sugar'],
+        status: 'Santuario'
     }
 ];
 

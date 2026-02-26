@@ -8,7 +8,7 @@ import ElCertamen from './screens/arena/ElCertamen';
 import './App.css';
 
 function App() {
-  const { currentScreen } = useAppStore();
+  const { currentScreen, currentUser } = useAppStore();
 
   if (!currentUser) {
     return <Login />;
