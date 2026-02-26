@@ -5,7 +5,10 @@ import { fetchWeather } from '../../services/weather';
 import { getCurrentTimeData } from '../../services/time';
 
 const ElSantuario: React.FC = () => {
-    const { currentUser, weather, time, setWeather, setTime, syncInventory, syncPlayerBirds, activeBirdsCount } = useAppStore();
+    const {
+        currentUser, weather, time, setWeather, setTime,
+        syncInventory, syncPlayerBirds, activeBirdsCount, addNotification
+    } = useAppStore();
 
     useEffect(() => {
         const initData = async () => {
@@ -20,7 +23,18 @@ const ElSantuario: React.FC = () => {
             await syncPlayerBirds();
         };
         initData();
-    }, [setWeather, setTime, syncInventory, syncPlayerBirds]);
+
+        // Simulate a real-time event arriving via WebSockets after 5 seconds
+        const timer = setTimeout(() => {
+            addNotification({
+                type: 'sighting',
+                title: 'Alerta de Avistamiento',
+                message: 'Se ha avistado un Martín Pescador cerca del río. ¡Ve a la expedición!'
+            });
+        }, 5000);
+
+        return () => clearTimeout(timer);
+    }, [setWeather, setTime, syncInventory, syncPlayerBirds, addNotification]);
 
     return (
         <div className="flex flex-col gap-8 p-6 lg:p-12 animate-fade-in max-w-7xl mx-auto">
