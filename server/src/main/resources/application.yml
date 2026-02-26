@@ -1,0 +1,58 @@
+server:
+  port: 8080
+  address: 0.0.0.0
+
+spring:
+  application:
+    name: AvisServer
+
+  # Configuracion de Supabase (PostgreSQL) usando R2DBC reactivo
+  r2dbc:
+    url: r2dbc:postgresql://db.shmutxsmjokamnxrkufe.supabase.co:5432/postgres
+    username: postgres
+    password: AleAdriRober
+    pool:
+      initial-size: 5
+      max-size: 20
+
+  # Configuracion de Redis Reactivo (Rendimiento extremo)
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  # Configuracion de RabbitMQ (Matchmaking en colas)
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+  # Configuracion RSocket
+  rsocket:
+    server:
+      port: 7000
+      transport: tcp
+      address: 0.0.0.0
+
+# APIs Externas
+api:
+  weather:
+    url: "https://api.openweathermap.org/data/2.5"
+    key: "0f3fe973a050b2df639fab82f3c33ca6"
+  unsplash:
+    url: "https://api.unsplash.com"
+    key: "LMN6wkrs9pnlyoE29fZVTVqLmfJD6UwU7p1384OUw0E"
+  nuthatch:
+    url: "https://nuthatch.lastelm.software"
+    key: "2ad0ea65-505a-4102-a804-d1a4f72406b8"
+
+# Datos del JWT (Security)
+jwt:
+  secret: "UnaClaveSecretaMuyLargaYComplejaParaFirmarLosTokensDeAvis2026"
+  expiration: 86400000 # 24 horas
+
+logging:
+  level:
+    org.springframework.r2dbc: DEBUG
+    org.springframework.security: DEBUG
