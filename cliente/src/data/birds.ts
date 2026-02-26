@@ -1,6 +1,6 @@
 import { Bird } from '../types';
 
-export interface CatalogBird extends Bird {
+export interface CatalogBird extends Omit<Bird, 'status'> {
     scientificName: string;
     fact: string;
     preferredPhase: Array<'Morning' | 'Afternoon' | 'Night'>;

@@ -20,6 +20,7 @@
 │   └── src/               (Componentes, Screens, Context)
 ├── src/                   (Código Fuente)
 │   └── backend/           (Spring Boot 3 + WebFlux)
+├── tailscalebridge/       (Módulo Go para compilar librería nativa .aar de Tailscale)
 └── avis-dev-tools/        (Scripts y utilidades)
 ```
 

@@ -2,6 +2,21 @@
 
 Para portar **Aery**, un cuaderno de campo interactivo gamificado (Santuario, Expedición, Certamen, Social, Tienda), a una **Aplicación Nativa de Android usando Java**, será necesario adoptar un ecosistema moderno pero consolidado sobre el lenguaje Java. A continuación se desglosan las librerías, dependencias de Gradle y componentes arquitectónicos recomendados.
 
+## 🛠️ Requisitos de Compilación Nativa (C/Go a Java)
+Para integrar el puente de Tailscale (escrito en Go) dentro de la aplicación Android, es obligatorio tener instalados los siguientes componentes nativos en el SDK Manager de Android Studio:
+*   **NDK (Native Development Kit) (Side by side)**: Permite compilar lenguajes nativos (C/C++, Go a través de cgo/gomobile) a bibliotecas que interactúan con Java.
+*   **CMake**: Herramienta de compilación utilizada por Android Studio para empacar el código nativo en el archivo `.aar`.
+
+### Integración de la Librería Externa (Tailscale Bridge)
+El módulo puente de Tailscale se desarrolla y compila externamente en la carpeta raíz `tailscalebridge/`. 
+1. Se compila ejecutando `gomobile bind -target=android` dentro de ese directorio.
+2. Esto genera un archivo `tailscalebridge.aar` (y un `.jar` de fuentes).
+3. Este archivo compilado se debe copiar a la carpeta `libs/` del proyecto Android (`cliente/app/libs/` o similar).
+4. Finalmente, se añade como dependencia en el `build.gradle` de la app:
+   ```gradle
+   implementation files('libs/tailscalebridge.aar')
+   ```
+
 ---
 
 ## 🏗️ 1. Arquitectura Base (Android Jetpack)
