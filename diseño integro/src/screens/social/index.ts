@@ -2,12 +2,13 @@ import { renderNavbar, attachNavbarListeners } from '../../components/Navbar';
 import { store, Guild, SocialPost, ChatMessage } from '../../state';
 
 export const renderSocial = (container: HTMLElement) => {
-    if (window.location.hash !== '#social') return;
-
     const state = store.getState();
     const { currentUser, posts, availableGuilds } = state;
 
-    if (!currentUser) return; // Need login
+    if (!currentUser) {
+        (window as any).router.navigate('login');
+        return;
+    }
 
     const userGuild = currentUser.guildId ? availableGuilds.find(g => g.id === currentUser.guildId) : null;
 
