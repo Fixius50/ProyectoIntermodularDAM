@@ -26,12 +26,20 @@ android {
 
 repositories {
     flatDir{
-        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+        def cordovaPluginsDir = new File(rootDir, 'capacitor-cordova-android-plugins')
+        if (cordovaPluginsDir.exists()) {
+            dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+        } else {
+            dirs 'libs'
+        }
     }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+    // --- Tailscale Bridge (Go/tsnet compilado con gomobile) ---
+    implementation(name: 'tailscalebridge', ext: 'aar')
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
     implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
     implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
@@ -39,40 +47,31 @@ dependencies {
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
-    implementation project(':capacitor-cordova-android-plugins')
+    
+    if (project.findProject(':capacitor-cordova-android-plugins')) {
+        implementation project(':capacitor-cordova-android-plugins')
+    }
 
     // --- Dependencias Nativas de AVIS ---
-    // Arquitectura Base
     implementation 'androidx.lifecycle:lifecycle-viewmodel:2.8.2'
     implementation 'androidx.lifecycle:lifecycle-livedata:2.8.2'
     implementation 'androidx.work:work-runtime:2.9.0'
-
-    // Red (Retrofit + RxJava + OkHttp)
     implementation 'com.squareup.retrofit2:retrofit:2.11.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava3:2.11.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
     implementation 'io.reactivex.rxjava3:rxjava:3.1.8'
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
-
-    // Base de Datos Local
     implementation 'androidx.room:room-runtime:2.6.1'
     implementation 'androidx.room:room-rxjava3:2.6.1'
     annotationProcessor 'androidx.room:room-compiler:2.6.1'
-
-    // Inyección de Dependencias
     implementation 'com.google.dagger:hilt-android:2.51.1'
     annotationProcessor 'com.google.dagger:hilt-compiler:2.51.1'
-
-    // Google Play Services
     implementation 'com.google.android.gms:play-services-location:21.2.0'
-
-    // Seguridad
     implementation 'androidx.security:security-crypto:1.1.0-alpha06'
 }
 
 apply plugin: 'dagger.hilt.android.plugin'
-
 apply from: 'capacitor.build.gradle'
 
 try {

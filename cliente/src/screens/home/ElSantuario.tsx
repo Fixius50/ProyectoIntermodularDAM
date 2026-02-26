@@ -5,14 +5,11 @@ import { fetchWeather } from '../../services/weather';
 import { getCurrentTimeData } from '../../services/time';
 
 const ElSantuario: React.FC = () => {
-<<<<<<< HEAD
-    const { currentUser, weather, time, setWeather, setTime, syncInventory, syncPlayerBirds, activeBirdsCount, inventory } = useAppStore();
-=======
     const {
         currentUser, weather, time, setWeather, setTime,
-        syncInventory, syncPlayerBirds, activeBirdsCount, addNotification
+        syncInventory, syncPlayerBirds, activeBirdsCount, inventory, addNotification
     } = useAppStore();
->>>>>>> 734b6b01db11973f44911217da1a477db60c2daf
+
 
     useEffect(() => {
         const initData = async () => {
