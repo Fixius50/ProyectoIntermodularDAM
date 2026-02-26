@@ -18,30 +18,6 @@ Dado que la aplicación depende fuertemente de los estados (pájaros activos, cl
     implementation 'androidx.navigation:navigation-ui:2.7.7'
     ```
 
----
-
-## 🎨 2. Interfaz de Usuario (UI/UX)
-La aplicación web actual tiene un diseño "glassmorphism", transiciones suaves y componentes estilizados (Tailwind). En Android Nativo se requiere emplear **Material Design 3** y bibliotecas de UI potentes.
-
-*   **Material Components para Android**: Para BottomNavigation, Cards, Botones estilizados flotantes y diálogos (modales).
-    ```gradle
-    implementation 'com.google.android.material:material:1.12.0'
-    ```
-*   **ConstraintLayout**: Obligatorio para diseñar vistas complejas como la pantalla de *Certamen* sin anidar linear layouts.
-    ```gradle
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    ```
-*   **Glide** o **Picasso**: Para la carga asíncrona en memoria y en caché de todas las imágenes (avatares de usuarios, los banners del álbum y los pájaros en el Santuario).
-    ```gradle
-    implementation 'com.github.bumptech.glide:glide:4.16.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
-    ```
-*   **Lottie (opcional pero recomendado)**: Para trasladar las animaciones sutiles (el clima, las animaciones al combatir en el Certamen).
-    ```gradle
-    implementation 'com.airbnb.android:lottie:6.4.0'
-    ```
-
----
 
 ## 💾 3. Persistencia de Datos y Caché Local
 Aery web utiliza `localStorage`. En la app final se dependerá del backend, pero es vital cachear datos (álbum completo, pájaros obtenidos) para soporte *offline*.
