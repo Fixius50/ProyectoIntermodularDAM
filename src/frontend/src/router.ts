@@ -1,4 +1,4 @@
-export type Screen = 'home' | 'arena' | 'expedition' | 'album' | 'workshop';
+export type Screen = 'home' | 'arena' | 'expedition' | 'album' | 'workshop' | 'social' | 'store';
 
 export class Router {
     private container: HTMLElement;

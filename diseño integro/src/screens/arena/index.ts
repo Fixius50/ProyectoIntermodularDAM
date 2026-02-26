@@ -1,162 +1,408 @@
 import { renderNavbar, attachNavbarListeners } from '../../components/Navbar';
+import { store, Bird } from '../../state';
 
 export const renderArena = (container: HTMLElement) => {
-    container.innerHTML = `
-<div class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col overflow-x-hidden text-slate-900 dark:text-slate-100 relative">
-<div class="fixed inset-0 pointer-events-none opacity-40 z-0 bg-paper-texture mix-blend-multiply dark:mix-blend-overlay"></div>
-<div class="relative z-10 flex flex-col flex-grow w-full max-w-[1440px] mx-auto">
-<!-- Top Navigation -->
-${renderNavbar('arena')}
-<!-- Main Content Area -->
-<main class="flex-grow flex flex-col items-center justify-start py-6 px-4 md:px-8 w-full max-w-[1200px] mx-auto z-10">
-<!-- Environment / Weather Header -->
-<div class="w-full mb-6 relative rounded-2xl overflow-hidden shadow-journal group">
-<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCr0j3K2_Jsj6OjxvvMwdM2BSHarU6K0SNTECV247fVfNVaeiPh3B6y1TIXdE1IXSNPMmPYVm27hCy_prUf5kLmtwITfgqtAtDHlk1kbwGbqovWs0Gf4nounWz1cNjIrs55quKgsiRi5L2-ouLyxSzuxbNfYFYeTcMQYv_EQrTCXFBNk0PsjzMjzkm8vF_F7cXeAB1jLtpwUJBdfhRsSI5RB-zeeS32EGwFZXslJQBFrXropsxjr_lqBdrr_eMvGI8dhALo8vA_5DRw");'></div>
-<div class="absolute inset-0 weather-overlay backdrop-blur-[1px]"></div>
-<div class="relative z-10 flex flex-col md:flex-row items-center justify-between p-6 md:p-8">
-<div class="text-center md:text-left">
-<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-background-light/80 dark:bg-background-dark/80 backdrop-blur text-xs font-semibold uppercase tracking-wider text-primary mb-2 border border-primary/20">
-<span class="material-symbols-outlined text-sm">mist</span> Current Weather
-                    </div>
-<h1 class="text-3xl md:text-4xl font-bold text-ink-dark dark:text-white mb-1">Misty Morning</h1>
-<p class="text-slate-600 dark:text-slate-300 font-medium">+10% Song Power to all Vocal Birds</p>
-</div>
-<!-- Power Triangle Hint -->
-<div class="mt-4 md:mt-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur p-3 rounded-xl border border-primary/10 flex items-center gap-4 text-xs font-bold text-slate-500 dark:text-slate-400">
-<div class="flex items-center gap-1">
-<span class="material-symbols-outlined text-primary text-base">music_note</span> Song
-                        <span class="material-symbols-outlined text-[10px]">arrow_forward_ios</span>
-</div>
-<div class="flex items-center gap-1">
-<span class="material-symbols-outlined text-primary text-base">spa</span> Plumage
-                        <span class="material-symbols-outlined text-[10px]">arrow_forward_ios</span>
-</div>
-<div class="flex items-center gap-1">
-<span class="material-symbols-outlined text-primary text-base">flight</span> Flight
-                        <span class="material-symbols-outlined text-[10px]">arrow_forward_ios</span>
-<span class="material-symbols-outlined text-primary text-base">music_note</span>
-</div>
-</div>
-</div>
-</div>
-<!-- Battle Arena Grid -->
-<div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative">
-<!-- Player 1 (User) -->
-<div class="lg:col-span-5 flex flex-col gap-4">
-<div class="bg-background-light dark:bg-background-dark border border-primary/20 rounded-2xl overflow-hidden shadow-card transition-all hover:shadow-journal">
-<!-- Card Image Area -->
-<div class="relative aspect-[4/3] w-full bg-slate-100 dark:bg-slate-800">
-<img alt="Peregrine Falcon" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLGrpeUIyzgRhQ3f7SL7InZFI5JSW6fe_hOuWII9OnA6Cz-x6YIoTEXmcsWE4BgybeRJwRDon12Un_we5qx-IA2Pks1SHPyl0B05k4E8vfiW3caYWDTmVA7PBZvqm67oC3OfIUNMa7oSyqy1K2aiRaQqwIYGp7pFmwKqNbyI7ufOJ5BMWjFyPeRtIiGQ32t8nSFciZ_2xKTGWqJbCRjR6l35Waqhkyf8-3DC5dPNCvEw1ZUxyj9NfM8-Jz6I_WIyPpy0aSaqBbfqqF"/>
-<div class="absolute top-4 left-4 bg-primary text-secondary text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-sm">
-<span class="material-symbols-outlined text-sm">flight</span> Flight Type
-                        </div>
-<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-<h3 class="text-white text-2xl font-bold">Peregrine Falcon</h3>
-<p class="text-primary-dark font-medium text-sm">Level 12 • Raptor</p>
-</div>
-</div>
-<!-- Stats & Controls -->
-<div class="p-5 space-y-5">
-<!-- HP Bar -->
-<div class="space-y-1.5">
-<div class="flex justify-between items-end">
-<span class="text-sm font-bold text-slate-500 dark:text-slate-400">Health</span>
-<span class="text-sm font-bold text-slate-800 dark:text-slate-200">85/100</span>
-</div>
-<div class="h-3 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden ink-bar-bg border border-slate-300 dark:border-slate-600 relative">
-<div class="h-full bg-primary relative w-[85%] rounded-full">
-<div class="absolute inset-0 bg-white/20"></div>
-</div>
-</div>
-</div>
-<!-- Stamina Bar -->
-<div class="space-y-1.5">
-<div class="flex justify-between items-end">
-<span class="text-sm font-bold text-slate-500 dark:text-slate-400">Stamina</span>
-<span class="text-sm font-bold text-slate-800 dark:text-slate-200">60/100</span>
-</div>
-<div class="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden ink-bar-bg border border-slate-300 dark:border-slate-600">
-<div class="h-full bg-blue-400 dark:bg-blue-500 w-[60%] rounded-full"></div>
-</div>
-<p class="text-xs text-slate-400 dark:text-slate-500 text-right">-5 Fatigue/turn</p>
-</div>
-<!-- Actions -->
-<div class="grid grid-cols-2 gap-3 pt-2">
-<button class="flex items-center justify-center gap-2 rounded-xl h-10 px-4 bg-primary text-secondary text-sm font-bold shadow-sm hover:translate-y-[-1px] transition-transform">
-<span class="material-symbols-outlined text-lg">swords</span> Attack
-                            </button>
-<button class="flex items-center justify-center gap-2 rounded-xl h-10 px-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-bold border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-<span class="material-symbols-outlined text-lg">shield</span> Defend
-                            </button>
-</div>
-</div>
-</div>
-</div>
-<!-- VS Badge -->
-<div class="lg:col-span-2 flex flex-col items-center justify-center lg:h-full py-4 lg:py-0 relative z-10">
-<div class="bg-background-light dark:bg-background-dark rounded-full p-2 shadow-journal border-4 border-slate-100 dark:border-slate-800">
-<div class="bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 w-12 h-12 rounded-full flex items-center justify-center font-black text-xl italic tracking-tighter">
-                        VS
-                    </div>
-</div>
-</div>
-<!-- Player 2 (Opponent) -->
-<div class="lg:col-span-5 flex flex-col gap-4">
-<div class="bg-background-light dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-card opacity-90">
-<!-- Card Image Area -->
-<div class="relative aspect-[4/3] w-full bg-slate-100 dark:bg-slate-800">
-<img alt="European Robin" class="w-full h-full object-cover filter saturate-[0.8]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVUt5Www2obd4AeXHz31ZQlYbfv4S9TkIuQbCA31uPBq_l8qoikIVVk3sf7e0y9KEBA6ZSFfFprQ8UOGmcW1G4fwaLyayjSe25I7UDuoM4iUbDw1vDJhJIV_UBzAVRiRnBIpmak4vpYMmdORbHfCrSIwcweoMSBQoHpiN2fUFjnfp8HmxNQ3kbCbsIn0GE0fsRCI3A-gN0ce2Kka42wdndFr35JwCOvPlRMDVEGamXGo6A4R4swm_iA8clE_30U7lwFB6tIhOnYwrr"/>
-<div class="absolute top-4 right-4 bg-purple-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-sm">
-<span class="material-symbols-outlined text-sm">music_note</span> Song Type
-                        </div>
-<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 text-right">
-<h3 class="text-white text-2xl font-bold">European Robin</h3>
-<p class="text-slate-300 font-medium text-sm">Level 11 • Songbird</p>
-</div>
-</div>
-<!-- Stats -->
-<div class="p-5 space-y-5">
-<!-- HP Bar -->
-<div class="space-y-1.5">
-<div class="flex justify-between items-end">
-<span class="text-sm font-bold text-slate-500 dark:text-slate-400">Health</span>
-<span class="text-sm font-bold text-slate-800 dark:text-slate-200">92/95</span>
-</div>
-<div class="h-3 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden ink-bar-bg border border-slate-300 dark:border-slate-600 relative">
-<div class="h-full bg-red-500 relative w-[96%] rounded-full">
-<div class="absolute inset-0 bg-white/20"></div>
-</div>
-</div>
-</div>
-<!-- Opponent Action -->
-<div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3 text-center border border-dashed border-slate-300 dark:border-slate-700">
-<p class="text-xs text-slate-500 dark:text-slate-400 flex items-center justify-center gap-2">
-<span class="material-symbols-outlined text-base animate-spin">hourglass_empty</span>
-                                Opponent is thinking...
-                            </p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- Combat Log -->
-<div class="w-full mt-6 bg-parchment dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
-<h4 class="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">Recent Activity</h4>
-<div class="space-y-2 font-mono text-sm text-slate-700 dark:text-slate-300">
-<div class="flex items-start gap-3">
-<span class="text-slate-400 text-xs mt-0.5">10:42 AM</span>
-<p><span class="font-bold text-primary-dark dark:text-primary">You</span> used <span class="font-bold">Aerial Dive</span>. It was super effective!</p>
-</div>
-<div class="flex items-start gap-3">
-<span class="text-slate-400 text-xs mt-0.5">10:41 AM</span>
-<p><span class="font-bold text-purple-600 dark:text-purple-400">Opponent</span> used <span class="font-bold">Morning Serenade</span>.</p>
-</div>
-</div>
-</div>
-</main>
-</div>
-</div>
-    `;
+    let { playerBirds, opponentBirds, weather, time } = store.getState();
 
-    attachNavbarListeners(container);
+    // Internal state for the combat flow
+    let selectedPlayerBird: Bird | null = null;
+    let selectedOpponentBird: Bird = opponentBirds[Math.floor(Math.random() * opponentBirds.length)];
+    let playerRounds = 0;
+    let opponentRounds = 0;
+    let currentRound = 1;
+    let isRoundAnimating = false;
+    let matchFinished = false;
+
+    const renderSelector = () => {
+        container.innerHTML = `
+        <div class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col overflow-x-hidden text-slate-900 dark:text-slate-100 relative">
+            <div class="fixed inset-0 pointer-events-none opacity-40 z-0 bg-paper-texture mix-blend-multiply dark:mix-blend-overlay"></div>
+            <div class="relative z-10 flex flex-col flex-grow w-full max-w-[1440px] mx-auto">
+                ${renderNavbar('arena')}
+                
+                <main class="flex-grow p-6 lg:p-12 flex flex-col items-center">
+                    <div class="text-center mb-10 max-w-2xl animate-fade-in">
+                        <h2 class="text-4xl font-black text-slate-800 dark:text-white tracking-tighter mb-4">El Certamen de Pinto</h2>
+                        <p class="text-slate-500 dark:text-slate-400 font-medium">Selecciona al campeón que representará a tu santuario en este duelo de elegancia y destreza.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
+                        ${playerBirds.map(bird => `
+                            <div class="bird-select-card group cursor-pointer bg-white dark:bg-slate-900 rounded-[2.5rem] border-4 border-white dark:border-slate-800 shadow-xl overflow-hidden hover:border-primary transition-all hover:scale-[1.02] active:scale-95" data-id="${bird.id}">
+                                <div class="h-48 bg-cover bg-center" style="background-image: url('${bird.image}')"></div>
+                                <div class="p-6">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div>
+                                            <h3 class="text-xl font-bold">${bird.name}</h3>
+                                            <span class="text-[10px] font-black uppercase text-primary tracking-widest">${bird.type}</span>
+                                        </div>
+                                        <div class="bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
+                                            <span class="text-xs font-black">LVL ${bird.level}</span>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                <div class="h-full bg-amber-400" style="width: ${bird.canto}%"></div>
+                                            </div>
+                                            <span class="text-[10px] font-bold text-slate-400 w-12 text-right">CANTO</span>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                <div class="h-full bg-emerald-400" style="width: ${bird.plumaje}%"></div>
+                                            </div>
+                                            <span class="text-[10px] font-bold text-slate-400 w-12 text-right">PLUMA</span>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                <div class="h-full bg-blue-400" style="width: ${bird.vuelo}%"></div>
+                                            </div>
+                                            <span class="text-[10px] font-bold text-slate-400 w-12 text-right">VUELO</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </main>
+            </div>
+        </div>
+        `;
+
+        attachNavbarListeners(container);
+        container.querySelectorAll('.bird-select-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const id = (card as HTMLElement).dataset.id;
+                selectedPlayerBird = playerBirds.find(b => b.id === id) || null;
+                if (selectedPlayerBird) renderCombat();
+            });
+        });
+    };
+
+    const calculateRoundResult = (userAttr: 'canto' | 'plumaje' | 'vuelo') => {
+        if (!selectedPlayerBird) return null;
+
+        const opponentAttrOptions: ('canto' | 'plumaje' | 'vuelo')[] = ['canto', 'plumaje', 'vuelo'];
+        const opponentAttr = opponentAttrOptions[Math.floor(Math.random() * 3)];
+
+        let userScore = selectedPlayerBird[userAttr];
+        let opponentScore = selectedOpponentBird[opponentAttr];
+
+        // Base Advantages
+        let advantage = "none";
+        if (
+            (userAttr === 'vuelo' && opponentAttr === 'canto') ||
+            (userAttr === 'canto' && opponentAttr === 'plumaje') ||
+            (userAttr === 'plumaje' && opponentAttr === 'vuelo')
+        ) {
+            userScore *= 1.3;
+            advantage = "user";
+        } else if (
+            (opponentAttr === 'vuelo' && userAttr === 'canto') ||
+            (opponentAttr === 'canto' && userAttr === 'plumaje') ||
+            (opponentAttr === 'plumaje' && userAttr === 'vuelo')
+        ) {
+            opponentScore *= 1.3;
+            advantage = "opponent";
+        }
+
+        // Weather Bonuses
+        const cond = weather?.condition.toLowerCase() || 'clear';
+        let weatherStatus = "Condiciones normales";
+
+        if (cond.includes('clear') || cond.includes('sun')) {
+            if (userAttr === 'vuelo') { userScore *= 1.2; weatherStatus = "¡Cielo despejado! +20% a Vuelo"; }
+        } else if (cond.includes('rain') || cond.includes('cloud')) {
+            if (userAttr === 'plumaje') { userScore *= 1.2; weatherStatus = "¡Humedad alta! +20% a Plumaje"; }
+        }
+
+        if (time.phase === 'Morning' && userAttr === 'canto') {
+            userScore *= 1.15;
+            weatherStatus = "¡Mañana temprana! +15% a Canto";
+        }
+
+        const winner = userScore > opponentScore ? 'user' : (userScore < opponentScore ? 'opponent' : 'draw');
+
+        return { winner, userAttr, opponentAttr, userScore, opponentScore, advantage, weatherStatus };
+    };
+
+    const renderCombat = () => {
+        if (!selectedPlayerBird) return;
+
+        container.innerHTML = `
+<div class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col overflow-x-hidden text-slate-900 dark:text-slate-100 relative">
+    <div class="fixed inset-0 pointer-events-none opacity-40 z-0 bg-paper-texture mix-blend-multiply dark:mix-blend-overlay"></div>
+    <div class="relative z-10 flex flex-col flex-grow w-full max-w-[1440px] mx-auto">
+        ${renderNavbar('arena')}
+
+        <main class="flex-grow flex flex-col items-center justify-start py-6 px-4 md:px-8 w-full max-w-[1200px] mx-auto z-10">
+            <!-- Header Match Status -->
+            <div class="w-full flex items-center justify-between mb-8 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl p-6 rounded-[2.5rem] border border-primary/20 shadow-journal">
+                <div class="flex items-center gap-4">
+                    <img src="${selectedPlayerBird.image}" class="size-16 rounded-2xl object-cover border-4 border-primary">
+                    <div>
+                        <h4 class="text-sm font-black uppercase text-slate-400">Tú</h4>
+                        <p class="text-lg font-bold leading-tight">${selectedPlayerBird.name}</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center">
+                    <div class="flex gap-2 mb-2">
+                        ${[1, 2, 3, 4, 5].map(i => `
+                            <div class="size-3 rounded-full border-2 border-primary/20 ${i <= playerRounds ? 'bg-primary scale-125 shadow-[0_0_10px_rgba(94,232,48,0.5)]' : 'bg-slate-100 dark:bg-slate-800'}"></div>
+                        `).join('')}
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 px-4 py-1 rounded-full border border-slate-100 dark:border-slate-700">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">${currentRound > 5 ? 'FINALIZADO' : `RONDA ${currentRound}`}</span>
+                    </div>
+                    <div class="flex gap-2 mt-2">
+                        ${[1, 2, 3, 4, 5].map(i => `
+                            <div class="size-3 rounded-full border-2 border-red-500/20 ${i <= opponentRounds ? 'bg-red-500 scale-125 shadow-[0_0_10px_rgba(239,68,68,0.5)]' : 'bg-slate-100 dark:bg-slate-800'}"></div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 text-right">
+                    <div>
+                        <h4 class="text-sm font-black uppercase text-slate-400">Rival</h4>
+                        <p class="text-lg font-bold leading-tight">${selectedOpponentBird.name}</p>
+                    </div>
+                    <img src="${selectedOpponentBird.image}" class="size-16 rounded-2xl object-cover border-4 border-red-500">
+                </div>
+            </div>
+
+            <!-- Main Stage -->
+            <div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Attributes Column -->
+                <div class="lg:col-span-3 space-y-4">
+                    <div class="bg-white/80 dark:bg-slate-900/60 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm">
+                        <h5 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6 text-center">Tus Atributos</h5>
+                        <div class="space-y-4">
+                            <button class="attr-btn w-full p-4 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-200 dark:border-amber-800 flex items-center justify-between hover:scale-[1.02] transition-all ${isRoundAnimating || matchFinished ? 'opacity-50 pointer-events-none' : ''}" data-attr="canto">
+                                <span class="material-symbols-outlined text-amber-600">music_note</span>
+                                <span class="font-bold">${selectedPlayerBird.canto}</span>
+                            </button>
+                            <button class="attr-btn w-full p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-900/20 border-2 border-emerald-200 dark:border-emerald-800 flex items-center justify-between hover:scale-[1.02] transition-all ${isRoundAnimating || matchFinished ? 'opacity-50 pointer-events-none' : ''}" data-attr="plumaje">
+                                <span class="material-symbols-outlined text-emerald-600">shield</span>
+                                <span class="font-bold">${selectedPlayerBird.plumaje}</span>
+                            </button>
+                            <button class="attr-btn w-full p-4 rounded-2xl bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 flex items-center justify-between hover:scale-[1.02] transition-all ${isRoundAnimating || matchFinished ? 'opacity-50 pointer-events-none' : ''}" data-attr="vuelo">
+                                <span class="material-symbols-outlined text-blue-600">air</span>
+                                <span class="font-bold">${selectedPlayerBird.vuelo}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Weather Card -->
+                    <div class="bg-primary/5 dark:bg-primary/10 p-5 rounded-[2rem] border border-primary/20">
+                        <div class="flex items-center gap-3 mb-2">
+                             <span class="material-symbols-outlined text-primary text-sm">${weather?.condition.includes('sun') ? 'sunny' : 'cloudy'}</span>
+                             <p class="text-[10px] font-black uppercase tracking-widest text-primary">Estado Atmosférico</p>
+                        </div>
+                        <p class="text-xs font-bold text-slate-600 dark:text-slate-300">${weather?.description || 'Despejado'} - ${time.phase}</p>
+                    </div>
+                </div>
+
+                <!-- Battle History and Central Stage -->
+                <div class="lg:col-span-9 space-y-6">
+                    <div id="combat-stage" class="min-h-[400px] bg-slate-900 rounded-[3rem] border-8 border-white dark:border-slate-800 shadow-journal relative flex flex-col items-center justify-center p-10 overflow-hidden">
+                        <!-- Dynamic Background -->
+                        <div class="absolute inset-0 opacity-20 pointer-events-none animate-pulse" style="background: radial-gradient(circle at center, var(--primary) 0%, transparent 70%)"></div>
+                        
+                        <div id="battle-display" class="relative z-10 w-full text-center">
+                            <h2 class="text-6xl font-black italic text-slate-800 dark:text-slate-700 select-none">VERSUS</h2>
+                            <p class="text-sm font-bold text-slate-400 mt-4 uppercase tracking-[0.5em]">Esperando Acción</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm max-h-[180px] flex flex-col">
+                        <h4 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 pb-3 border-b border-slate-50 dark:border-slate-800 flex justify-between items-center">
+                            Crónica del Encuentro
+                            <span class="text-primary font-bold">Tiempo Actual: ${weather?.condition || 'Normal'}</span>
+                        </h4>
+                        <div id="arena-log" class="overflow-y-auto space-y-2 flex-grow custom-scrollbar pr-2">
+                            <p class="text-[11px] text-slate-500 italic">Los jueces ocupan sus sitios. El certamen por el prestigio de Pinto va a dar comienzo.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+        `;
+
+        attachNavbarListeners(container);
+        addCombatListeners();
+    };
+
+    const addCombatListeners = () => {
+        container.querySelectorAll('.attr-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const attr = (e.currentTarget as HTMLElement).dataset.attr as any;
+                if (isRoundAnimating || matchFinished) return;
+
+                isRoundAnimating = true;
+                const result = calculateRoundResult(attr);
+                if (!result) return;
+
+                const display = document.getElementById('battle-display');
+                if (display) {
+                    display.innerHTML = `
+                        <div class="animate-scale-up flex flex-col items-center">
+                            <div class="flex items-center gap-12 mb-8">
+                                <div class="text-center">
+                                    <div class="size-24 rounded-full border-4 border-primary bg-white dark:bg-slate-800 flex items-center justify-center mb-2 shadow-xl">
+                                        <span class="material-symbols-outlined text-5xl text-primary">${attr === 'canto' ? 'music_note' : attr === 'plumaje' ? 'shield' : 'air'}</span>
+                                    </div>
+                                    <p class="text-4xl font-black">${Math.round(result.userScore)}</p>
+                                    <p class="text-[10px] font-bold uppercase text-primary">${attr}</p>
+                                </div>
+                                <div class="text-2xl font-black text-slate-500 italic">VS</div>
+                                <div class="text-center">
+                                    <div class="size-24 rounded-full border-4 border-red-500 bg-white dark:bg-slate-800 flex items-center justify-center mb-2 shadow-xl">
+                                        <span class="material-symbols-outlined text-5xl text-red-500">${result.opponentAttr === 'canto' ? 'music_note' : result.opponentAttr === 'plumaje' ? 'shield' : 'air'}</span>
+                                    </div>
+                                    <p class="text-4xl font-black">${Math.round(result.opponentScore)}</p>
+                                    <p class="text-[10px] font-bold uppercase text-red-500">${result.opponentAttr}</p>
+                                </div>
+                            </div>
+                            <h3 class="text-4xl font-black tracking-tighter ${result.winner === 'user' ? 'text-primary' : (result.winner === 'opponent' ? 'text-red-500' : 'text-slate-500')}">
+                                ${result.winner === 'user' ? '¡Victoria de Ronda!' : (result.winner === 'opponent' ? 'Ronda Perdida' : '¡Empate!')}
+                            </h3>
+                            <p class="text-xs font-bold text-slate-400 mt-2 italic">${result.weatherStatus}</p>
+                        </div>
+                    `;
+                }
+
+                addLogEntry(`R${currentRound}: ${attr.toUpperCase()} (${Math.round(result.userScore)}) vs ${result.opponentAttr.toUpperCase()} (${Math.round(result.opponentScore)}). ${result.weatherStatus}`);
+
+                await new Promise(r => setTimeout(r, 2000));
+
+                if (result.winner === 'user') playerRounds++;
+                else if (result.winner === 'opponent') opponentRounds++;
+
+                currentRound++;
+                isRoundAnimating = false;
+
+                if (currentRound > 5) {
+                    matchFinished = true;
+                    renderRewards();
+                } else {
+                    renderCombat();
+                }
+            });
+        });
+    };
+
+    const addLogEntry = (msg: string) => {
+        const log = document.getElementById('arena-log');
+        if (log) {
+            const p = document.createElement('p');
+            p.className = 'text-[11px] leading-relaxed py-1.5 border-l-2 border-primary/20 pl-4 animate-fade-in-right bg-primary/5 rounded-r-lg mb-2';
+            p.innerHTML = `<span class="text-slate-400 mr-2 font-mono">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span> ${msg}`;
+            log.insertBefore(p, log.firstChild);
+        }
+    };
+
+    const renderRewards = () => {
+        const winner = playerRounds > opponentRounds ? 'user' : (playerRounds < opponentRounds ? 'opponent' : 'draw');
+
+        let rewardPlumas = 0;
+        let rewardXP = currentRound * 15;
+        let bonusItem = null;
+
+        if (winner === 'user') {
+            rewardPlumas = 150 + (playerRounds * 20);
+            rewardXP += 100;
+            // 30% chance for a random supply
+            if (Math.random() > 0.7) bonusItem = "Esencia de Vuelo";
+        } else if (winner === 'draw') {
+            rewardPlumas = 50;
+            rewardXP += 40;
+        }
+
+        container.innerHTML = `
+        <div class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/90 backdrop-blur-md">
+            <div class="bg-white dark:bg-slate-900 rounded-[3rem] p-12 max-w-md w-full border-8 border-primary shadow-2xl text-center animate-scale-up">
+                <div class="size-24 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                    <span class="material-symbols-outlined text-6xl text-primary">${winner === 'user' ? 'military_tech' : 'sentiment_dissatisfied'}</span>
+                </div>
+                
+                <h2 class="text-5xl font-black uppercase tracking-tighter mb-2 italic">
+                    ${winner === 'user' ? '¡CAMPEÓN!' : (winner === 'opponent' ? 'VALOR DEMOSTRADO' : 'EMPATE TÉCNICO')}
+                </h2>
+                <p class="text-slate-500 font-bold mb-10 italic">Marcador Final: ${playerRounds} - ${opponentRounds}</p>
+                
+                <div class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-700 mb-8 space-y-4">
+                    <h4 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Recompensas del Certamen</h4>
+                    <div class="flex justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+                        <div class="flex items-center gap-2">
+                             <span class="material-symbols-outlined text-amber-500">monetization_on</span>
+                             <span class="text-sm font-bold">Plumas</span>
+                        </div>
+                        <span class="text-lg font-black text-amber-600">+${rewardPlumas}</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+                        <div class="flex items-center gap-2">
+                             <span class="material-symbols-outlined text-primary">add_circle</span>
+                             <span class="text-sm font-bold">XP (Ave)</span>
+                        </div>
+                        <span class="text-lg font-black text-primary">+${rewardXP}</span>
+                    </div>
+                    ${bonusItem ? `
+                    <div class="flex justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-900/30">
+                        <div class="flex items-center gap-2">
+                             <span class="material-symbols-outlined text-emerald-500">package_2</span>
+                             <span class="text-sm font-bold">${bonusItem}</span>
+                        </div>
+                        <span class="text-xs font-black text-emerald-600">NUEVO</span>
+                    </div>
+                    ` : ''}
+                </div>
+
+                <button id="claim-rewards-btn" class="w-full py-5 bg-primary text-slate-900 font-black rounded-2xl shadow-xl shadow-primary/30 hover:bg-primary-dark transition-all uppercase tracking-widest text-sm">
+                    Reclamar y Volver
+                </button>
+            </div>
+        </div>
+        `;
+
+        document.getElementById('claim-rewards-btn')?.addEventListener('click', () => {
+            // Update state
+            const { playerBirds, currentUser } = store.getState();
+            if (currentUser && selectedPlayerBird) {
+                const updatedBirds = playerBirds.map(b => {
+                    if (b.id === selectedPlayerBird?.id) {
+                        let newXp = b.xp + rewardXP;
+                        let newLevel = b.level;
+                        let newMaxXp = b.maxXp;
+                        if (newXp >= b.maxXp) {
+                            newXp -= b.maxXp;
+                            newLevel++;
+                            newMaxXp = Math.floor(b.maxXp * 1.5);
+                        }
+                        return { ...b, xp: newXp, level: newLevel, maxXp: newMaxXp };
+                    }
+                    return b;
+                });
+
+                store.setState({
+                    currentUser: { ...currentUser, feathers: currentUser.feathers + rewardPlumas },
+                    playerBirds: updatedBirds
+                });
+
+                store.addNotification({
+                    type: 'achievement',
+                    title: winner === 'user' ? 'Recompensas de Victoria' : 'Recompensas de Participación',
+                    message: `Has recibido ${rewardPlumas} plumas y tu ave ha ganado ${rewardXP} XP.`
+                });
+            }
+
+            // Reset and go home
+            (window as any).router.navigate('home');
+        });
+    };
+
+    // Initial render
+    renderSelector();
 };

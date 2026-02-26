@@ -1,0 +1,217 @@
+/**
+ * BIRD_CATALOG — Fuente única de verdad para las 6 aves de Pinto.
+ *
+ * Todos los módulos (expedition, home, album, arena, etc.) deben
+ * importar los pájaros desde aquí en lugar de duplicar los datos.
+ */
+
+import { Bird } from '../state';
+
+/** Datos extendidos del catálogo (superset de Bird). */
+export interface CatalogBird extends Bird {
+    /** Nombre científico latino */
+    scientificName: string;
+    /** Dato curioso para mostrar en modales / álbum */
+    fact: string;
+    /** Fases del día en las que el pájaro está activo */
+    preferredPhase: Array<'Morning' | 'Afternoon' | 'Night'>;
+    /** Condiciones meteorológicas favorables (opcional) */
+    preferredWeather?: string[];
+    /** Latitud en el mapa de Pinto */
+    lat: number;
+    /** Longitud en el mapa de Pinto */
+    lng: number;
+    /** Rareza, determina probabilidad de aparición */
+    rarity: 'common' | 'uncommon' | 'rare';
+    /** IDs de InventoryItem necesarios para mejorar este pájaro */
+    upgradeItems: string[];
+}
+
+export const BIRD_CATALOG: CatalogBird[] = [
+    {
+        id: 'pinto-1',
+        name: 'Cernícalo Primilla',
+        scientificName: 'Falco naumanni',
+        fact: 'Es el emblema de Pinto. Cría en la Torre de Éboli y la Iglesia de Santo Domingo.',
+        level: 1,
+        xp: 0,
+        maxXp: 150,
+        type: 'Raptor',
+        hp: 110,
+        maxHp: 110,
+        stamina: 90,
+        maxStamina: 100,
+        canto: 40,
+        plumaje: 60,
+        vuelo: 95,
+        image: 'https://images.pexels.com/photos/14840742/pexels-photo-14840742.jpeg?auto=compress&cs=tinysrgb&w=400',
+        audioUrl: 'https://upload.wikimedia.org/wikipedia/commons/8/84/Falco_naumanni.ogg',
+        origin: 'Torre de Éboli',
+        preferredPhase: ['Afternoon'],
+        preferredWeather: ['clear', 'sun'],
+        lat: 40.2425,
+        lng: -3.7005,
+        rarity: 'rare',
+        upgradeItems: ['feather', 'metal-scrap']
+    },
+    {
+        id: 'pinto-2',
+        name: 'Cigüeña Blanca',
+        scientificName: 'Ciconia ciconia',
+        fact: 'Se las puede ver en casi todos los campanarios y torres de Pinto.',
+        level: 1,
+        xp: 0,
+        maxXp: 100,
+        type: 'Plumage',
+        hp: 150,
+        maxHp: 150,
+        stamina: 70,
+        maxStamina: 120,
+        canto: 30,
+        plumaje: 90,
+        vuelo: 45,
+        image: 'https://images.pexels.com/photos/4516315/pexels-photo-4516315.jpeg?auto=compress&cs=tinysrgb&w=400',
+        audioUrl: 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Ciconia_ciconia.ogg',
+        origin: 'Iglesia Sto. Domingo',
+        preferredPhase: ['Morning', 'Afternoon'],
+        lat: 40.2415,
+        lng: -3.6985,
+        rarity: 'uncommon',
+        upgradeItems: ['feather', 'flower-petal']
+    },
+    {
+        id: 'pinto-3',
+        name: 'Abubilla',
+        scientificName: 'Upupa epops',
+        fact: 'Muy común en el Parque Municipal Cabeza de Hierro por su suelo arenoso.',
+        level: 1,
+        xp: 0,
+        maxXp: 80,
+        type: 'Songbird',
+        hp: 80,
+        maxHp: 80,
+        stamina: 120,
+        maxStamina: 150,
+        canto: 85,
+        plumaje: 50,
+        vuelo: 70,
+        image: 'https://images.pexels.com/photos/14234384/pexels-photo-14234384.jpeg?auto=compress&cs=tinysrgb&w=400',
+        audioUrl: 'https://upload.wikimedia.org/wikipedia/commons/7/7a/Upupa_epops.ogg',
+        origin: 'Parque Cabeza de Hierro',
+        preferredPhase: ['Morning', 'Afternoon'],
+        lat: 40.2455,
+        lng: -3.6975,
+        rarity: 'common',
+        upgradeItems: ['flower-petal', 'sugar']
+    },
+    {
+        id: 'pinto-4',
+        name: 'Mochuelo Común',
+        scientificName: 'Athene noctua',
+        fact: 'Habita en las zonas olivareras de las afueras de Pinto.',
+        level: 1,
+        xp: 0,
+        maxXp: 120,
+        type: 'Raptor',
+        hp: 95,
+        maxHp: 95,
+        stamina: 100,
+        maxStamina: 110,
+        canto: 50,
+        plumaje: 45,
+        vuelo: 80,
+        image: 'https://images.pexels.com/photos/106692/pexels-photo-106692.jpeg?auto=compress&cs=tinysrgb&w=400',
+        audioUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Athene_noctua.ogg',
+        origin: 'Olivos de Pinto',
+        preferredPhase: ['Night'],
+        lat: 40.250,
+        lng: -3.705,
+        rarity: 'uncommon',
+        upgradeItems: ['feather', 'metal-scrap']
+    },
+    {
+        id: 'pinto-5',
+        name: 'Vencejo Común',
+        scientificName: 'Apus apus',
+        fact: 'Pueblan el aire de Pinto en verano con sus gritos y vuelos rápidos.',
+        level: 1,
+        xp: 0,
+        maxXp: 50,
+        type: 'Flight',
+        hp: 60,
+        maxHp: 60,
+        stamina: 200,
+        maxStamina: 200,
+        canto: 65,
+        plumaje: 30,
+        vuelo: 100,
+        image: 'https://images.pexels.com/photos/1054394/pexels-photo-1054394.jpeg?auto=compress&cs=tinysrgb&w=400',
+        audioUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b3/Apus_apus.ogg',
+        origin: 'Centro Urbano',
+        preferredPhase: ['Morning'],
+        lat: 40.243,
+        lng: -3.699,
+        rarity: 'common',
+        upgradeItems: ['flower-petal']
+    },
+    {
+        id: 'pinto-6',
+        name: 'Mirlo Común',
+        scientificName: 'Turdus merula',
+        fact: 'Canto melodioso y color negro azabache, un vecino inseparable de Pinto.',
+        level: 1,
+        xp: 0,
+        maxXp: 70,
+        type: 'Songbird',
+        hp: 85,
+        maxHp: 85,
+        stamina: 100,
+        maxStamina: 100,
+        canto: 95,
+        plumaje: 20,
+        vuelo: 65,
+        image: 'https://images.pexels.com/photos/46162/common-blackbird-turdus-merula-male-thrush-46162.jpeg?auto=compress&cs=tinysrgb&w=400',
+        audioUrl: 'https://upload.wikimedia.org/wikipedia/commons/6/66/Turdus_merula_singing.ogg',
+        origin: 'Jardines de Pinto',
+        preferredPhase: ['Morning', 'Afternoon'],
+        lat: 40.244,
+        lng: -3.702,
+        rarity: 'common',
+        upgradeItems: ['flower-petal', 'sugar']
+    }
+];
+
+/** Lookup rápido por id */
+export function getBirdById(id: string): CatalogBird | undefined {
+    return BIRD_CATALOG.find(b => b.id === id);
+}
+
+/** Obtén la imagen de un pájaro por id (o string vacío si no existe) */
+export function getBirdImage(id: string): string {
+    return getBirdById(id)?.image ?? '';
+}
+
+/** Obtén la URL del audio de un pájaro por id */
+export function getBirdAudio(id: string): string {
+    return getBirdById(id)?.audioUrl ?? '';
+}
+
+/**
+ * Genera una copia limpia del pájaro lista para añadir a playerBirds,
+ * con xp/level reseteados a nivel 1 (la progresión es del jugador).
+ */
+export function createPlayerBird(catalogId: string): Bird | null {
+    const catalog = getBirdById(catalogId);
+    if (!catalog) return null;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { scientificName: _sn, fact: _f, preferredPhase: _pp, preferredWeather: _pw, lat: _lat, lng: _lng, rarity: _r, upgradeItems: _ui, ...birdBase } = catalog;
+    return {
+        ...birdBase,
+        level: 1,
+        xp: 0,
+        maxXp: catalog.maxXp,
+        hp: catalog.maxHp,
+        stamina: catalog.maxStamina,
+        isStudied: false
+    };
+}

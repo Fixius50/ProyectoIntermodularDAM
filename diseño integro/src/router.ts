@@ -1,4 +1,4 @@
-export type Screen = 'home' | 'arena' | 'expedition' | 'album' | 'workshop' | 'social';
+export type Screen = 'home' | 'arena' | 'expedition' | 'album' | 'workshop' | 'social' | 'login' | 'store' | 'profile';
 
 export class Router {
     private container: HTMLElement;
@@ -15,8 +15,16 @@ export class Router {
     async navigate(name: Screen) {
         const loader = this.screens.get(name);
         if (loader) {
+            this.container.classList.remove('animate-fade-in');
             this.container.innerHTML = ''; // Clear container
+
             await loader();
+
+            // Re-trigger animation
+            requestAnimationFrame(() => {
+                this.container.classList.add('animate-fade-in');
+            });
+
             window.location.hash = name;
         }
     }

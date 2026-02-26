@@ -1,37 +1,27 @@
+import { renderNavbar, attachNavbarListeners } from '../../components/Navbar';
+import { store, InventoryItem } from '../../state';
+
 export const renderWorkshop = (container: HTMLElement) => {
-    container.innerHTML = `
+    let selectedIngredients: (InventoryItem | null)[] = [null, null];
+
+    const renderContent = () => {
+        const { inventory, weather } = store.getState();
+
+        const getWeatherImpact = () => {
+            if (!weather) return { text: "Stable Conditions", icon: "sync", active: false };
+            const condition = weather.condition.toLowerCase();
+            if (condition.includes('rain')) return { text: "Water Infusion Active", icon: "water_drop", active: true, bonus: "Higher Success Rate" };
+            if (condition.includes('sun') || condition.includes('clear')) return { text: "Solar Hardening", icon: "sunny", active: true, bonus: "Stronger Equipment" };
+            return { text: "Standard Conditions", icon: weather.icon, active: false };
+        };
+
+        const impact = getWeatherImpact();
+
+        container.innerHTML = `
 <div class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col overflow-x-hidden text-slate-900 dark:text-slate-100 relative">
 <div class="fixed inset-0 pointer-events-none opacity-40 z-0 bg-paper-texture mix-blend-multiply dark:mix-blend-overlay"></div>
 <!-- Top Navigation -->
-<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/20 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md px-6 lg:px-10 py-3 sticky top-0 z-50">
-<div class="flex items-center gap-4 cursor-pointer nav-link" data-screen="home">
-<div class="size-8 text-primary flex items-center justify-center">
-<span class="material-symbols-outlined text-3xl">construction</span>
-</div>
-<h2 class="text-ink-dark dark:text-white text-xl font-bold leading-tight tracking-tight">Aery: Workshop</h2>
-</div>
-<div class="hidden lg:flex flex-1 justify-center gap-8">
-<div class="flex items-center gap-9">
-<a class="nav-link cursor-pointer text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium leading-normal flex items-center gap-2" data-screen="home">
-<span class="material-symbols-outlined text-[20px]">home</span> Santuario
-                </a>
-<a class="nav-link cursor-pointer text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium leading-normal flex items-center gap-2" data-screen="expedition">
-<span class="material-symbols-outlined text-[20px]">explore</span> Expeditions
-                </a>
-<a class="nav-link cursor-pointer text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium leading-normal flex items-center gap-2" data-screen="album">
-<span class="material-symbols-outlined text-[20px]">photo_library</span> Collection
-                </a>
-<a class="nav-link cursor-pointer text-primary transition-colors text-sm font-bold leading-normal flex items-center gap-2" data-screen="workshop">
-<span class="material-symbols-outlined text-[20px]">construction</span> Workshop
-                </a>
-</div>
-</div>
-<div class="flex items-center gap-4 justify-end">
-<button class="nav-button bg-primary text-secondary px-4 py-2 rounded-xl font-bold text-sm" data-screen="home">Back to Home</button>
-<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 ring-2 ring-primary/30" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBU1KsSJCCItxugHMDBkqTkaLjpZf7_RDstEa3XdJJy-bhe4eay97xnQFbyq4HBYdvHrb-qA_NtvndEVud7m2_xTa-1lc0Sp-HW7wYK_n6-qXNMGKhBGBu-zaggpbMjz_WkmwKcT98DUi72-9SisclC2wJL3mOefVuHqQv0q9_1iM3UeThWwXk7PSP6PlI0fegjutmDAJB6VnoBaI3j4SUYVp3IN-and4XXUbbAknkCg2gH2myYMuIcptvuoVYFjkwbESmwZO9M8Ir6");'></div>
-</div>
-</header>
-<!-- Main Content Area -->
+${renderNavbar('workshop')}
 <main class="flex-grow flex flex-col lg:flex-row p-6 md:p-8 w-full max-w-[1440px] mx-auto z-10 gap-8 h-[calc(100vh-65px)] overflow-hidden">
 <!-- Left Side: Crafting Bench -->
 <div class="flex-grow flex flex-col gap-6 overflow-hidden">
@@ -42,23 +32,29 @@ export const renderWorkshop = (container: HTMLElement) => {
 <h1 class="text-3xl font-bold text-ink-dark dark:text-white">Crafting Bench</h1>
 <p class="text-slate-500 font-medium">Combine resources to create upgrades.</p>
 </div>
+<div class="flex flex-col items-end gap-2">
 <div class="flex items-center gap-3 bg-white/50 dark:bg-black/20 px-4 py-2 rounded-full border border-primary/20">
 <span class="material-symbols-outlined text-primary">auto_fix_high</span>
 <span class="text-sm font-bold">Lvl 4 Workshop</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-xl ${impact.active ? 'bg-amber-50 dark:bg-amber-900/30 border-amber-200' : 'bg-slate-50 dark:bg-slate-800 border-slate-200'} border text-xs font-bold transition-all">
+<span class="material-symbols-outlined text-sm ${impact.active ? 'text-amber-500' : 'text-slate-400'}">${impact.icon}</span>
+<span class="${impact.active ? 'text-amber-700 dark:text-amber-400' : 'text-slate-500'}">${impact.text} ${impact.active ? `(${impact.bonus})` : ''}</span>
+</div>
 </div>
 </div>
 <!-- Crafting Slots -->
 <div class="flex flex-col md:flex-row items-center justify-center gap-8 py-10">
 <div class="flex flex-col items-center gap-3">
-<div class="size-24 rounded-2xl border-2 border-dashed border-primary/30 bg-primary/5 flex items-center justify-center group cursor-pointer hover:bg-primary/10 transition-colors">
-<span class="material-symbols-outlined text-primary/40 text-4xl group-hover:scale-110 transition-transform">add</span>
+<div id="slot-0" class="size-24 rounded-2xl border-2 border-dashed ${selectedIngredients[0] ? 'border-primary bg-primary/10' : 'border-primary/30 bg-primary/5'} flex items-center justify-center group cursor-pointer hover:bg-primary/10 transition-colors">
+${selectedIngredients[0] ? `<span class="material-symbols-outlined text-primary text-4xl">${selectedIngredients[0].icon}</span>` : '<span class="material-symbols-outlined text-primary/40 text-4xl group-hover:scale-110 transition-transform">add</span>'}
 </div>
 <span class="text-xs font-bold uppercase text-slate-400">Ingredient 1</span>
 </div>
 <span class="material-symbols-outlined text-primary/40 text-3xl">add</span>
 <div class="flex flex-col items-center gap-3">
-<div class="size-24 rounded-2xl border-2 border-dashed border-primary/30 bg-primary/5 flex items-center justify-center group cursor-pointer hover:bg-primary/10 transition-colors">
-<span class="material-symbols-outlined text-primary/40 text-4xl group-hover:scale-110 transition-transform">add</span>
+<div id="slot-1" class="size-24 rounded-2xl border-2 border-dashed ${selectedIngredients[1] ? 'border-primary bg-primary/10' : 'border-primary/30 bg-primary/5'} flex items-center justify-center group cursor-pointer hover:bg-primary/10 transition-colors">
+${selectedIngredients[1] ? `<span class="material-symbols-outlined text-primary text-4xl">${selectedIngredients[1].icon}</span>` : '<span class="material-symbols-outlined text-primary/40 text-4xl group-hover:scale-110 transition-transform">add</span>'}
 </div>
 <span class="text-xs font-bold uppercase text-slate-400">Ingredient 2</span>
 </div>
@@ -72,10 +68,10 @@ export const renderWorkshop = (container: HTMLElement) => {
 </div>
 <!-- Action Buttons -->
 <div class="flex gap-4 mt-auto">
-<button class="flex-1 py-4 bg-primary hover:bg-primary-dark text-secondary font-bold rounded-2xl shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3">
+<button id="btn-craft" class="flex-1 py-4 bg-primary hover:bg-primary-dark text-secondary font-bold rounded-2xl shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50" ${!selectedIngredients[0] || !selectedIngredients[1] ? 'disabled' : ''}>
 <span class="material-symbols-outlined">bolt</span> Craft Item
                 </button>
-<button class="px-8 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-white font-bold rounded-2xl border border-slate-200 dark:border-slate-700 hover:bg-slate-200 transition-colors">
+<button id="btn-clear" class="px-8 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-white font-bold rounded-2xl border border-slate-200 dark:border-slate-700 hover:bg-slate-200 transition-colors">
                     Clear Slots
                 </button>
 </div>
@@ -88,7 +84,7 @@ export const renderWorkshop = (container: HTMLElement) => {
 </div>
 <div>
 <h4 class="font-bold text-sm">Energy Nectar</h4>
-<p class="text-xs text-slate-500 italic">2x Flower Petals + 1x Sugar</p>
+<p class="text-xs text-slate-500 italic">Flower Petals + Sugar</p>
 </div>
 </div>
 <div class="bg-white/50 dark:bg-black/20 p-4 rounded-2xl border border-primary/10 flex items-center gap-4 cursor-pointer hover:bg-white/80 transition-colors">
@@ -97,7 +93,7 @@ export const renderWorkshop = (container: HTMLElement) => {
 </div>
 <div>
 <h4 class="font-bold text-sm">Leg Band</h4>
-<p class="text-xs text-slate-500 italic">1x Metal + 1x Leather</p>
+<p class="text-xs text-slate-500 italic">Metal Scraps + 1x Leather</p>
 </div>
 </div>
 </div>
@@ -109,7 +105,7 @@ export const renderWorkshop = (container: HTMLElement) => {
 <h3 class="text-xl font-bold flex items-center gap-2">
 <span class="material-symbols-outlined text-primary">backpack</span> Inventory
                     </h3>
-<span class="text-xs font-bold text-slate-400 uppercase tracking-widest">32/50 Slots</span>
+<span class="text-xs font-bold text-slate-400 uppercase tracking-widest">${inventory.reduce((sum, item) => sum + item.count, 0)}/50 Slots</span>
 </div>
 <!-- Search/Filter -->
 <div class="relative mb-6">
@@ -119,26 +115,15 @@ export const renderWorkshop = (container: HTMLElement) => {
 <!-- Inventory Grid -->
 <div class="flex-grow overflow-y-auto custom-scrollbar pr-2">
 <div class="grid grid-cols-4 gap-3">
-<div class="aspect-square rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-transparent hover:border-primary/50 cursor-pointer transition-all flex items-center justify-center group relative p-2">
-<img class="w-full h-full object-contain filter drop-shadow-sm group-hover:scale-110 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAn8m9p9G7Zg-mK-yY9vN6-uS_x9-e-G9_s-T9_p-Y-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u-v-u"/>
-<span class="absolute bottom-1 right-1 bg-white dark:bg-black px-1 rounded text-[10px] font-bold">x12</span>
+${inventory.map(item => `
+<div class="inventory-item aspect-square rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-transparent hover:border-primary/50 cursor-pointer transition-all flex items-center justify-center group relative p-1" data-id="${item.id}">
+<span class="material-symbols-outlined text-primary text-2xl group-hover:scale-110 transition-transform">${item.icon}</span>
+<span class="absolute bottom-1 right-1 bg-white/80 dark:bg-black/60 px-1 rounded text-[10px] font-bold">${item.count}</span>
+<div class="absolute -top-12 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none z-20 whitespace-nowrap">
+    ${item.name}
 </div>
-<!-- Placeholder slots for look -->
-<div class="aspect-square rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-transparent hover:border-primary/50 cursor-pointer transition-all flex items-center justify-center p-2">
-<span class="material-symbols-outlined text-slate-300">block</span>
 </div>
-<div class="aspect-square rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-transparent hover:border-primary/50 cursor-pointer transition-all flex items-center justify-center p-2">
-<span class="material-symbols-outlined text-slate-300">block</span>
-</div>
-<div class="aspect-square rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-transparent hover:border-primary/50 cursor-pointer transition-all flex items-center justify-center p-2">
-<span class="material-symbols-outlined text-slate-300">block</span>
-</div>
-<div class="aspect-square rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-transparent hover:border-primary/50 cursor-pointer transition-all flex items-center justify-center p-2">
-<span class="material-symbols-outlined text-slate-300">block</span>
-</div>
-<div class="aspect-square rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-transparent hover:border-primary/50 cursor-pointer transition-all flex items-center justify-center p-2">
-<span class="material-symbols-outlined text-slate-300">block</span>
-</div>
+`).join('')}
 </div>
 </div>
 </div>
@@ -146,11 +131,67 @@ export const renderWorkshop = (container: HTMLElement) => {
 </main>
 </div>
     `;
+        attachNavbarListeners(container);
+        addWorkshopListeners();
+    };
 
-    container.querySelectorAll('.nav-link, .nav-button').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const screen = (e.currentTarget as HTMLElement).dataset.screen;
-            if (screen) { (window as any).router.navigate(screen); }
+    const addWorkshopListeners = () => {
+        container.querySelectorAll('.inventory-item').forEach(el => {
+            el.addEventListener('click', (e) => {
+                const id = (e.currentTarget as HTMLElement).dataset.id;
+                const item = store.getState().inventory.find(i => i.id === id);
+                if (item && item.count > 0) {
+                    if (!selectedIngredients[0]) selectedIngredients[0] = item;
+                    else if (!selectedIngredients[1]) selectedIngredients[1] = item;
+                    renderContent();
+                }
+            });
         });
-    });
+
+        document.getElementById('slot-0')?.addEventListener('click', () => { selectedIngredients[0] = null; renderContent(); });
+        document.getElementById('slot-1')?.addEventListener('click', () => { selectedIngredients[1] = null; renderContent(); });
+
+        document.getElementById('btn-clear')?.addEventListener('click', () => {
+            selectedIngredients = [null, null];
+            renderContent();
+        });
+
+        document.getElementById('btn-craft')?.addEventListener('click', () => {
+            if (selectedIngredients[0] && selectedIngredients[1]) {
+                const { inventory, weather } = store.getState();
+
+                // Weather restriction example
+                if (selectedIngredients[0].id === 'i1' && selectedIngredients[1].id === 'i2') {
+                    const condition = weather?.condition.toLowerCase() || "";
+                    if (condition.includes('rain')) {
+                        alert("The rain infuses your Nectar! You crafted a 'Storm Nectar' (+50% Stamina)!");
+                    } else {
+                        alert(`Crafted successful! Used ${selectedIngredients[0].name} and ${selectedIngredients[1].name}.`);
+                    }
+                } else {
+                    alert(`Crafted successful! Used ${selectedIngredients[0].name} and ${selectedIngredients[1].name}.`);
+                }
+
+                const newInventory = inventory.map(item => {
+                    let count = item.count;
+                    if (item.id === selectedIngredients[0]?.id) count--;
+                    if (item.id === selectedIngredients[1]?.id) count--;
+                    return { ...item, count };
+                });
+
+                selectedIngredients = [null, null];
+                store.setState({ inventory: newInventory });
+                renderContent();
+            }
+        });
+
+        container.querySelectorAll('.nav-link, .nav-button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const screen = (e.currentTarget as HTMLElement).dataset.screen;
+                if (screen) { (window as any).router.navigate(screen); }
+            });
+        });
+    };
+
+    renderContent();
 };
