@@ -10,19 +10,28 @@
 - **Gestión de Identidad:** Spring Security Reactive + JWT
 - **Procesamiento de Eventos:** RabbitMQ / Kafka
 
-## Stack Frontend
-- **Framework Core:** React Native
-- **Gestión de Estado:** Context / Zustand
-- **UX/UI:** Componentes funcionales simples, asegurando que funcione de forma intuitiva sin importar experiencia técnica previa.
+## Stack Frontend (Híbrido Web + Android)
+- **Framework Core:** React 18 + Vite + TypeScript
+- **Target Mobile:** Capacitor 6 → APK Android nativo con WebView
+- **Gestión de Estado:** Zustand (singleton store con persistencia localStorage)
+- **Estilos:** Tailwind CSS + CSS Variables (Glassmorphism, modo oscuro)
+- **Router:** Zustand `currentScreen` (SPA sin React Router)
+- **Capa Nativa Android:** Java puro con Hilt, Retrofit, RxJava3, Room, OkHttp
+
+## Conectividad Cliente ↔ Servidor (Tailscale VPN)
+- El servidor Spring Boot corre en una máquina Lubuntu (`100.112.239.82:8080`)
+- El cliente Android se conecta a través de **Tailscale VPN** embebida (Go/tsnet)
+- La librería Tailscale se compila como `.aar` con `gomobile bind` desde `tailscalebridge/`
+- El plugin `TailscalePlugin.java` (Capacitor) inicia la VPN antes de cualquier llamada Retrofit
 
 ## APIs Externas Integradas
 - **Nuthatch API:** Datos taxonómicos reales (nombre científico, familia, audios de cantos)
-- **Unsplash / Pexels API:** Fondos de cartas dinámicos (hábitats y clima)
-- **Vecteezy:** Iconografía vectorial interactiva
-- **Weather API:** Para sincronizar probabilidades de avistamiento y estados de UI según clima real.
+- **wttr.in:** API de clima ligera (sin API key) para `weather.ts`
+- **Pexels API:** Imágenes de aves y hábitats
+- **DiceBear API:** Avatares de usuario generados dinámicamente (`/api.dicebear.com`)
 
-## Entorno de Desarrollo (Lubuntu)
-- Java 21, Maven
-- Node.js, npm
-- Docker (Redis, RabbitMQ/Kafka local)
-- Herramientas internas: AVIS Dev Uploader (Python GUI para push con Git LFS)
+## Entorno de Desarrollo
+- **Servidor remoto (Lubuntu):** Java 21, Maven, Docker (Redis, RabbitMQ/Kafka local)
+- **Cliente (Windows):** Node.js, npm, Android Studio, Go, gomobile
+- **Acceso remoto:** Tailscale VPN → SSH `ssh lubuntu@100.112.239.82`
+- **Scripts de Build:** `tailscalebridge/build_aar.ps1` (compile + copy .aar)
