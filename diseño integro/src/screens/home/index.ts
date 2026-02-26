@@ -36,8 +36,6 @@ export const renderHome = async (container: HTMLElement) => {
             store.setState({ playerBirds });
         }
 
-        const currentTip = tips[Math.floor(Date.now() / (1000 * 60 * 60 * 24)) % tips.length];
-
         const isCurrentRoute = window.location.hash === '#home' || window.location.hash === '' || window.location.hash === '#';
         if (!isCurrentRoute) return;
 
@@ -210,7 +208,7 @@ ${time.phase === 'Night' ? 'Nocturnal birds are currently appearing.' : 'Diurnal
 <span class="material-symbols-outlined text-primary text-xl">tips_and_updates</span>
 <h4 class="font-bold text-sm text-sage-800 dark:text-sage-100">Naturalist Tip</h4>
 </div>
-<p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">${currentTip}</p>
+<p id="naturalist-tip-text" class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed transition-opacity duration-500">${tips[Math.floor(Date.now() / (1000 * 60 * 60 * 24)) % tips.length]}</p>
 </div>
 </div>
 <!-- Center Column: Tree -->
@@ -551,4 +549,33 @@ ${pinnedLinks.map(link => `
         store.setState({ weather: weatherData });
         renderContent();
     }
+
+    // Dynamic Rotating Tip Logic
+    let currentTipIndex = Math.floor(Date.now() / (1000 * 60 * 60 * 24)) % tips.length;
+
+    // Initial Tip Set
+    const initialSetTip = () => {
+        const tipEl = container.querySelector('#naturalist-tip-text');
+        if (tipEl) tipEl.textContent = tips[currentTipIndex];
+    };
+    initialSetTip();
+
+    if ((container as any)._tipInterval) clearInterval((container as any)._tipInterval);
+
+    (container as any)._tipInterval = setInterval(() => {
+        // If not on the screen anymore, stop running logic
+        if (window.location.hash !== '#home' && window.location.hash !== '' && window.location.hash !== '#') return;
+
+        const tipEl = container.querySelector('#naturalist-tip-text');
+        if (tipEl) {
+            tipEl.classList.add('opacity-0');
+            setTimeout(() => {
+                currentTipIndex = (currentTipIndex + 1) % tips.length;
+                if (container.querySelector('#naturalist-tip-text')) {
+                    container.querySelector('#naturalist-tip-text')!.textContent = tips[currentTipIndex];
+                    container.querySelector('#naturalist-tip-text')!.classList.remove('opacity-0');
+                }
+            }, 500);
+        }
+    }, 8000);
 };

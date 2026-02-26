@@ -164,12 +164,12 @@ ${inventory.map(item => `
                 if (selectedIngredients[0].id === 'i1' && selectedIngredients[1].id === 'i2') {
                     const condition = weather?.condition.toLowerCase() || "";
                     if (condition.includes('rain')) {
-                        alert("The rain infuses your Nectar! You crafted a 'Storm Nectar' (+50% Stamina)!");
+                        store.addNotification({ type: 'system', title: 'Fabricación Especial', message: '¡La lluvia infunde tu Néctar! Has creado "Néctar de Tormenta" (+50% Estamina).' });
                     } else {
-                        alert(`Crafted successful! Used ${selectedIngredients[0].name} and ${selectedIngredients[1].name}.`);
+                        store.addNotification({ type: 'system', title: 'Fabricación Exitosa', message: `Has combinado ${selectedIngredients[0].name} y ${selectedIngredients[1].name}.` });
                     }
                 } else {
-                    alert(`Crafted successful! Used ${selectedIngredients[0].name} and ${selectedIngredients[1].name}.`);
+                    store.addNotification({ type: 'system', title: 'Fabricación Exitosa', message: `Has combinado ${selectedIngredients[0].name} y ${selectedIngredients[1].name}.` });
                 }
 
                 const newInventory = inventory.map(item => {

@@ -1,4 +1,5 @@
 import { WeatherData } from './services/weather';
+import { getBirdById, createPlayerBird } from './data/birds';
 import { TimeData, getCurrentTimeData } from './services/time';
 
 export interface Bird {
@@ -59,6 +60,40 @@ export interface User {
     feathers: number;
     joinDate: string;
     email?: string;
+    guildId?: string;
+}
+
+export interface Guild {
+    id: string;
+    name: string;
+    level: number;
+    members: number;
+    mission: string;
+    missionProgress: number;
+    missionTarget: number;
+    missionTimeLeft: string;
+}
+
+export interface ChatMessage {
+    id: string;
+    userId: string;
+    userName: string;
+    avatar: string;
+    text: string;
+    timestamp: number;
+}
+
+export interface SocialPost {
+    id: string;
+    userId: string;
+    userName: string;
+    userAvatar: string;
+    time: string;
+    location: string;
+    text: string;
+    imageUrl?: string;
+    likes: number;
+    comments: number;
 }
 
 export interface AppState {
@@ -73,6 +108,9 @@ export interface AppState {
     pinnedLinks: QuickLink[];
     currentUser: User | null;
     notifications: Notification[];
+    posts: SocialPost[];
+    guildChats: Record<string, ChatMessage[]>;
+    availableGuilds: Guild[];
 }
 
 // ─── Opponent birds (no need to persist, they're static NPC data) ────────────
@@ -125,6 +163,63 @@ const DEFAULT_PINNED_LINKS: QuickLink[] = [
 
 // ─── Fresh state for a brand new user ────────────────────────────────────────
 export function createEmptyState(): AppState {
+    const defaultGuilds: Guild[] = [
+        {
+            id: 'g1',
+            name: 'Los Albatros',
+            level: 15,
+            members: 24,
+            mission: 'Avistar 50 Rapaces de Pinto',
+            missionProgress: 32,
+            missionTarget: 50,
+            missionTimeLeft: 'Termina en 2d'
+        },
+        {
+            id: 'g2',
+            name: 'Pinto Wildlife',
+            level: 8,
+            members: 45,
+            mission: 'Capturar 10 aves épicas',
+            missionProgress: 2,
+            missionTarget: 10,
+            missionTimeLeft: 'Termina en 1d'
+        }
+    ];
+
+    const defaultPosts: SocialPost[] = [
+        {
+            id: 'p1',
+            userId: 'u1',
+            userName: 'Pablo_Nat',
+            userAvatar: 'https://i.pravatar.cc/150?u=post_1',
+            time: 'Hace 2 horas',
+            location: 'Parque Juan Carlos I',
+            text: '¡Increíble encuentro hoy! Logré fotografiar a un Cernícalo Primilla en pleno vuelo. Sus colores eran espectaculares bajo la luz del atardecer.',
+            imageUrl: 'https://images.pexels.com/photos/14840742/pexels-photo-14840742.jpeg?auto=compress&cs=tinysrgb&w=800',
+            likes: 20,
+            comments: 5
+        },
+        {
+            id: 'p2',
+            userId: 'u2',
+            userName: 'Laura_Aves',
+            userAvatar: 'https://i.pravatar.cc/150?u=post_2',
+            time: 'Hace 5 horas',
+            location: 'Centro Urbano',
+            text: 'Acabo de divisar varios vencejos rozando los tejados. Parecen estar anidando temprano este año. ¿Alguien más ha notado actividad inusual?',
+            imageUrl: 'https://images.pexels.com/photos/1054394/pexels-photo-1054394.jpeg?auto=compress&cs=tinysrgb&w=800',
+            likes: 34,
+            comments: 6
+        }
+    ];
+
+    const defaultGuildChats: Record<string, ChatMessage[]> = {
+        'g1': [
+            { id: 'c1', userId: 'ext1', userName: 'Explorador_1', avatar: 'https://i.pravatar.cc/150?u=user1', text: '¡Hola a todos! Buena caza hoy.', timestamp: Date.now() - 3600000 },
+            { id: 'c2', userId: 'ext2', userName: 'Explorador_2', avatar: 'https://i.pravatar.cc/150?u=user2', text: 'Llevamos buen ritmo con la misión de la semana.', timestamp: Date.now() - 1800000 }
+        ]
+    };
+
     return {
         playerBirds: [],
         opponentBirds: NPC_OPPONENT_BIRDS,
@@ -145,7 +240,10 @@ export function createEmptyState(): AppState {
                 timestamp: Date.now(),
                 isRead: false
             }
-        ]
+        ],
+        posts: defaultPosts,
+        guildChats: defaultGuildChats,
+        availableGuilds: defaultGuilds
     };
 }
 
@@ -168,7 +266,10 @@ function saveProgress(email: string, state: AppState): void {
             streak: state.streak,
             pinnedLinks: state.pinnedLinks,
             currentUser: state.currentUser,
-            notifications: state.notifications
+            notifications: state.notifications,
+            posts: state.posts,
+            guildChats: state.guildChats,
+            availableGuilds: state.availableGuilds
         };
         localStorage.setItem(storageKey(email), JSON.stringify(toSave));
         localStorage.setItem(LAST_USER_KEY, email);
@@ -190,6 +291,44 @@ function loadProgress(email: string): Partial<AppState> | null {
 
 // ─── State Store ──────────────────────────────────────────────────────────────
 class StateStore {
+    /** Check if a bird can be acquired based on inventory */
+    canAcquireBird(birdId: string): boolean {
+        const catalog = getBirdById(birdId);
+        if (!catalog) return false;
+        // Ensure all required upgrade items are present in inventory with count > 0
+        return catalog.upgradeItems.every(itemId =>
+            this.state.inventory.some(inv => inv.id === itemId && inv.count > 0)
+        );
+    }
+
+    /** Acquire a bird if requirements are met, deduct items, add to player birds */
+    acquireBird(birdId: string): boolean {
+        const catalog = getBirdById(birdId);
+        if (!catalog) return false;
+        if (!this.canAcquireBird(birdId)) return false;
+        // Deduct required items
+        catalog.upgradeItems.forEach(itemId => {
+            const invIndex = this.state.inventory.findIndex(inv => inv.id === itemId);
+            if (invIndex >= 0) {
+                const inv = this.state.inventory[invIndex];
+                if (inv.count > 1) {
+                    inv.count -= 1;
+                } else {
+                    this.state.inventory.splice(invIndex, 1);
+                }
+            }
+        });
+        // Add the new bird to player collection
+        const newBird = createPlayerBird(birdId);
+        if (newBird) {
+            this.state.playerBirds.push(newBird);
+            this.state.activeBirdsCount = this.state.playerBirds.length;
+            this.saveCurrentProgress();
+            this.notify();
+            return true;
+        }
+        return false;
+    }
     private state: AppState = createEmptyState();
     private listeners: (() => void)[] = [];
 
