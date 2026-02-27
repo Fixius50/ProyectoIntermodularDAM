@@ -12,10 +12,14 @@ import com.avis.cliente.network.AvisApiService;
 import com.avis.cliente.db.BirdDao;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
+import android.Manifest;
+import com.getcapacitor.PermissionState;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import com.getcapacitor.annotation.Permission;
+import com.getcapacitor.annotation.PermissionCallback;
 
 import dagger.hilt.EntryPoint;
 import dagger.hilt.EntryPoints;
@@ -30,7 +34,23 @@ import org.json.JSONObject;
 
 import java.util.UUID;
 
-@CapacitorPlugin(name = "AvisCore")
+@CapacitorPlugin(
+    name = "AvisCore",
+    permissions = {
+        @Permission(
+            alias = "camera",
+            strings = { Manifest.permission.CAMERA }
+        ),
+        @Permission(
+            alias = "location",
+            strings = { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION }
+        ),
+        @Permission(
+            alias = "microphone",
+            strings = { Manifest.permission.RECORD_AUDIO }
+        )
+    }
+)
 public class AvisCorePlugin extends Plugin {
 
     private static final String TAG          = "AvisCorePlugin";
@@ -52,6 +72,34 @@ public class AvisCorePlugin extends Plugin {
 
     private BirdDao getBirdDao() {
         return EntryPoints.get(getContext().getApplicationContext(), AvisCoreEntryPoint.class).birdDao();
+    }
+
+    @PluginMethod
+    public void ensurePermissions(PluginCall call) {
+        if (!hasRequiredPermissions()) {
+            requestAllPermissions(call, "checkPermissionsCallback");
+        } else {
+            JSObject ret = new JSObject();
+            ret.put("status", "granted");
+            call.resolve(ret);
+        }
+    }
+
+    @PermissionCallback
+    private void checkPermissionsCallback(PluginCall call) {
+        if (hasRequiredPermissions()) {
+            JSObject ret = new JSObject();
+            ret.put("status", "granted");
+            call.resolve(ret);
+        } else {
+            call.reject("Permisos no concedidos");
+        }
+    }
+
+    private boolean hasRequiredPermissions() {
+        return getPermissionState("camera") == PermissionState.GRANTED &&
+               getPermissionState("location") == PermissionState.GRANTED &&
+               getPermissionState("microphone") == PermissionState.GRANTED;
     }
 
     @PluginMethod

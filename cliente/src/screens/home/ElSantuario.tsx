@@ -47,7 +47,7 @@ const ElSantuario: React.FC = () => {
         <div className="flex flex-col flex-1 font-display">
             <main className="flex-1 flex flex-col px-4 md:px-12 py-6 md:py-8 max-w-7xl mx-auto w-full">
 
-                <header className="flex flex-col gap-3 py-6 md:py-12">
+                <header className="flex flex-col gap-3 pt-2 pb-6 md:pt-4 md:pb-8">
                     <div className="flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full w-fit">
                         <span className="material-symbols-outlined text-sm text-primary">{time.icon}</span>
                         <span className="text-[10px] font-black uppercase tracking-widest text-primary">{time.phase}</span>

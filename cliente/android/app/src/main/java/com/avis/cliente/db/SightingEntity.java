@@ -1,11 +1,13 @@
 package com.avis.cliente.db;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "sightings")
 public class SightingEntity {
     @PrimaryKey(autoGenerate = false)
+    @NonNull
     public String id; // UUID string
 
     public String birdCardId;

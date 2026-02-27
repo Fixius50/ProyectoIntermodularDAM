@@ -46,7 +46,7 @@ const ElSocial: React.FC = () => {
             <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 md:px-12 py-6 md:py-8">
 
                 {/* Header */}
-                <header className="flex flex-col gap-3 py-4 md:py-10 animate-fade-in text-left">
+                <header className="flex flex-col gap-3 py-4 md:py-10 animate-fade-in text-left mb-4">
                     <div className="flex items-center gap-2 px-4 py-1.5 bg-primary/10 rounded-full w-fit">
                         <span className="material-symbols-outlined text-sm text-primary">diversity_3</span>
                         <span className="text-[10px] font-black uppercase tracking-widest text-primary">Comunidad del Naturalista</span>
@@ -198,7 +198,7 @@ const ElSocial: React.FC = () => {
                                                     <span className="material-symbols-outlined text-base">local_library</span>
                                                     {selectedBirdId ? BIRD_CATALOG.find(b => b.id === selectedBirdId)?.name : 'Vincular Ave'}
                                                 </button>
-                                                <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 p-2 hidden group-hover:block z-[100] animate-scale-in">
+                                                <div className="absolute top-full left-0 mt-2 w-64 max-w-[calc(100vw-3rem)] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 p-2 hidden group-hover:block z-[100] animate-scale-in">
                                                     <div className="grid grid-cols-1 gap-1 max-h-60 overflow-y-auto custom-scrollbar">
                                                         {BIRD_CATALOG.map(b => (
                                                             <button

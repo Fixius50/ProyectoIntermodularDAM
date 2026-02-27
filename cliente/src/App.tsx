@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import AvisCore from './services/avisCore';
 import { useAppStore } from './store/useAppStore';
 import Navbar from './components/Navbar';
 import ElSantuario from './screens/home/ElSantuario';
@@ -15,20 +16,32 @@ function App() {
   const { currentScreen, currentUser, updateTime, updateWeather, hydrateBirdMedia } = useAppStore();
 
   useEffect(() => {
+    const initApp = async () => {
+      // Solicitud de permisos nativa (Android) al arrancar
+      await AvisCore.ensurePermissions().catch(err => console.error("Error solicitando permisos:", err));
+
+      if (currentUser) {
+        updateTime();
+        updateWeather();
+        hydrateBirdMedia();
+      }
+    };
+
+    initApp();
+
+    let tInterval: number;
+    let wInterval: number;
+
     if (currentUser) {
-      updateTime();
-      updateWeather();
-      hydrateBirdMedia();
-
-      const tInterval = setInterval(updateTime, 60000);
-      const wInterval = setInterval(updateWeather, 600000);
-
-      return () => {
-        clearInterval(tInterval);
-        clearInterval(wInterval);
-      };
+      tInterval = window.setInterval(updateTime, 60000);
+      wInterval = window.setInterval(updateWeather, 600000);
     }
-  }, [currentUser, updateTime, updateWeather]);
+
+    return () => {
+      if (tInterval) clearInterval(tInterval);
+      if (wInterval) clearInterval(wInterval);
+    };
+  }, [currentUser, updateTime, updateWeather, hydrateBirdMedia]);
 
   if (!currentUser) {
     return <Login />;

@@ -39,6 +39,9 @@ export interface AvisCorePlugin {
 
     /** Persist inventory items fetched from server into Room DB. */
     saveInventory(options: { items: InventoryItem[] }): Promise<void>;
+
+    /** Ensure all required native permissions are granted (Android side flow). */
+    ensurePermissions(): Promise<{ status: 'granted' | 'denied' }>;
 }
 
 /** Tailscale VPN connectivity plugin. */
@@ -80,6 +83,9 @@ const avisCoreWebMock: AvisCorePlugin = {
     },
     async saveInventory(options) {
         console.log('[Web Mock] saveInventory', options.items.length);
+    },
+    async ensurePermissions() {
+        return { status: 'granted' };
     }
 };
 
