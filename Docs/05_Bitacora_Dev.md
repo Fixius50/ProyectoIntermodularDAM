@@ -282,3 +282,43 @@ Some libraries have LOAD segments not aligned at 16 KB boundaries:
    Y recompilar el bridge con NDK 27.
 
 **Referencia oficial:** https://developer.android.com/guide/practices/page-sizes
+
+### SOLUCION APLICADA (27/02/2026)
+
+**NDK disponibles:** 25.0, 25.1, 25.2, **29.0.14206865** (la más nueva, usada).
+
+```powershell
+# 1. Actualizar gomobile al último
+go install golang.org/x/mobile/cmd/gomobile@latest
+
+# 2. Configurar NDK 29 (compila con 16 KB alignment por defecto)
+$env:ANDROID_HOME     = "$env:LOCALAPPDATA\Android\Sdk"
+$env:ANDROID_NDK_HOME = "$env:LOCALAPPDATA\Android\Sdk\ndk\29.0.14206865"
+
+# 3. Reinicializar gomobile
+gomobile init
+
+# 4. Recompilar el .aar
+cd tailscalebridge/
+gomobile bind -v -target=android -androidapi 21 -o tailscalebridge.aar .
+
+# 5. Copiar al proyecto y compilar APK
+copy tailscalebridge.aar ..\Cliente\android\app\libs\
+.\build_full.ps1
+```
+
+**Resultado:** `tailscalebridge.aar` (~60 MB) compilado con NDK 29. APK instalado en Xiaomi con `adb install` — EXIT 0.
+
+---
+
+### Fix: build_full.ps1 roto por emojis Unicode (27/02/2026)
+
+**Causa:** Los emojis `✔ ✘` en las funciones helper causaban `MissingEndCurlyBrace` al parsear por encoding incorrecto en PowerShell.
+**Solución:** Reemplazar por texto ASCII (`OK:` / `FAIL:`).
+
+### Comando adb sin PATH configurado
+
+```powershell
+$adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
+& $adb install -r "Cliente\android\app\build\outputs\apk\debug\app-debug.apk"
+```
