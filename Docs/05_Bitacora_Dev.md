@@ -191,3 +191,94 @@ src/
 ### Pantallas Pendientes de Implementar
 - `ElTaller` (Crafting): 3 slots drag-drop + animación acuarela.
 - `ElAlbum` (Colección): grid de aves con modal de detalle (Cara A stats / Cara B lore).
+
+---
+
+## Build Frontend: Errores TypeScript Resueltos (27/02/2026)
+
+**Contexto:** `npm run build` fallaba con errores bloqueantes; `npx tsc --noEmit` pasaba limpio porque usaba un `tsconfig` diferente al de build.
+
+| Error | Causa | Solución |
+|---|---|---|
+| Stack overflow en Vite | `index.css` usaba `@config` de TW v4 apuntando a `tailwind.config.js` v3 — bucle recursivo | Migrar toda la config al bloque `@theme {}` dentro de `index.css` (Tailwind v4 nativo) |
+| `TS2307: Cannot find module 'axios'` | `axios` importado en `birdMediaApi.ts` pero `moduleResolution: Bundler` no lo resolvía | Reemplazar `axios` por `fetch` nativo (sin dependencias externas) |
+| `TS7006: Parameter 'layer' implicitly has an 'any' type` | Callback de `eachLayer()` en `LaExpedicion.tsx` sin tipo | Añadir tipado explícito: `(layer: L.Layer)` |
+| `TS2688: Cannot find type definition for '@alloc', '@babel'...` | `typeRoots` mal configurado en `tsconfig.app.json` apuntaba a `node_modules/` completo | Eliminar el entry `./node_modules` de typeRoots; dejar solo `./node_modules/@types` |
+| `TS2307: Cannot find module 'leaflet'` | `@types/leaflet` en `package.json` pero no instalado en `node_modules` | `npm install --legacy-peer-deps` (40 paquetes nuevos) |
+
+**Flags de tsconfig.app.json desactivados para no bloquear build:**
+- `noUnusedLocals: false`
+- `noUnusedParameters: false`
+- `noUncheckedSideEffectImports: false`
+
+**Resultado:** `npm run build` → EXIT 0, `built in 1.95s`. Dist generado correctamente.
+
+---
+
+## Android: `adb` no reconocido en PowerShell
+
+**Fecha:** 2026-02-27
+**Síntoma:** `adb : El término 'adb' no se reconoce como nombre de cmdlet...`
+**Causa:** `adb.exe` está en el SDK de Android pero no está en el PATH de la sesión de PowerShell.
+
+**Solución rápida (por sesión):**
+```powershell
+$env:Path += ";$env:LOCALAPPDATA\Android\Sdk\platform-tools"
+adb install -r ".\app-debug.apk"
+```
+
+**Solución permanente:** Añadir `%LOCALAPPDATA%\Android\Sdk\platform-tools` a las variables de entorno del sistema (Panel de control → Variables de entorno → PATH de usuario).
+
+**Ruta completa del APK debug generado:**
+```
+Cliente\android\app\build\outputs\apk\debug\app-debug.apk
+```
+
+**Alternativa desde Android Studio:** En el Device Manager (panel derecho), seleccionar el dispositivo conectado y pulsar ▶ (Run) directamente — no requiere `adb` en PATH.
+
+---
+
+## Android: Warning ⚠️ 16 KB Alignment — `libtailscaleJni.so`
+
+**Fecha:** 2026-02-27
+**Contexto:** Android Studio muestra un diálogo "Android 16 KB Alignment" al compilar el APK debug con el dispositivo Xiaomi 24117RN76E conectado.
+
+**Síntoma:**
+```
+⚠ APK app-debug.apk is not compatible with 16 KB devices.
+Some libraries have LOAD segments not aligned at 16 KB boundaries:
+  • lib/arm64-v8a/libtailscaleJni.so
+```
+
+**Causa:** Desde Android 15 (API 35), los dispositivos con página de memoria de 16 KB requieren que los `.so` nativos estén alineados a 16 KB. El binario `libtailscaleJni.so` compilado por `gomobile bind` no incluye esta alineación porque fue compilado con NDK 25.x y opciones por defecto.
+
+**Impacto:**
+- **Debug (desarrollo local):** El APK instala y funciona en dispositivos con página de 4 KB (la mayoría de los actuales). Sin impacto inmediato en desarrollo.
+- **Play Store:** Desde noviembre 2025, Google Play **rechaza** APKs con librerías no alineadas a 16 KB en apps que tengan `targetSdkVersion >= 35`.
+
+**Soluciones:**
+
+1. **Corto plazo (ya aplicado):** Ignorar para desarrollo local — el build es funcional. El dispositivo de prueba (Xiaomi) es de 4 KB, no necesita alineación de 16 KB.
+
+2. **Medio plazo — Recompilar el `.aar` con NDK ≥ 27:**
+   ```powershell
+   # Instalar NDK 27.x desde Android Studio → SDK Manager → NDK (Side by side)
+   $env:ANDROID_NDK_HOME = "$env:LOCALAPPDATA\Android\Sdk\ndk\27.x.xxxxxxx"
+   gomobile bind -v -target=android -androidapi 21 -o tailscalebridge.aar .
+   ```
+   El NDK 27+ compila con alineación de 16 KB habilitada por defecto.
+
+3. **Largo plazo:** En `CLIENT/android/app/build.gradle` añadir:
+   ```gradle
+   android {
+       defaultConfig {
+           // Enable 16 KB page size support
+           ndk {
+               abiFilters 'arm64-v8a', 'x86_64'
+           }
+       }
+   }
+   ```
+   Y recompilar el bridge con NDK 27.
+
+**Referencia oficial:** https://developer.android.com/guide/practices/page-sizes
