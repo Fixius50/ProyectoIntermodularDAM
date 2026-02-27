@@ -143,6 +143,7 @@ export interface AppState {
     pinnedLinks: QuickLink[];
     currentUser: User | null;
     notifications: Notification[];
+    language: 'es' | 'en';
     posts: SocialPost[];
     guildChats: Record<string, ChatMessage[]>;
     availableGuilds: Guild[];

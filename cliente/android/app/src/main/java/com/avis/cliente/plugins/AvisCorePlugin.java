@@ -76,8 +76,8 @@ public class AvisCorePlugin extends Plugin {
 
     @PluginMethod
     public void ensurePermissions(PluginCall call) {
-        if (!hasRequiredPermissions()) {
-            requestAllPermissions(call, "checkPermissionsCallback");
+        if (!arePermissionsGranted()) {
+            requestPermissions(call);
         } else {
             JSObject ret = new JSObject();
             ret.put("status", "granted");
@@ -85,18 +85,13 @@ public class AvisCorePlugin extends Plugin {
         }
     }
 
-    @PermissionCallback
-    private void checkPermissionsCallback(PluginCall call) {
-        if (hasRequiredPermissions()) {
-            JSObject ret = new JSObject();
-            ret.put("status", "granted");
-            call.resolve(ret);
-        } else {
-            call.reject("Permisos no concedidos");
-        }
+    @Override
+    protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.handleRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Si Capacitor no maneja el callback automáticamente, podríamos necesitar checkPermissionsCallback
     }
 
-    private boolean hasRequiredPermissions() {
+    private boolean arePermissionsGranted() {
         return getPermissionState("camera") == PermissionState.GRANTED &&
                getPermissionState("location") == PermissionState.GRANTED &&
                getPermissionState("microphone") == PermissionState.GRANTED;

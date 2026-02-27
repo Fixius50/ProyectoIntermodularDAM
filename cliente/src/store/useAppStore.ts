@@ -71,6 +71,7 @@ interface AppActions {
     sellItem: (itemId: string, price: number) => void;
     addItemToInventory: (item: Omit<InventoryItem, 'count'> & { count?: number }) => void;
     syncGlobalBirds: () => Promise<void>;
+    setLanguage: (lang: 'es' | 'en') => void;
 }
 
 type CombinedState = AppState & AppActions & { currentScreen: string };
@@ -319,6 +320,7 @@ export const useAppStore = create<CombinedState>()(
             categories: ['Oop', 'Gaviota', 'Herrerillo', 'Golondrina', 'Cuervo', 'Águila', 'Búho'],
             activityHistory: [],
             birds: BIRD_CATALOG,
+            language: 'es',
 
             // Actions
             setWeather: (weather: WeatherData) => set({ weather }),
@@ -426,6 +428,8 @@ export const useAppStore = create<CombinedState>()(
             setFavoriteBird: (birdId: string) => set((state) => ({
                 currentUser: state.currentUser ? { ...state.currentUser, favoriteBirdId: birdId } : null
             })),
+
+            setLanguage: (language: 'es' | 'en') => set({ language }),
 
             addActivity: (action: string, icon: string) => set((state) => ({
                 activityHistory: [{
