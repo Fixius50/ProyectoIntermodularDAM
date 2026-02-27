@@ -237,7 +237,10 @@ const LaExpedicion: React.FC = () => {
             )}
 
             {/* Header / Config Bar */}
-            <div className="fixed top-20 md:top-24 left-0 right-0 z-40 px-4 pointer-events-none">
+            <div
+                className="fixed left-0 right-0 z-40 px-4 pointer-events-none"
+                style={{ top: 'calc(env(safe-area-inset-top, 0px) + 4rem)' }}
+            >
                 <div className="max-w-7xl mx-auto flex justify-center md:justify-end">
                     <GlassPanel className="p-3 w-fit shadow-xl pointer-events-auto flex items-center gap-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl border border-white/50 dark:border-slate-800">
                         <div className="flex items-center gap-2">
@@ -267,7 +270,7 @@ const LaExpedicion: React.FC = () => {
                 </div>
             </div>
 
-            <main className="flex-1 flex flex-col lg:flex-row gap-4 p-3 lg:p-8 mt-14 mb-2 max-w-[1440px] mx-auto w-full" style={{ height: 'calc(100dvh - 9rem)' }}>
+            <main className="flex-1 flex flex-col lg:flex-row gap-4 p-3 lg:p-8 mt-20 mb-2 max-w-[1440px] mx-auto w-full" style={{ height: 'calc(100dvh - 9rem)' }}>
                 {/* Contenedor del Mapa */}
                 <div className="flex-grow bg-slate-200 dark:bg-slate-900 rounded-[3rem] overflow-hidden border-8 border-white dark:border-slate-800 relative shadow-2xl flex flex-col min-h-[450px]">
 

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import AvisCore from '../services/avisCore';
+import { api } from '../services/api';
 import { fetchWeather } from '../services/weather';
 import { getCurrentTimeData } from '../services/time';
 import { fetchBirdImage, fetchBirdAudio } from '../services/birdMediaApi';
@@ -58,7 +59,7 @@ interface AppActions {
 
     // Bird Actions
     updateStamina: (birdId: string, amount: number) => void;
-    addBirdToSantuario: (birdId: string) => void;
+    addBirdToSantuario: (birdId: string, media?: { audioPath?: string; photoPath?: string; notes?: string }) => Promise<void>;
     levelUpBird: (birdId: string) => void;
 
     // Environment Actions
@@ -69,6 +70,7 @@ interface AppActions {
     purchaseItem: (price: number) => boolean;
     sellItem: (itemId: string, price: number) => void;
     addItemToInventory: (item: Omit<InventoryItem, 'count'> & { count?: number }) => void;
+    syncGlobalBirds: () => Promise<void>;
 }
 
 type CombinedState = AppState & AppActions & { currentScreen: string };
@@ -341,68 +343,78 @@ export const useAppStore = create<CombinedState>()(
             })),
             setCurrentScreen: (currentScreen: string) => set({ currentScreen }),
 
-            login: async (email: string, pass: string) => {
-                console.log('Logging in...', email, pass);
-                if (email && pass) {
-                    set({
-                        currentUser: {
-                            id: 'u1',
-                            name: email.split('@')[0],
-                            rank: 'Ornitólogo Novel',
-                            level: 1,
-                            xp: 0,
-                            maxXp: 100,
-                            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
-                            feathers: 10,
-                            joinDate: new Date().toISOString()
-                        },
-                        currentScreen: 'home'
-                    });
+            login: async (username: string, pass: string) => {
+                try {
+                    const { token, player } = await api.post('/auth/login', { username, password: pass });
+                    await AvisCore.storeSecureToken({ token });
+
+                    const userObj: User = {
+                        id: player.id,
+                        name: player.username,
+                        rank: 'Ornitólogo Novel',
+                        level: player.level || 1,
+                        xp: player.xp || 0,
+                        maxXp: player.maxXp || 100,
+                        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${player.username}`,
+                        feathers: player.feathers || 0,
+                        joinDate: new Date().toISOString()
+                    };
+
+                    set({ currentUser: userObj, currentScreen: 'home' });
 
                     get().addNotification({
                         type: 'system',
                         title: 'Santuario Abierto',
-                        message: `¡Bienvenido de nuevo, ${email.split('@')[0]}! El bosque te echaba de menos.`
+                        message: `¡Bienvenido de nuevo, ${player.username}! El bosque te echaba de menos.`
                     });
 
+                    // Carga inicial de datos
+                    get().syncPlayerBirds();
+                    get().syncInventory();
+
                     return true;
+                } catch (err) {
+                    console.error('Login Error:', err);
+                    get().addNotification({
+                        type: 'system',
+                        title: 'Error de Acceso',
+                        message: 'Credenciales inválidas o servidor no disponible.'
+                    });
+                    return false;
                 }
-                return false;
             },
 
             register: async (name: string, email: string, pass: string) => {
-                console.log('Registering...', name, email, pass);
-                if (name && email && pass) {
-                    set({
-                        currentUser: {
-                            id: 'u1',
-                            name: name,
-                            rank: 'Novato',
-                            level: 1,
-                            xp: 0,
-                            maxXp: 100,
-                            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`,
-                            feathers: 0,
-                            joinDate: new Date().toISOString()
-                        },
-                        currentScreen: 'home',
-                        activityHistory: [{
-                            id: Date.now().toString(),
-                            action: `Te uniste a AVIS, ${name}`,
-                            time: Date.now(),
-                            icon: 'card_membership'
-                        }]
-                    });
+                try {
+                    // Nota: El backend espera username y password. Usamos name como username.
+                    const { token, player } = await api.post('/auth/register', { username: name, password: pass });
+                    await AvisCore.storeSecureToken({ token });
+
+                    const userObj: User = {
+                        id: player.id,
+                        name: player.username,
+                        rank: 'Novato',
+                        level: 1,
+                        xp: 0,
+                        maxXp: 100,
+                        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${player.username}`,
+                        feathers: 0,
+                        joinDate: new Date().toISOString()
+                    };
+
+                    set({ currentUser: userObj, currentScreen: 'home' });
 
                     get().addNotification({
                         type: 'achievement',
                         title: '¡Carnet de Ornitólogo!',
-                        message: `Te damos la bienvenida a AVIS, ${name}. Has recibido tus primeras 10 plumas de inicio.`
+                        message: `Te damos la bienvenida a AVIS, ${player.username}.`
                     });
 
                     return true;
+                } catch (err) {
+                    console.error('Register error:', err);
+                    return false;
                 }
-                return false;
             },
 
             logout: () => set({ currentUser: null, currentScreen: 'login', activityHistory: [] }),
@@ -426,30 +438,50 @@ export const useAppStore = create<CombinedState>()(
 
             syncInventory: async () => {
                 try {
-                    const state = get();
-                    if (state.inventory.length > 0) return;
-                    const { items } = await AvisCore.fetchInventory();
+                    // 1. Fetch from server
+                    const items = await api.get('/inventory');
+                    // 2. Save to local Room
+                    await AvisCore.saveInventory({ items });
+                    // 3. Update store state
                     set({ inventory: items });
                 } catch (err) {
-                    console.error('CorePlugin Error: fetchInventory', err);
+                    console.error('Error syncing inventory:', err);
+                    // Fallback to local Room if server fails
+                    const { items } = await AvisCore.fetchInventory();
+                    set({ inventory: items });
                 }
             },
 
             syncPlayerBirds: async () => {
                 try {
-                    const state = get();
-                    if (state.playerBirds.length > 0) {
-                        get().hydrateBirdMedia();
-                        return;
-                    }
+                    // 1. Fetch from server (owned birds)
+                    const birds = await api.get('/collection');
+                    // 2. Save to local Room
+                    await AvisCore.saveBirds({ birds });
+                    // 3. Update store state
+                    set({
+                        playerBirds: birds,
+                        activeBirdsCount: birds.filter((b: Bird) => b.status === 'Santuario').length
+                    });
+                    get().hydrateBirdMedia();
+                } catch (err) {
+                    console.error('Error syncing player birds:', err);
+                    // Fallback to local Room
                     const { birds } = await AvisCore.getPlayerBirds();
                     set({
                         playerBirds: birds,
                         activeBirdsCount: birds.filter(b => b.status === 'Santuario').length
                     });
                     get().hydrateBirdMedia();
+                }
+            },
+
+            syncGlobalBirds: async () => {
+                try {
+                    const birds = await api.get('/public/birds');
+                    set({ birds });
                 } catch (err) {
-                    console.error('CorePlugin Error: getPlayerBirds', err);
+                    console.error('Error syncing global catalog:', err);
                 }
             },
 
@@ -519,19 +551,32 @@ export const useAppStore = create<CombinedState>()(
                 }
             },
 
-            addPost: (post) => set((state) => ({
-                posts: [{
-                    ...post,
-                    id: Math.random().toString(36).substring(2, 9),
-                    userId: state.currentUser?.id || 'u1',
-                    userName: state.currentUser?.name || 'Explorador',
-                    userAvatar: state.currentUser?.avatar || '',
-                    time: 'Ahora mismo',
-                    likes: 0,
-                    reactions: { '🐦': 0, '🪶': 0, '📷': 0 },
-                    comments: 0
-                } as SocialPost, ...state.posts]
-            })),
+            addPost: async (post) => {
+                try {
+                    const newPost = await api.post('/posts', {
+                        text: post.text,
+                        imageUrl: post.imageUrl,
+                        location: post.location,
+                        birdId: post.birdId
+                    });
+
+                    const fullPost: SocialPost = {
+                        ...post,
+                        id: newPost.id,
+                        userId: get().currentUser?.id || 'u1',
+                        userName: get().currentUser?.name || 'Explorador',
+                        userAvatar: get().currentUser?.avatar || '',
+                        time: 'Ahora mismo',
+                        likes: 0,
+                        reactions: { '🐦': 0, '🪶': 0, '📷': 0 },
+                        comments: 0
+                    };
+
+                    set((state) => ({ posts: [fullPost, ...state.posts] }));
+                } catch (err) {
+                    console.error('Error adding post:', err);
+                }
+            },
 
             reactToPost: (postId: string, reaction: string) => set((state) => ({
                 posts: state.posts.map(p => {
@@ -690,7 +735,7 @@ export const useAppStore = create<CombinedState>()(
                 }));
             },
 
-            addBirdToSantuario: (birdId: string) => {
+            addBirdToSantuario: async (birdId: string, media?: { audioPath?: string; photoPath?: string; notes?: string }) => {
                 const state = get();
                 const { playerBirds, currentUser, addNotification, birds, addActivity } = state;
                 if (!currentUser) return;
@@ -698,48 +743,58 @@ export const useAppStore = create<CombinedState>()(
                 const catalogBird = birds.find(b => b.id === birdId) || BIRD_CATALOG.find(b => b.id === birdId);
                 if (!catalogBird) return;
 
-                // Check if already captured (optional logic, usually we want duplicates allowed or just one per species)
-                // For now, let's allow adding it as a new "individual" bird
-                const newBird: Bird = {
-                    ...catalogBird,
-                    id: `${birdId}-${Date.now()}`, // Unique instance ID
-                    status: 'Santuario'
-                };
-
-                set({
-                    playerBirds: [...playerBirds, newBird],
-                    currentUser: {
-                        ...currentUser,
-                        feathers: currentUser.feathers + 1,
-                        xp: currentUser.xp + 50
-                    }
-                });
-
-                addActivity(`Capturaste un ${catalogBird.name} en la Expedición`, 'add_circle');
-
-                // Handle level up on user
-                const newState = get();
-                if (newState.currentUser && newState.currentUser.xp >= newState.currentUser.maxXp) {
-                    set({
-                        currentUser: {
-                            ...newState.currentUser,
-                            xp: newState.currentUser.xp - newState.currentUser.maxXp,
-                            level: newState.currentUser.level + 1,
-                            maxXp: Math.floor(newState.currentUser.maxXp * 1.5)
-                        }
+                try {
+                    // 1. Save to Server (Sighting)
+                    const { lat, lng } = await AvisCore.syncLocation();
+                    await api.post('/sightings', {
+                        birdCardId: birdId,
+                        lat,
+                        lon: lng,
+                        notes: media?.notes,
+                        audioUrl: media?.audioPath, // Initially the local path/placeholder
+                        photoUrl: media?.photoPath
                     });
+
+                    // 2. Save to Local SQLite (for offline audio/upload tracking)
+                    await AvisCore.saveSighting({
+                        birdId,
+                        lat,
+                        lon: lng,
+                        audioPath: media?.audioPath,
+                        photoPath: media?.photoPath,
+                        notes: media?.notes
+                    });
+
+                    // 3. Update Local Collection (fetch again to get server IDs)
+                    await get().syncPlayerBirds();
+
+                    addActivity(`Capturaste un ${catalogBird.name} en la Expedición`, 'add_circle');
+
                     addNotification({
                         type: 'achievement',
-                        title: '¡Rango de Naturalista Subido!',
-                        message: `Has alcanzado el nivel ${get().currentUser?.level}.`
+                        title: '¡Especie Registrada!',
+                        message: `Has encontrado un ${catalogBird.name}. Datos sincronizados con la nube e hilos locales.`
+                    });
+                } catch (err) {
+                    console.error('Error recording sighting:', err);
+
+                    // Offline fallback: save only locally
+                    const { lat, lng } = await AvisCore.syncLocation();
+                    await AvisCore.saveSighting({
+                        birdId,
+                        lat,
+                        lon: lng,
+                        audioPath: media?.audioPath,
+                        photoPath: media?.photoPath,
+                        notes: media?.notes
+                    });
+
+                    addNotification({
+                        type: 'system',
+                        title: 'Modo Offline',
+                        message: 'Avistamiento guardado localmente. Se sincronizará al recuperar conexión.'
                     });
                 }
-
-                addNotification({
-                    type: 'achievement',
-                    title: '¡Especie Registrada!',
-                    message: `Has encontrado un ${catalogBird.name}. Recibes +1 Pluma y +50 XP.`
-                });
             },
 
             purchaseItem: (price: number) => {

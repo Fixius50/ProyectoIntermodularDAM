@@ -350,6 +350,16 @@ $adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
 
 ---
 
+## [2026-02-27] - Integración Técnica Completa y Upgrade a Spring Boot 4
+- **Spring Boot 4.0.0**: Actualización del core del servidor a la última versión mayor (basada en Spring Framework 7).
+- **Backend Real**: Sustitución de mocks por API Spring Boot real con persistencia en Supabase.
+- **Autenticación**: Implementación de flujo JWT seguro mediante plugin Capacitor nativo.
+- **Persistencia Híbrida**: Integración de Room DB para caché de aves/inventario y soporte de expediciones offline.
+- **Manejo de Medios**: Nuevo sistema de tracking para audios y fotos locales con sincronización programada.
+- **Corrección de Tipados**: Refactorización de `api.ts` para usar la API standar `Headers`.
+
+---
+
 ### `start_all.ps1` — Entorno de Desarrollo Local
 
 **Ubicación:** `ProyectoIntermodularDAM\start_all.ps1`

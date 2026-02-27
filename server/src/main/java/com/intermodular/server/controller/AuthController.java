@@ -1,0 +1,31 @@
+package com.intermodular.server.controller;
+
+import com.intermodular.server.service.AuthService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
+public class AuthController {
+
+    private final AuthService authService;
+
+    /** POST /api/auth/register body: { "username":"...", "password":"..." } */
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<Map<String, Object>> register(@RequestBody Map<String, String> body) {
+        return authService.register(body.get("username"), body.get("password"))
+                .onErrorMap(IllegalArgumentException.class, e -> new IllegalArgumentException(e.getMessage()));
+    }
+
+    /** POST /api/auth/login body: { "username":"...", "password":"..." } */
+    @PostMapping("/login")
+    public Mono<Map<String, Object>> login(@RequestBody Map<String, String> body) {
+        return authService.login(body.get("username"), body.get("password"));
+    }
+}

@@ -101,8 +101,8 @@ const ElTienda: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col flex-1 relative overflow-hidden font-display">
-            <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 md:px-12 z-10 py-6 md:py-8">
+        <div className="flex flex-col flex-1 relative font-display">
+            <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 md:px-12 z-10 py-4 md:py-8 pb-8">
 
                 <header className="flex flex-col gap-3 py-6 md:py-12 animate-fade-in">
                     <div className="flex items-center justify-between">
@@ -111,7 +111,7 @@ const ElTienda: React.FC = () => {
                                 <span className="material-symbols-outlined text-sm text-amber-500">shopping_cart</span>
                                 <span className="text-[10px] font-black uppercase tracking-widest text-amber-500">Suministros</span>
                             </div>
-                            <h2 className="text-4xl lg:text-5xl font-black leading-tight">La Tienda</h2>
+                            <h2 className="text-2xl md:text-4xl lg:text-5xl font-black leading-tight">La Tienda</h2>
                         </div>
                         <div className="glass-card px-6 py-3 border-primary/20 flex items-center gap-4 bg-white/50 dark:bg-slate-900/50 shadow-md">
                             <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary shadow-inner">
