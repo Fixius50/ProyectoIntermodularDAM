@@ -30,10 +30,22 @@ export interface Bird {
     plumaje: number;
     vuelo: number;
     image: string;
+    scientificName?: string;
+    fact?: string;
     audioUrl?: string;
     origin?: string;
     isStudied?: boolean;
+    preferredPhase?: Array<'Morning' | 'Afternoon' | 'Night'>;
+    preferredWeather?: string[];
     status: 'Santuario' | 'Expedicion' | 'Certamen';
+}
+
+export interface CatalogBird extends Bird {
+    scientificName: string;
+    fact: string;
+    preferredPhase: Array<'Morning' | 'Afternoon' | 'Night'>;
+    preferredWeather?: string[];
+    rarity: 'common' | 'uncommon' | 'rare';
 }
 
 export interface InventoryItem {
@@ -74,6 +86,14 @@ export interface User {
     joinDate: string;
     email?: string;
     guildId?: string;
+    favoriteBirdId?: string;
+}
+
+export interface Activity {
+    id: string;
+    action: string;
+    time: number;
+    icon: string;
 }
 
 export interface Guild {
@@ -105,7 +125,9 @@ export interface SocialPost {
     location: string;
     text: string;
     imageUrl?: string;
-    likes: number;
+    birdId?: string; // For bird sighting cards
+    likes: number; // Keep for legacy but we'll use reactions
+    reactions?: Record<string, number>; // { '🐦': 5, '🪶': 2 }
     comments: number;
 }
 
@@ -125,4 +147,7 @@ export interface AppState {
     guildChats: Record<string, ChatMessage[]>;
     availableGuilds: Guild[];
     battleLogs: string[];
+    birds: Bird[];
+    categories: string[];
+    activityHistory: Activity[];
 }

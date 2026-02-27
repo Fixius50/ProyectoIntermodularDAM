@@ -47,12 +47,13 @@ const NotificationDropdown: React.FC<Props> = ({ isOpen, onClose }) => {
                             </span>
                         )}
                     </h3>
-                    {notifications.length > 0 && (
+                    {unreadCount > 0 && (
                         <button
                             onClick={(e) => { e.stopPropagation(); markAllNotificationsAsRead(); }}
-                            className="text-xs font-bold text-primary hover:text-primary-dark transition-colors"
+                            className="text-xs font-bold text-primary hover:text-primary-dark transition-colors flex items-center gap-1"
                         >
-                            Marcar Todo
+                            <span className="material-symbols-outlined text-[14px]">done_all</span>
+                            Marcar leídas
                         </button>
                     )}
                 </div>
@@ -74,7 +75,7 @@ const NotificationDropdown: React.FC<Props> = ({ isOpen, onClose }) => {
                                         e.stopPropagation();
                                         if (!notif.isRead) markNotificationAsRead(notif.id);
                                     }}
-                                    className={`w-full text-left p-3 rounded-2xl flex gap-3 transition-all hover:bg-slate-100 dark:hover:bg-slate-800 ${!notif.isRead ? 'bg-white dark:bg-slate-800/50 shadow-sm border border-slate-100 dark:border-slate-800' : 'opacity-70'
+                                    className={`group w-full text-left p-3 rounded-2xl flex gap-3 transition-all hover:bg-slate-50 dark:hover:bg-slate-800 ${!notif.isRead ? 'bg-white dark:bg-slate-800/50 shadow-sm border border-slate-100 dark:border-slate-700' : 'opacity-60 grayscale-[50%]'
                                         }`}
                                 >
                                     <div className={`mt-1 size-10 shrink-0 rounded-xl flex items-center justify-center ${getNotificationColor(notif.type)}`}>
@@ -94,6 +95,13 @@ const NotificationDropdown: React.FC<Props> = ({ isOpen, onClose }) => {
                                             Hace {Math.max(0, Math.floor((Date.now() - notif.timestamp) / 60000))} min
                                         </p>
                                     </div>
+                                    {!notif.isRead && (
+                                        <div className="shrink-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <span className="material-symbols-outlined text-sm text-slate-400 border border-slate-200 rounded-full p-1 hover:bg-primary hover:text-white hover:border-primary transition-colors cursor-pointer" title="Marcar como leída">
+                                                check
+                                            </span>
+                                        </div>
+                                    )}
                                 </button>
                             ))}
                         </div>

@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import { useAppStore } from './store/useAppStore';
 import Navbar from './components/Navbar';
 import ElSantuario from './screens/home/ElSantuario';
@@ -5,10 +6,29 @@ import Login from './screens/auth/Login';
 import BottomNav from './components/BottomNav';
 import LaExpedicion from './screens/expedition/LaExpedicion';
 import ElCertamen from './screens/arena/ElCertamen';
+import ElSocial from './screens/social/ElSocial';
+import ElTienda from './screens/store/ElTienda';
+import MiPerfil from './screens/profile/MiPerfil';
 import './App.css';
 
 function App() {
-  const { currentScreen, currentUser } = useAppStore();
+  const { currentScreen, currentUser, updateTime, updateWeather, hydrateBirdMedia } = useAppStore();
+
+  useEffect(() => {
+    if (currentUser) {
+      updateTime();
+      updateWeather();
+      hydrateBirdMedia();
+
+      const tInterval = setInterval(updateTime, 60000);
+      const wInterval = setInterval(updateWeather, 600000);
+
+      return () => {
+        clearInterval(tInterval);
+        clearInterval(wInterval);
+      };
+    }
+  }, [currentUser, updateTime, updateWeather]);
 
   if (!currentUser) {
     return <Login />;
@@ -23,32 +43,20 @@ function App() {
       case 'expedition':
         return <LaExpedicion />;
       case 'social':
-        return <div className="p-12 text-center flex flex-col items-center justify-center min-h-[60vh] gap-6 animate-fade-in">
-          <span className="material-symbols-outlined text-6xl text-primary animate-pulse">group</span>
-          <h2 className="text-3xl font-black">Social</h2>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Bandadas y mercado próximamente disponible</p>
-        </div>;
+        return <ElSocial />;
       case 'store':
-        return <div className="p-12 text-center flex flex-col items-center justify-center min-h-[60vh] gap-6 animate-fade-in">
-          <span className="material-symbols-outlined text-6xl text-primary animate-pulse">shopping_cart</span>
-          <h2 className="text-3xl font-black">Tienda</h2>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Suministros próximamente disponible</p>
-        </div>;
+        return <ElTienda />;
       case 'profile':
-        return <div className="p-12 text-center flex flex-col items-center justify-center min-h-[60vh] gap-6 animate-fade-in">
-          <span className="material-symbols-outlined text-6xl text-primary animate-pulse">account_circle</span>
-          <h2 className="text-3xl font-black">Mi Perfil</h2>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Estadísticas de explorador próximamente disponible</p>
-        </div>;
+        return <MiPerfil />;
       default:
         return <ElSantuario />;
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans pb-24 md:pb-0">
+    <div className="flex flex-col min-h-[100dvh] font-sans bg-cream dark:bg-slate-950 text-slate-900 dark:text-slate-100">
       <Navbar />
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 flex flex-col pb-28 md:pb-12 w-full">
         {renderContent()}
       </main>
       <BottomNav />

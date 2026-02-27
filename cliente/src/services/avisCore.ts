@@ -75,13 +75,13 @@ const avisCoreWebMock: AvisCorePlugin = {
         return {
             birds: [
                 {
-                    id: 'b1', name: 'Cigüeña Blanca', level: 24, status: 'Santuario', type: 'Flight',
+                    id: 'b1', name: 'Cigüeña Blanca', scientificName: 'Ciconia ciconia', level: 24, status: 'Santuario', type: 'Flight',
                     hp: 85, maxHp: 100, xp: 450, maxXp: 1000, stamina: 50, maxStamina: 100,
                     canto: 75, plumaje: 80, vuelo: 90,
                     image: 'https://images.pexels.com/photos/4516315/pexels-photo-4516315.jpeg?auto=compress&cs=tinysrgb&w=400',
                 },
                 {
-                    id: 'b2', name: 'Petirrojo', level: 22, status: 'Certamen', type: 'Songbird',
+                    id: 'b2', name: 'Petirrojo', scientificName: 'Erithacus rubecula', level: 22, status: 'Certamen', type: 'Songbird',
                     hp: 60, maxHp: 80, xp: 200, maxXp: 800, stamina: 40, maxStamina: 60,
                     canto: 95, plumaje: 60, vuelo: 50,
                     image: 'https://images.pexels.com/photos/14234384/pexels-photo-14234384.jpeg?auto=compress&cs=tinysrgb&w=400',

@@ -36,17 +36,21 @@ const Navbar: React.FC = () => {
 
     return (
         <header className="sticky top-0 z-50 px-4 py-3 md:px-6 md:py-4 lg:px-12 flex items-center justify-between glass-card md:glass-panel mt-2 md:mt-4 mx-2 md:mx-4 rounded-xl shadow-sm">
+            {/* Left side: Logo */}
             <div
-                className="flex items-center gap-3 cursor-pointer"
+                className="flex items-center gap-2 md:gap-3 cursor-pointer z-10"
                 onClick={() => setCurrentScreen('home')}
             >
-                <div className="size-8 text-primary flex items-center justify-center bg-primary/10 rounded-full">
-                    <span className="material-symbols-outlined text-[20px]">flutter_dash</span>
+                <div className="size-8 md:size-10 text-primary flex items-center justify-center bg-primary/10 rounded-full shadow-inner">
+                    <span className="material-symbols-outlined text-[20px] md:text-[24px]">flutter_dash</span>
                 </div>
-                <h1 className="text-xl font-display font-bold tracking-tight text-slate-900 dark:text-slate-100">Aery</h1>
+                <h1 className="text-xl md:text-2xl font-black tracking-tighter text-slate-900 dark:text-slate-100 flex items-baseline">
+                    Aery<span className="text-primary text-3xl leading-none">.</span>
+                </h1>
             </div>
 
-            <nav className="hidden md:flex items-center gap-8">
+            {/* Center: Navigation (Desktop Only) */}
+            <nav className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-6 lg:gap-10">
                 {navItems.map(item => {
                     const isActive = item.id === currentScreen;
                     return (
@@ -65,7 +69,8 @@ const Navbar: React.FC = () => {
                 })}
             </nav>
 
-            <div className="flex items-center gap-2 md:gap-4">
+            {/* Right side: Profile & Notifications */}
+            <div className="flex items-center gap-3 md:gap-5 z-10 w-[140px] md:w-auto justify-end">
                 <div className="relative" onClick={(e) => e.stopPropagation()}>
                     <button
                         className="relative p-2 text-slate-600 dark:text-slate-300 hover:bg-sage-100 dark:hover:bg-sage-800 rounded-full transition-colors group"
