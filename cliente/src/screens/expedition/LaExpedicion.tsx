@@ -98,7 +98,7 @@ const LaExpedicion: React.FC = () => {
             : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
 
         // Find existing tile layer and update it or replace it
-        mapInstance.current.eachLayer((layer) => {
+        mapInstance.current.eachLayer((layer: L.Layer) => {
             if (layer instanceof L.TileLayer) {
                 layer.setUrl(url);
             }

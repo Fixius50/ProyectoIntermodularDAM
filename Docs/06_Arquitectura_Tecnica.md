@@ -1,268 +1,298 @@
 # 06 Arquitectura Técnica Completa — AVIS
 
-Referencia unificada de Stack de Tecnologías, Backend (Spring Boot), Frontend (React/Capacitor) y capa nativa Android (Java/Hilt/Retrofit).
+> **Actualizado:** 2026-02-27. Refleja fielmente el estado actual del código.
 
 ---
 
-## 🧩 0. Stack Tecnológico (Visión General)
+## 0. Visión General del Sistema
 
-### Backend (Reactivo y No Bloqueante)
-- **Framework Core:** Java 21 + Spring Boot 3 (WebFlux)
-- **Tiempo Real:** RSocket (puerto 7000) + WebSockets STOMP
-- **Persistencia:** Supabase (PostgreSQL) + Spring Data R2DBC (asíncrono)
-- **Caché:** Spring Data Redis Reactive + Redisson (Distributed Locks)
-- **Identidad:** Spring Security Reactive + JWT (HS512)
-- **Eventos:** RabbitMQ / Kafka
+AVIS es una aplicación móvil híbrida de ornitología y estrategia. La arquitectura combina:
 
-### Frontend (Híbrido Web + Android)
-- **Framework Core:** React 18 + Vite + TypeScript
-- **Target Mobile:** Capacitor 6 → APK Android nativo (WebView)
-- **Estado Global:** Zustand (persist `localStorage` → key `aery-storage`)
-- **Estilos:** Tailwind CSS + CSS Variables (Glassmorphism)
-- **Router:** `currentScreen` en Zustand (SPA, sin React Router)
-- **Android Nativo:** Java + Hilt + Retrofit + RxJava3 + Room + OkHttp
-
-### Conectividad Cliente ↔ Servidor (Tailscale VPN)
-- Servidor Spring Boot en Lubuntu: `100.112.239.82:8080`
-- Cliente Android conecta vía **Tailscale VPN embebida** (Go/tsnet compilado como `.aar`)
-- `TailscalePlugin.java` (Capacitor) arranca la VPN antes de cualquier llamada Retrofit
-- Compilación del bridge: `tailscalebridge/build_aar.ps1`
-
-### APIs Externas
-
-| API | Uso |
-|---|---|
-| **Nuthatch API** | Datos taxonómicos (nombre científico, familia, audio del canto) |
-| **wttr.in** | Clima en tiempo real (sin API key) para `weather.ts` |
-| **Pexels API** | Imágenes de aves y hábitats |
-| **DiceBear API** | Avatares de usuario generados dinámicamente |
-
-### Entorno de Desarrollo
-
-| Entorno | Herramientas |
-|---|---|
-| **Servidor remoto (Lubuntu)** | Java 21, Maven, Docker (Redis + RabbitMQ) |
-| **Cliente (Windows)** | Node.js, npm, Android Studio, Go, gomobile |
-| **Acceso remoto** | `ssh lubuntu@100.112.239.82` (vía Tailscale) |
-| **Scripts de Build** | `tailscalebridge/build_aar.ps1` (compile + copy .aar) |
+| Capa | Tecnología | Rol |
+|---|---|---|
+| **Frontend Web** | React 18 + Vite + TypeScript | UI renderizada en WebView |
+| **Capa Nativa Android** | Capacitor 6 + Java + Hilt | Bridge JS ↔ Android, plugins nativos |
+| **Conectividad VPN** | Tailscale (Go/tsnet → `.aar`) | Túnel seguro al servidor privado |
+| **Backend** | Spring Boot 3 + WebFlux (Java 21) | API REST + RSocket + lógica de juego |
+| **Persistencia** | Supabase (PostgreSQL) + R2DBC | BD reactiva no bloqueante |
+| **Caché / Locks** | Redis + Redisson | Marketplace, anti-doble-gasto |
+| **Mensajería** | RabbitMQ | Recompensas post-combate asíncronas |
 
 ---
 
-## 🏗️ A. Backend (Java 21 + Spring Boot 3 + WebFlux)
+## 1. Flujo Completo de una Petición
 
-### Política de Infraestructura
-- **Persistencia:** Relacional pura (R2DBC + PostgreSQL/Supabase). Prohibido JSONB.
-- **Red:** Tailscale VPN. El servidor escucha en `0.0.0.0` en:
-  - Puerto `8080` — API REST (WebFlux)
-  - Puerto `7000` — Tiempo real (RSocket)
-
----
-
-### A.1 Filosofía Non-Blocking (Spring WebFlux)
-
-Spring WebFlux usa el servidor **Netty** con un modelo de Event Loop. Un único hilo atiende cientos de peticiones sin bloquearse: lanza la tarea a la BD y se va a atender otros clientes. Cuando la BD responde, retoma al usuario.
-
-- `Mono<T>` — responde con 0 o 1 elemento (ej. un perfil de jugador)
-- `Flux<T>` — responde con N elementos (ej. lista de aves del catálogo)
-
-### A.2 Módulo de Catálogo (WebClient)
-
-`BirdCatalogService` usa `WebClient` (HTTP reactivo) para consultar APIs externas (Nuthatch) on-demand. No almacena el catálogo internamente; lo deserializa con Jackson a `Flux<BirdRecord>`.
-
-### A.3 Módulo Colección / Taller (R2DBC)
-
-Persistencia asíncrona con R2DBC. Operación de Crafting es atómica:
-1. Consume materiales del inventario
-2. Llama a la lógica de probabilidad (clima + estructura + cebo)
-3. Inserta la nueva `BirdCard` con `save()`
-
-### A.4 Módulo Certamen (RSocket — Puerto 7000)
-
-**Flujo de matchmaking:**
-1. `battle.room.create` → Host envía su ID + ID de carta → servidor genera `sessionId`, estado `WAITING`
-2. `battle.room.join` → Segundo jugador envía `sessionId` → estado `IN_PROGRESS`
-3. `battle.action.stream` → Canal bidireccional; cada ataque descuenta HP instantáneamente
-4. Finalización → `FINISHED`, recompensas despachadas vía **RabbitMQ**
-
-**RSocket vs REST:**
-- REST = enviar cartas por buzón (lento, síncrono)
-- RSocket = llamada telefónica abierta todo el día (instantáneo, bidireccional, con _Backpressure_)
-
-### A.5 Módulo Marketplace (Redis + Redisson)
-
-`MarketplaceService` usa `ConcurrentHashMap` en RAM + bloques `synchronized` para el anti-doble-gasto. En producción: **Redis** para búsquedas sub-milisegundo + **Redisson** para locks distribuidos (dos usuarios no pueden comprar la misma carta simultáneamente).
-
-### A.6 Módulo de Eventos (RabbitMQ)
-
-Las recompensas post-combate se encolan con AMQP para no bloquear el cierre del duelo. `RewardConsumerService` (`@RabbitListener`) las procesa en segundo plano.
-
-### A.7 Seguridad (Spring Security Reactive + JWT)
-
-Todo request pasa por `WebFilterChain` antes de llegar al controller. El `JwtUtil` decodifica `Authorization: Bearer <token>` con HS512. Si falla → `401 UNAUTHORIZED` sin despertar Spring. Stateless, resistente a DDoS básico.
-
----
-
-## 🖥️ B. Frontend (React 18 + Vite + TypeScript + Capacitor)
-
-### B.1 Arquitectura SPA
-
-Single Page Application: la shell completa se descarga una sola vez. Toda navegación ocurre en memoria del dispositivo. Solo salen peticiones para datos de API.
-
-**Virtual DOM (Reconciliation):**
-- React mantiene una "fotocopia matemática" del DOM en RAM
-- Solo repinta los píxeles que cambiaron (ej. si ganas 50 Semillas, solo se repinta ese número)
-- Resultado: 60 FPS sin consumo excesivo de batería
-
-### B.2 Gestión de Estado (Zustand)
-
-```typescript
-// store/useAppStore.ts
-const useAppStore = create(persist(
-    (set, get) => ({
-        currentUser: null,
-        playerBirds: [],
-        inventory: [],
-        weather: 'sunny',
-        notifications: [],
-        // Acciones:
-        login: (user) => set({ currentUser: user }),
-        syncInventory: async () => { /* llama a AvisCore.fetchInventory() */ },
-        executeAttack: async (move, birdId) => { /* llama a AvisCore.executeBattleAttack() */ },
-    }),
-    { name: 'aery-storage', partialize: (s) => ({ currentUser: s.currentUser, playerBirds: s.playerBirds }) }
-))
 ```
-
-### B.3 Seguridad JWT (Interceptor)
-
-El token JWT se guarda vía `AvisCore.storeSecureToken()` (EncryptedSharedPreferences en Android, no localStorage). El interceptor de OkHttp añade `Authorization: Bearer <token>` a cada petición Retrofit automáticamente.
-
-### B.4 Módulo de Certamen (RSocket-js / Hook Custom)
-
-```typescript
-// Hook useBattleSocket() — canal bidireccional con el servidor
-const { attack, opponentState } = useBattleSocket(sessionId);
-// Cuando el servidor empuja un evento, React actualiza la barra de HP
-// y dispara la animación de daño instantáneamente
-```
-
-### B.5 Optimistic UI (Crafting & Marketplace)
-
-React aplica el cambio visualmente antes de que el servidor responda:
-1. Resta semillas en pantalla e inyecta la carta temporalmente
-2. Envía `POST` asíncrono a Spring Boot
-3. Si el servidor devuelve `400` (doble-gasto / recursos insuficientes) → `.catch()` revierte el estado y muestra notificación
-
-### B.6 Estructura de Directorios
-
-```text
-Cliente/src/
-├── components/       → Navbar, BottomNav, GlassPanel, BirdCard
-├── data/             → birds.ts (catálogo local — 6 aves de Pinto)
-├── screens/
-│   ├── auth/         → Login.tsx
-│   ├── home/         → ElSantuario.tsx
-│   ├── expedition/   → LaExpedicion.tsx
-│   └── arena/        → ElCertamen.tsx
-├── services/
-│   ├── avisCore.ts   → AvisCore + TailscalePlugin (Capacitor bridge)
-│   ├── weather.ts    → wttr.in (sin API key)
-│   └── time.ts       → fase del día
-├── store/
-│   └── useAppStore.ts → Zustand (persist localStorage)
-└── types/index.ts    → Bird, User, AppState, InventoryItem...
+┌──────────────────────────────────────────────┐
+│               DISPOSITIVO ANDROID             │
+│                                               │
+│  React 18 + Vite (WebView)                    │
+│  ┌──────────────────────────────────────┐     │
+│  │  Component → Zustand Store           │     │
+│  │   await AvisCore.executeBattleAttack()│     │
+│  └─────────────┬────────────────────────┘     │
+│                │  Capacitor JSI Bridge         │
+│  ┌─────────────▼────────────────────────┐     │
+│  │  AvisCorePlugin.java  (EntryPoint)   │     │
+│  │  TailscalePlugin.java                │     │
+│  │   OkHttp + Retrofit + RxJava3        │     │
+│  └─────────────┬────────────────────────┘     │
+│                │  HTTP sobre Tailscale VPN     │
+│  ┌─────────────▼────────────────────────┐     │
+│  │  tailscalebridge.aar  (Go/tsnet)     │     │
+│  │  Túnel cifrado WireGuard             │     │
+│  └─────────────┬────────────────────────┘     │
+└────────────────┼─────────────────────────────-┘
+                 │  WireGuard / Tailscale Mesh
+┌────────────────▼──────────────────────────────┐
+│            SERVIDOR LUBUNTU (100.112.239.82)  │
+│                                               │
+│  Spring Boot 3 + WebFlux (Puerto 8080)        │
+│  ┌──────────────────────────────────────┐     │
+│  │  JwtAuthFilter → REST Controller     │     │
+│  │  BattleController / CraftingService  │     │
+│  └─────────────┬─────────┬─────────────┘     │
+│                │         │                    │
+│  ┌─────────────▼─┐  ┌───▼──────────────┐     │
+│  │  R2DBC        │  │  RSocket Port 7000│     │
+│  │  Supabase PG  │  │  Batalla real-time│     │
+│  └───────────────┘  └──────────────────┘     │
+│                                               │
+│  Redis (caché)  RabbitMQ (eventos async)      │
+└───────────────────────────────────────────────┘
+                 │
+┌────────────────▼──────────────────────────────┐
+│  SUPABASE (PostgreSQL gestionado en la nube)  │
+│  Tablas: users, birds, inventory, battles...  │
+└───────────────────────────────────────────────┘
 ```
 
 ---
 
-## 📱 C. Capa Nativa Android (Java + Hilt + Retrofit)
+## 2. Frontend (React 18 + Vite + TypeScript + Capacitor)
 
-### C.1 Dependencias Gradle (app/build.gradle)
+### 2.1 Stack
 
-```gradle
-// Inyección de dependencias
-implementation 'com.google.dagger:hilt-android:2.51.1'
-annotationProcessor 'com.google.dagger:hilt-compiler:2.51.1'
+| Lib | Versión | Uso |
+|---|---|---|
+| React | 18.3.1 | UI reactiva |
+| Vite | ^5.4 | Bundler + dev server |
+| TypeScript | ^5.5 | Tipado estático |
+| Capacitor | 8.1.0 | Bridge JS ↔ Android |
+| Zustand | ^5.0 | Estado global (persistido) |
+| Tailwind CSS | **v4** | Utility-first CSS |
+| Framer Motion | ^12 | Animaciones |
+| Leaflet + react-leaflet | 1.9 / 4.2 | Mapa de expedición |
+| Axios | ^1.13 | HTTP client |
 
-// Red
-implementation 'com.squareup.retrofit2:retrofit:2.11.0'
-implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
-implementation 'com.squareup.retrofit2:adapter-rxjava3:2.11.0'
-implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
+### 2.2 Tailwind CSS v4 — Configuración
 
-// Concurrencia
-implementation 'io.reactivex.rxjava3:rxjava:3.1.8'
-implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
+> **Importante:** Se usa **Tailwind v4**. La configuración NO está en `tailwind.config.js` sino en `src/index.css` mediante `@theme {}`.
 
-// Persistencia local
-implementation 'androidx.room:room-runtime:2.6.1'
-implementation 'androidx.room:room-rxjava3:2.6.1'
-annotationProcessor 'androidx.room:room-compiler:2.6.1'
+```css
+/* src/index.css */
+@import "tailwindcss";
 
-// Seguridad
-implementation 'androidx.security:security-crypto:1.1.0-alpha06'
-
-// Tailscale Bridge (Go/tsnet compilado con gomobile)
-implementation(name: 'tailscalebridge', ext: 'aar')
+@theme {
+  --color-primary: #5ee830;
+  --color-cream: #fdfbf7;
+  --font-display: 'Lexend', sans-serif;
+  /* ... resto de tokens */
+}
 ```
 
-### C.2 Módulos Hilt
+El `postcss.config.js` usa `@tailwindcss/postcss` (plugin oficial de TW4).
+El fichero `tailwind.config.js` existe solo como referencia legacy; TW4 lo ignora.
 
-| Módulo | Provee |
-|---|---|
-| `NetworkModule.java` | `OkHttpClient`, `Retrofit`, `AvisApiService` — BASE_URL: `http://100.112.239.82:8080/` |
-| `DatabaseModule.java` | `AppDatabase` (Room), `BirdDao` |
+### 2.3 Arquitectura SPA (sin React Router)
 
-### C.3 Plugins Capacitor
+La navegación se gestiona mediante `currentScreen` en el Zustand store:
 
-Ver `07_Arquitectura_Capacitor_Plugins.md` para la documentación completa. Resumen:
+```
+App.tsx → switch(currentScreen) → pantalla activa
+```
 
-| Plugin | Responsabilidad |
-|---|---|
-| `AvisCorePlugin` | Datos del juego: inventario, aves, batalla, token JWT |
-| `TailscalePlugin` | Conectividad VPN Tailscale (Go/tsnet `.aar`) |
+| Screen key | Componente | Estado |
+|---|---|---|
+| `home` | `ElSantuario.tsx` | ✅ Implementado |
+| `expedition` | `LaExpedicion.tsx` | ✅ Implementado |
+| `arena` | `ElCertamen.tsx` | ✅ Implementado |
+| `social` | `ElSocial.tsx` | ✅ Implementado |
+| `store` | `ElTienda.tsx` | ✅ Implementado |
+| `profile` | `MiPerfil.tsx` | ✅ Implementado |
+| `taller` | `ElTaller.tsx` | 🔧 Pendiente (Fase 4) |
+| `album` | `ElAlbum.tsx` | 🔧 Pendiente (Fase 4) |
 
-**Patrón obligatorio para plugins** (no inyectables por Hilt directamente):
+### 2.4 Estado Global (Zustand)
+
+```
+store/useAppStore.ts
+  ├── State:   playerBirds, inventory, currentUser, weather, time, notifications...
+  ├── Persist: currentUser + playerBirds → localStorage (key: 'aery-storage')
+  └── Actions: login, syncInventory, syncPlayerBirds, hydrateBirdMedia, executeAttack...
+```
+
+---
+
+## 3. Capa Nativa Android (Java + Hilt + Retrofit)
+
+### 3.1 Plugins Capacitor
+
+| Plugin | Archivo Java | Métodos expuestos a JS |
+|---|---|---|
+| `AvisCore` | `AvisCorePlugin.java` | `fetchInventory`, `getPlayerBirds`, `executeBattleAttack`, `storeSecureToken`, `getSecureToken` |
+| `TailscalePlugin` | `TailscalePlugin.java` | `initTailscale`, `stopTailscale`, `testTailscaleConnection` |
+
+**Patrón obligatorio** — los plugins Capacitor no son inyectables por Hilt directamente:
+
 ```java
 @EntryPoint
 @InstallIn(SingletonComponent.class)
-interface MyEntryPoint { AvisApiService apiService(); }
-
-// Dentro del plugin:
-AvisApiService svc = EntryPoints.get(getContext().getApplicationContext(), MyEntryPoint.class).apiService();
+interface AvisCoreEntryPoint {
+    AvisApiService apiService();
+}
+// Uso dentro del plugin:
+AvisApiService svc = EntryPoints.get(
+    getContext().getApplicationContext(),
+    AvisCoreEntryPoint.class
+).apiService();
 ```
 
-### C.4 Compilar tailscalebridge.aar
+### 3.2 Módulos Hilt
+
+| Módulo | Provee |
+|---|---|
+| `NetworkModule.java` | `OkHttpClient`, `Retrofit` → `AvisApiService`. BASE_URL: `http://100.112.239.82:8080/` |
+| `DatabaseModule.java` | `AppDatabase` (Room), `BirdDao` |
+
+### 3.3 Endpoints Retrofit (`AvisApiService.java`)
+
+| Método HTTP | Endpoint | Uso |
+|---|---|---|
+| POST | `/api/auth/login` | Autenticación JWT |
+| POST | `/api/auth/register` | Registro de usuario |
+| GET | `/api/collection` | Lista de aves del jugador |
+| GET | `/api/inventory` | Inventario de materiales |
+| POST | `/api/crafting/craft` | Crear carta de ave |
+| POST | `/api/expeditions/start` | Iniciar expedición |
+| POST | `/api/battle/attack` | Acción de combate (RSocket) |
+| GET/POST | `/api/market` | Marketplace |
+
+### 3.4 Compilar tailscalebridge.aar
 
 ```powershell
-# ONE-TIME: añadir x/mobile al go.mod del bridge
-cd tailscalebridge/
-go get golang.org/x/mobile@latest
+# Prerequisitos: Go instalado, NDK 25.x
+cd C:\Users\rober\Desktop\ProyectoIntermodularDAM\tailscalebridge
 
-# Compilar (NDK 25.0.8775105 requerido)
-powershell -ExecutionPolicy Bypass -File .\build_aar.ps1
+$env:ANDROID_HOME     = "$env:LOCALAPPDATA\Android\Sdk"
+$env:ANDROID_NDK_HOME = "$env:LOCALAPPDATA\Android\Sdk\ndk\25.0.8775105"
+
+gomobile init
+gomobile bind -v -target=android -androidapi 21 -o tailscalebridge.aar .
+copy tailscalebridge.aar ..\Cliente\android\app\libs\
 ```
 
-Resultado: `tailscalebridge.aar` (~60 MB, arm + arm64 + x86 + x86_64) copiado automáticamente a `Cliente/android/app/libs/`.
-
-Ver `Docs/Skills/Skill_Build_Tailscale_AAR.md` para troubleshooting detallado.
+Resultado: `tailscalebridge.aar` (~60 MB, arm64 + armeabi-v7a + x86 + x86_64).
 
 ---
 
-## 🔄 D. Flujo Completo de Datos
+## 4. Conectividad — Tailscale VPN
 
 ```
-[React Component]
-     ↓  await AvisCore.executeBattleAttack({ move, birdId })
-[Capacitor Bridge]
-     ↓  call Java via WebView JSI
-[AvisCorePlugin.java (EntryPoint)]
-     ↓  getApiService().attack(dto)  [RxJava3 / Schedulers.io()]
-[Retrofit → OkHttp → Tailscale VPN]
-     ↓  HTTP POST http://100.112.239.82:8080/api/battle/attack
-[Spring Boot BattleController]
-     ↓  BattleService.processAttack() → returns BattleResult
-[Retrofit → call.resolve(JSObject)]
-     ↓
-[React state update → UI repaint]
+Android App  ──[tailscalebridge.aar/Go tsnet]──▶  Tailscale Mesh ──▶  Servidor Lubuntu
+                                                                        100.112.239.82
+```
+
+- El plugin `TailscalePlugin.java` llama a `TailscaleLib.initTailscale()` antes de cualquier petición Retrofit.
+- `NetworkModule.java` configura `BASE_URL = http://100.112.239.82:8080/`.
+- El servidor Spring Boot escucha en `server.address: 0.0.0.0` para aceptar conexiones de la interfaz virtual de Tailscale.
+- Acceso SSH al servidor: `ssh lubuntu@100.112.239.82` (password en Bitácora).
+
+---
+
+## 5. Backend (Spring Boot 3 + WebFlux)
+
+### 5.1 Arquitectura Reactiva
+
+| Concepto | Implementación |
+|---|---|
+| Servidor | Netty (Event Loop, non-blocking) |
+| API REST | WebFlux Controllers (`Mono<T>` / `Flux<T>`) |
+| Tiempo real | RSocket (puerto 7000) — batallas 1v1 |
+| Persistencia | Spring Data R2DBC → Supabase PostgreSQL |
+| Caché | Redis Reactive + Redisson (locks distribuidos) |
+| Mensajería | RabbitMQ AMQP → recompensas post-combate |
+
+### 5.2 Seguridad
+
+- JWT (HS512) validado en `JwtUtil` por `WebFilterChain` antes de llegar al controller.
+- Stateless — sin sesiones en servidor.
+- Token almacenado en el cliente con `EncryptedSharedPreferences` (no localStorage).
+
+### 5.3 Módulos de Juego
+
+| Módulo | Tecnología | Descripción |
+|---|---|---|
+| Autenticación | Spring Security + JWT | `/api/auth/login|register` |
+| Catálogo | WebClient → Nuthatch API | Datos taxonómicos on-demand |
+| Colección + Taller | R2DBC (atómico) | Crafting: consume materiales → genera BirdCard |
+| Certamen | RSocket channel bidireccional | Matchmaking + ataques en tiempo real |
+| Marketplace | Redis + Redisson (distributed lock) | Anti-doble-gasto en compras simultáneas |
+| Eventos | RabbitMQ `@RabbitListener` | Recompensas asíncronas post-batalla |
+| Clima | wttr.in (WebClient, sin API key) | Modifica probabilidades de crafteo |
+
+### 5.4 APIs Externas
+
+| API | Uso |
+|---|---|
+| **Nuthatch API** | Nombre científico, familia, audio del canto |
+| **wttr.in** | Clima actual sin API key |
+| **Pexels API** | Imágenes de aves y hábitats |
+| **DiceBear API** | Avatares de usuario SVG |
+
+---
+
+## 6. Supabase (PostgreSQL)
+
+- Supabase gestiona PostgreSQL en la nube.
+- Spring Boot se conecta via **R2DBC** (driver async, no JDBC).
+- Los IDs son **UUID** (emparejan con Supabase Auth).
+- **Prohibido:** columnas JSONB — solo relacional puro.
+- Tablas principales: `users`, `bird_cards`, `inventory_items`, `expeditions`, `battles`, `market_listings`.
+
+---
+
+## 7. Script de Build Automatizado
+
+```powershell
+# Build completo (Frontend → Capacitor → APK debug)
+.\build_full.ps1
+
+# APK de release
+.\build_full.ps1 -Mode release
+
+# Solo Android (si el frontend no cambió)
+.\build_full.ps1 -SkipFrontend
+```
+
+**Pasos internos:**
+1. `npm run build` en `Cliente/` (Vite + tsc)
+2. `npx cap sync android` (copia `dist/` a WebView Android)
+3. `gradlew assembleDebug` o `assembleRelease`
+4. Informa la ruta del APK generado + comando `adb install`
+
+---
+
+## 8. Entorno de Desarrollo
+
+| Máquina | Herramientas |
+|---|---|
+| **Windows (cliente)** | Node 24, npm, Android Studio, Go, gomobile, Tailscale |
+| **Lubuntu (servidor)** | Java 21, Maven, Docker (Redis + RabbitMQ), Tailscale |
+
+**Acceso rápido al servidor:**
+```bash
+ssh lubuntu@100.112.239.82
+# Ver logs de Spring Boot en tiempo real:
+ssh lubuntu@100.112.239.82 "journalctl -u avis-backend -f"
 ```
