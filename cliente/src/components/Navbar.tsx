@@ -35,7 +35,10 @@ const Navbar: React.FC = () => {
     }, []);
 
     return (
-        <header className="sticky top-0 z-50 px-4 py-3 md:px-6 md:py-4 lg:px-12 flex items-center justify-between glass-card md:glass-panel mt-2 md:mt-4 mx-2 md:mx-4 rounded-xl shadow-sm">
+        <header
+            style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+            className="sticky top-0 z-50 px-4 py-3 md:px-6 md:py-4 lg:px-12 flex items-center justify-between glass-card md:glass-panel mx-2 md:mx-4 rounded-xl shadow-sm"
+        >
             {/* Left side: Logo */}
             <div
                 className="flex items-center gap-2 md:gap-3 cursor-pointer z-10"

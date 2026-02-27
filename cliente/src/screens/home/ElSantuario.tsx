@@ -52,12 +52,12 @@ const ElSantuario: React.FC = () => {
                         <span className="material-symbols-outlined text-sm text-primary">{time.icon}</span>
                         <span className="text-[10px] font-black uppercase tracking-widest text-primary">{time.phase}</span>
                     </div>
-                    <h2 className="text-4xl lg:text-6xl font-black text-slate-900 dark:text-slate-100 leading-tight">
+                    <h2 className="text-2xl md:text-4xl lg:text-6xl font-black text-slate-900 dark:text-slate-100 leading-tight">
                         ¡Buenos días,<br />{currentUser?.name || 'Explorador'}!
                     </h2>
                 </header>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-10">
 
                     <GlassPanel className="md:col-span-1 lg:col-span-1 relative w-full aspect-square flex items-center justify-center overflow-hidden rounded-3xl group p-0 border-none shadow-none bg-transparent">
                         <div className="absolute inset-0 tree-gradient opacity-60"></div>

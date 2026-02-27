@@ -54,9 +54,9 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col min-h-[100dvh] font-sans bg-cream dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+    <div className="flex flex-col h-[100dvh] font-sans bg-cream dark:bg-slate-950 text-slate-900 dark:text-slate-100">
       <Navbar />
-      <main className="flex-1 flex flex-col pb-28 md:pb-12 w-full">
+      <main className="flex-1 flex flex-col overflow-y-auto w-full" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 5rem)' }}>
         {renderContent()}
       </main>
       <BottomNav />

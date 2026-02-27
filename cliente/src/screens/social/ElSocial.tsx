@@ -46,12 +46,12 @@ const ElSocial: React.FC = () => {
             <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 md:px-12 py-6 md:py-8">
 
                 {/* Header */}
-                <header className="flex flex-col gap-3 py-10 md:py-16 animate-fade-in text-left">
+                <header className="flex flex-col gap-3 py-4 md:py-10 animate-fade-in text-left">
                     <div className="flex items-center gap-2 px-4 py-1.5 bg-primary/10 rounded-full w-fit">
                         <span className="material-symbols-outlined text-sm text-primary">diversity_3</span>
                         <span className="text-[10px] font-black uppercase tracking-widest text-primary">Comunidad del Naturalista</span>
                     </div>
-                    <h2 className="text-4xl md:text-6xl font-black leading-tight tracking-tight">Social & Bandadas</h2>
+                    <h2 className="text-xl md:text-4xl lg:text-6xl font-black leading-tight tracking-tight">Social &amp; Bandadas</h2>
                     <p className="text-slate-500 dark:text-slate-400 font-bold italic text-sm md:text-lg max-w-2xl">
                         Comparte tus descubrimientos, colabora en misiones globales y conecta con otros expertos de Pinto.
                     </p>

@@ -517,12 +517,12 @@ const ElCertamen: React.FC = () => {
     return (
         <div className="flex flex-col flex-1 font-display px-4 md:px-12 py-6 md:py-8">
             <main className="flex-1 w-full max-w-7xl mx-auto flex flex-col">
-                <header className="flex flex-col gap-3 py-6 md:py-12 text-center md:text-left border-b border-slate-100 dark:border-slate-800 mb-8">
+                <header className="flex flex-col gap-3 py-3 md:py-8 text-center md:text-left border-b border-slate-100 dark:border-slate-800 mb-4">
                     <div className="flex items-center gap-2 px-3 py-1 bg-red-500/10 rounded-full w-fit mx-auto md:mx-0">
                         <span className="material-symbols-outlined text-sm text-red-500">swords</span>
                         <span className="text-[10px] font-black uppercase tracking-widest text-red-500">Gala Competitiva de Pinto</span>
                     </div>
-                    <h2 className="text-4xl lg:text-5xl font-black leading-tight">El Certamen de Pinto</h2>
+                    <h2 className="text-xl md:text-4xl lg:text-5xl font-black leading-tight">Él Certamen de Pinto</h2>
                     <div className="flex items-center gap-6 justify-center md:justify-start">
                         <div className="flex items-center gap-2">
                             <span className="material-symbols-outlined text-primary">{time.icon}</span>

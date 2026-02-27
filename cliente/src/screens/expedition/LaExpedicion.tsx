@@ -267,7 +267,7 @@ const LaExpedicion: React.FC = () => {
                 </div>
             </div>
 
-            <main className="flex-1 flex flex-col lg:flex-row gap-6 p-4 lg:p-8 mt-14 mb-4 max-w-[1440px] mx-auto w-full h-[calc(100vh-160px)]">
+            <main className="flex-1 flex flex-col lg:flex-row gap-4 p-3 lg:p-8 mt-14 mb-2 max-w-[1440px] mx-auto w-full" style={{ height: 'calc(100dvh - 9rem)' }}>
                 {/* Contenedor del Mapa */}
                 <div className="flex-grow bg-slate-200 dark:bg-slate-900 rounded-[3rem] overflow-hidden border-8 border-white dark:border-slate-800 relative shadow-2xl flex flex-col min-h-[450px]">
 
