@@ -322,3 +322,58 @@ copy tailscalebridge.aar ..\Cliente\android\app\libs\
 $adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
 & $adb install -r "Cliente\android\app\build\outputs\apk\debug\app-debug.apk"
 ```
+
+---
+
+## Scripts de Automatización — Verificados (27/02/2026)
+
+### `build_full.ps1` — Compilación del APK
+
+**Ubicación:** `ProyectoIntermodularDAM\build_full.ps1`
+**Propósito:** Compila el frontend, sincroniza Capacitor y genera el APK de Android.
+
+**Uso:**
+```powershell
+.\build_full.ps1               # APK debug (por defecto)
+.\build_full.ps1 -Mode release # APK release
+.\build_full.ps1 -SkipFrontend # Solo Capacitor + Gradle (frontend sin cambios)
+```
+
+**Pasos internos verificados:**
+1. `npm run build` → Vite compila a `Cliente/dist/` (~1.95s, 56 modules)
+2. `npx cap sync android` → copia el dist al WebView Android (~0.134s)
+3. `gradlew assembleDebug` → genera APK (~6s con cache activo)
+
+**Resultado:** `app-debug.apk` en `Cliente/android/app/build/outputs/apk/debug/` (~128 MB).
+
+**Para instalar el APK** — usar Android Studio con el dispositivo conectado y pulsar el botón **▶ Run**.
+
+---
+
+### `start_all.ps1` — Entorno de Desarrollo Local
+
+**Ubicación:** `ProyectoIntermodularDAM\start_all.ps1`
+**Propósito:** Arranca el backend Spring Boot y el dev server de Vite para desarrollo en navegador.
+
+**Uso:**
+```powershell
+.\start_all.ps1
+```
+
+**Pasos verificados:**
+1. `mvn clean` → limpia artefactos del backend
+2. `npm install --legacy-peer-deps` → instala/actualiza dependencias frontend
+3. `mvnw spring-boot:run` → arranca backend en ventana separada
+4. `npm run dev` → arranca Vite dev server en ventana separada
+5. Pulsar ENTER → para ambos procesos limpiamente
+
+**URLs disponibles tras el arranque:**
+| Servicio | URL |
+|---|---|
+| Backend REST | `http://localhost:8080` |
+| Frontend Vite | `http://localhost:5173` |
+| Swagger UI | `http://localhost:8080/swagger-ui.html` |
+
+**Fix aplicado:** El script original apuntaba a `src/frontend` (no existía). Corregido a `Cliente/`.
+
+**NOTA:** El backend requiere que el servidor Lubuntu (`100.112.239.82`) esté accesible vía Tailscale para peticiones reales. En desarrollo local funciona con datos mock del Zustand store.
