@@ -450,3 +450,17 @@ En desarrollo local funciona con datos mock del Zustand store.
 - **CORS**: Reemplazado el wildcard `*` en el backend por orígenes explícitos (`capacitor://localhost`, `http://localhost:5173`) para permitir el envío de cookies/cabeceras de autorización.
 - **Build AAB/APK**: Verificada la compilación con NDK 29 para soporte de alineación de 16 KB (compatibilidad con dispositivos Android 15+).
 - **Tipado TS**: Corregidos errores de asignación en `theme` y `language` mediante casting explícito en el store.
+ 
+ ---
+ 
+ ### [2026-02-28] - Resolución Tailscale: SOCKS5 Proxy y Netlink Bypass (Fase Final)
+ **Contexto:** Se detectaron errores de permisos de red (`netlink`) y fallos en el encaminamiento de tráfico API en la versión Android.
+ 
+ **Acciones Realizadas:**
+ 1. **Netlink Bypass**: Inyección de variables `TS_NO_NETLINK=true` y `TS_SKIP_NETLINK_BIND=true` en el `init()` del bridge de Go para omitir el monitoreo de red restringido en Android.
+ 2. **SOCKS5 Proxy Real**: Integración de `github.com/armon/go-socks5` en el bridge, vinculando el proxy al dialer de Tailscale.
+ 3. **Configuración OkHttp**: Definición de `Proxy.Type.SOCKS` en `NetworkModule.java` apuntando a `127.0.0.1:1055`.
+ 
+ **Resultado:** Conectividad robusta verificada. El tráfico API fluye cifrado por la VPN de forma transparente para el frontend.
+ 
+ ---

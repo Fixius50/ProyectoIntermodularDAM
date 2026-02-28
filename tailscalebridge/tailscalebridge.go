@@ -3,12 +3,14 @@ package tailscalebridge
 import (
 	"context"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"path/filepath"
 	"sync"
 	"time"
 
+	"github.com/armon/go-socks5"
 	"tailscale.com/tsnet"
 )
 
@@ -62,20 +64,24 @@ func StartProxy(dataDir, authKey, hostname, socksPort, tailscaleUser, tailscaleP
 		return "Failed to start tsnet: " + err.Error()
 	}
 
-	// Start a local SOCKS5 proxy that routes through the Tailscale network.
-	// We'll use the Dial function for Retrofit/OkHttp directly.
-	go func() {
-		ln, err := tsServer.Listen("tcp", ":1055") // Internal mock listener
-		if err != nil {
-			log.Printf("Failed to listen for SOCKS: %v", err)
-			return
-		}
-		defer ln.Close()
+	// Create a SOCKS5 server that uses Tailscale as its dialer
+	conf := &socks5.Config{
+		Dial: func(ctx context.Context, network, addr string) (net.Conn, error) {
+			return tsServer.Dial(ctx, network, addr)
+		},
+	}
+	server, err := socks5.New(conf)
+	if err != nil {
+		return "Failed to create SOCKS5 server: " + err.Error()
+	}
 
-		// A very simplified "proxy" logic since gomobile cannot easily run full SOCKS5 packages
-		// Instead, we will use a simpler approach: we expose the Listen function via Java if needed,
-		// but for now, let's try to keep the tsServer active.
-		log.Printf("Tailscale Proxy listener active on :1055")
+	// Start a local SOCKS5 proxy that routes through the Tailscale network.
+	go func() {
+		log.Printf("Tailscale Proxy: starting SOCKS5 server on localhost:%s", socksPort)
+		// We listen on localhost only for security
+		if err := server.ListenAndServe("tcp", "127.0.0.1:"+socksPort); err != nil {
+			log.Printf("SOCKS5 server failed: %v", err)
+		}
 	}()
 
 	// Wait max 30 seconds for IP and visibility
