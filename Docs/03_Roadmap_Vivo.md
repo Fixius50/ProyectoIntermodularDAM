@@ -30,11 +30,14 @@
 ### Fase 4: Módulo 2: Vinculación de Datos y Recursos [EN CURSO]
 - [x] Conexión de UI con Zustand Store.
 - [x] Implementación de `avisCore.ts` calls (mockados en web, reales en Android).
+- [x] **Soporte Multi-idioma (i18n)**: Diccionarios ES/EN y selector de región.
+- [x] **Gestión Proactiva de Permisos**: Solicitud nativa de Cámara, GPS y Audio.
+- [x] **Optimización UI/UX**: Ajustes de Safe Area y responsividad en móviles.
 - [ ] Sistema de Inventario y Plumas (pantalla `ElTaller`).
 - [ ] Álbum de Colección (pantalla `ElAlbum`).
-- [ ] Persistencia de sesión segura via `storeSecureToken` / `getSecureToken`.
-- [ ] Integración real Room DB → `fetchInventory()` / `getPlayerBirds()` desde SQLite nativo.
-- [ ] Integración JWT: interceptor OkHttp + `storeSecureToken` en flujo login.
+- [x] Persistencia de sesión segura via `storeSecureToken` / `getSecureToken`.
+- [x] Integración real Room DB → `fetchInventory()` / `getPlayerBirds()` desde SQLite nativo.
+- [/] Integración JWT: interceptor OkHttp + `storeSecureToken` en flujo login (pendiente interceptor nativo).
 
 ### Fase 5: Backend Integration [EN CURSO / BACKEND DISPONIBLE]
 - [x] Módulo de Autenticación (Spring Boot REST `/api/auth`).

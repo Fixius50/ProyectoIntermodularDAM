@@ -13,7 +13,14 @@ const BottomNav: React.FC = () => {
     ];
 
     return (
+<<<<<<< HEAD
         <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden glass-card border-t-0 rounded-t-2xl px-1 sm:px-2 pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))] flex justify-between items-end">
+=======
+        <nav
+            style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 0.75rem)' }}
+            className="fixed bottom-0 left-0 right-0 z-50 md:hidden glass-card border-t-0 rounded-t-2xl px-2 pt-3 flex justify-between items-end"
+        >
+>>>>>>> cba0c9590c1661a7b7154d24dbd21b98784cae04
             {navItems.slice(0, 2).map((item) => {
                 const isActive = item.id === currentScreen;
                 return (

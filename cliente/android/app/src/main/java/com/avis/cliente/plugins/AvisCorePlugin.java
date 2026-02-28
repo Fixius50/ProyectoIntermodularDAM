@@ -5,15 +5,21 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.avis.cliente.di.NetworkModule;
+import com.avis.cliente.db.BirdEntity;
+import com.avis.cliente.db.InventoryEntity;
+import com.avis.cliente.db.SightingEntity;
 import com.avis.cliente.network.AvisApiService;
 import com.avis.cliente.db.BirdDao;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
+import android.Manifest;
+import com.getcapacitor.PermissionState;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import com.getcapacitor.annotation.Permission;
+import com.getcapacitor.annotation.PermissionCallback;
 
 import dagger.hilt.EntryPoint;
 import dagger.hilt.EntryPoints;
@@ -26,21 +32,25 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/**
- * AvisCorePlugin - Primary Capacitor bridge for game data operations.
- *
- * Exposes the following methods to the React frontend:
- *   - fetchInventory()                     → Room DB (local cache)
- *   - getPlayerBirds()                     → Room DB (local cache)
- *   - executeBattleAttack(move, birdId)    → Spring Boot via Retrofit/Tailscale
- *   - storeSecureToken(token)              → EncryptedSharedPreferences
- *   - getSecureToken()                     → EncryptedSharedPreferences
- *   - syncLocation()                       → FusedLocationProviderClient
- *
- * Hilt injection for Capacitor plugins requires the EntryPoint pattern since
- * Capacitor instantiates plugins directly (not through the DI container).
- */
-@CapacitorPlugin(name = "AvisCore")
+import java.util.UUID;
+
+@CapacitorPlugin(
+    name = "AvisCore",
+    permissions = {
+        @Permission(
+            alias = "camera",
+            strings = { Manifest.permission.CAMERA }
+        ),
+        @Permission(
+            alias = "location",
+            strings = { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION }
+        ),
+        @Permission(
+            alias = "microphone",
+            strings = { Manifest.permission.RECORD_AUDIO }
+        )
+    }
+)
 public class AvisCorePlugin extends Plugin {
 
     private static final String TAG          = "AvisCorePlugin";
@@ -48,8 +58,6 @@ public class AvisCorePlugin extends Plugin {
     private static final String TOKEN_KEY    = "jwt_token";
 
     private final CompositeDisposable disposables = new CompositeDisposable();
-
-    // --- Hilt EntryPoint for non-Hilt-managed classes ---
 
     @EntryPoint
     @InstallIn(SingletonComponent.class)
@@ -66,20 +74,33 @@ public class AvisCorePlugin extends Plugin {
         return EntryPoints.get(getContext().getApplicationContext(), AvisCoreEntryPoint.class).birdDao();
     }
 
-    // -----------------------------------------------------------------------
-    // Plugin Methods
-    // -----------------------------------------------------------------------
+    @PluginMethod
+    public void ensurePermissions(PluginCall call) {
+        if (!arePermissionsGranted()) {
+            requestPermissions(call);
+        } else {
+            JSObject ret = new JSObject();
+            ret.put("status", "granted");
+            call.resolve(ret);
+        }
+    }
 
-    /**
-     * Executes a battle attack action via the Spring Boot backend (Tailscale).
-     * Falls back to a local mock if the server is unreachable.
-     */
+    @Override
+    protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.handleRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Si Capacitor no maneja el callback automáticamente, podríamos necesitar checkPermissionsCallback
+    }
+
+    private boolean arePermissionsGranted() {
+        return getPermissionState("camera") == PermissionState.GRANTED &&
+               getPermissionState("location") == PermissionState.GRANTED &&
+               getPermissionState("microphone") == PermissionState.GRANTED;
+    }
+
     @PluginMethod
     public void executeBattleAttack(PluginCall call) {
         String move   = call.getString("move", "Cantar");
         String birdId = call.getString("birdId", "b1");
-
-        Log.d(TAG, "executeBattleAttack: move=" + move + ", birdId=" + birdId);
 
         AvisApiService.BattleAttackDto body = new AvisApiService.BattleAttackDto(move, birdId);
 
@@ -96,113 +117,215 @@ public class AvisCorePlugin extends Plugin {
                         call.resolve(ret);
                     },
                     error -> {
-                        Log.e(TAG, "executeBattleAttack error, using local mock: " + error.getMessage());
-                        // Graceful degradation: return a mock result
                         JSObject ret = new JSObject();
-                        ret.put("result", "Ataque ejecutado (sin conexión)");
-                        ret.put("log",    "El ave " + birdId + " usó " + move + " (modo offline).");
-                        ret.put("damage", (int)(Math.random() * 20) + 10);
+                        ret.put("result", "Ataque ejecutado (offline)");
+                        ret.put("log",    "El ave usó " + move + " (local).");
+                        ret.put("damage", 15);
                         call.resolve(ret);
                     }
                 )
         );
     }
 
-    /**
-     * Returns the player's inventory items from Room (local SQLite cache).
-     * Falls back to a hard-coded mock when Room is empty.
-     */
     @PluginMethod
     public void fetchInventory(PluginCall call) {
-        Log.d(TAG, "fetchInventory: reading from Room.");
-
-        // For now return a mock — actual Room integration comes in the next sprint
-        JSObject ret = new JSObject();
-        JSArray items = new JSArray();
-        try {
-            items.put(new JSObject().put("id", "i1").put("name", "Baya Vital")
-                .put("icon", "eco").put("count", 5).put("description", "Recupera 20 HP"));
-            items.put(new JSObject().put("id", "i2").put("name", "Agua Clara")
-                .put("icon", "water_drop").put("count", 3).put("description", "Recupera 10 Estamina"));
-        } catch (Exception e) {
-            Log.e(TAG, "fetchInventory JSON error: " + e.getMessage());
-        }
-        ret.put("items", items);
-        call.resolve(ret);
+        disposables.add(
+            getBirdDao().getAllInventory()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    items -> {
+                        JSObject ret = new JSObject();
+                        JSArray array = new JSArray();
+                        for (InventoryEntity item : items) {
+                            JSObject obj = new JSObject();
+                            obj.put("id", item.id);
+                            obj.put("name", item.name);
+                            obj.put("icon", item.icon);
+                            obj.put("count", item.count);
+                            obj.put("description", item.description);
+                            array.put(obj);
+                        }
+                        ret.put("items", array);
+                        call.resolve(ret);
+                    },
+                    error -> call.reject("Failed to fetch inventory from Room")
+                )
+        );
     }
 
-    /**
-     * Returns the player's birds from Room (local SQLite cache).
-     * Falls back to a hard-coded mock when Room is empty.
-     */
     @PluginMethod
     public void getPlayerBirds(PluginCall call) {
-        Log.d(TAG, "getPlayerBirds: reading from Room.");
-
-        // For now return a mock — actual Room integration comes in the next sprint
-        JSObject ret = new JSObject();
-        JSArray birds = new JSArray();
-        try {
-            birds.put(new JSObject()
-                .put("id", "b1").put("name", "Cigüeña Blanca").put("level", 24)
-                .put("status", "Santuario").put("type", "Flight")
-                .put("hp", 85).put("maxHp", 100).put("xp", 450).put("maxXp", 1000)
-                .put("stamina", 50).put("maxStamina", 100)
-                .put("canto", 75).put("plumaje", 80).put("vuelo", 90)
-                .put("image", "https://images.pexels.com/photos/4516315/pexels-photo-4516315.jpeg"));
-            birds.put(new JSObject()
-                .put("id", "b2").put("name", "Petirrojo").put("level", 22)
-                .put("status", "Certamen").put("type", "Songbird")
-                .put("hp", 60).put("maxHp", 80).put("xp", 200).put("maxXp", 800)
-                .put("stamina", 40).put("maxStamina", 60)
-                .put("canto", 95).put("plumaje", 60).put("vuelo", 50)
-                .put("image", "https://images.pexels.com/photos/14234384/pexels-photo-14234384.jpeg"));
-        } catch (Exception e) {
-            Log.e(TAG, "getPlayerBirds JSON error: " + e.getMessage());
-        }
-        ret.put("birds", birds);
-        call.resolve(ret);
+        disposables.add(
+            getBirdDao().getAllBirds()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    birds -> {
+                        JSObject ret = new JSObject();
+                        JSArray array = new JSArray();
+                        for (BirdEntity b : birds) {
+                            JSObject obj = new JSObject();
+                            obj.put("id", b.id);
+                            obj.put("name", b.name);
+                            obj.put("scientificName", b.scientificName);
+                            obj.put("level", b.level);
+                            obj.put("status", b.status);
+                            obj.put("birdType", b.birdType);
+                            obj.put("hp", b.hp);
+                            obj.put("maxHp", b.maxHp);
+                            obj.put("stamina", b.stamina);
+                            obj.put("maxStamina", b.maxStamina);
+                            obj.put("canto", b.canto);
+                            obj.put("plumaje", b.plumaje);
+                            obj.put("vuelo", b.vuelo);
+                            obj.put("image", b.imageUrl);
+                            array.put(obj);
+                        }
+                        ret.put("birds", array);
+                        call.resolve(ret);
+                    },
+                    error -> call.reject("Failed to fetch birds from Room")
+                )
+        );
     }
 
-    /**
-     * Synchronises device GPS location. Returns lat/lng mock for now.
-     * Real implementation will use FusedLocationProviderClient.
-     */
     @PluginMethod
-    public void syncLocation(PluginCall call) {
-        Log.d(TAG, "syncLocation: returning mock coords for Pinto, Madrid.");
-        JSObject ret = new JSObject();
-        ret.put("lat", 40.2430);
-        ret.put("lng", -3.7005);
-        ret.put("timestamp", System.currentTimeMillis());
-        call.resolve(ret);
+    public void saveSighting(PluginCall call) {
+        String birdId = call.getString("birdId");
+        Double lat = call.getDouble("lat");
+        Double lon = call.getDouble("lon");
+        String audioPath = call.getString("audioPath");
+        String photoPath = call.getString("photoPath");
+        String notes = call.getString("notes");
+
+        SightingEntity sighting = new SightingEntity();
+        sighting.id = UUID.randomUUID().toString();
+        sighting.birdCardId = birdId;
+        sighting.lat = lat != null ? lat : 0.0;
+        sighting.lon = lon != null ? lon : 0.0;
+        sighting.localAudioPath = audioPath;
+        sighting.localPhotoPath = photoPath;
+        sighting.notes = notes;
+        sighting.sightedAt = System.currentTimeMillis();
+        sighting.isSynced = false;
+
+        disposables.add(
+            getBirdDao().insertSighting(sighting)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    () -> {
+                        JSObject ret = new JSObject();
+                        ret.put("id", sighting.id);
+                        call.resolve(ret);
+                    },
+                    error -> call.reject("Error al guardar avistamiento local")
+                )
+        );
     }
 
-    /**
-     * Stores a JWT in EncryptedSharedPreferences.
-     */
     @PluginMethod
     public void storeSecureToken(PluginCall call) {
         String token = call.getString("token", "");
-        Log.d(TAG, "storeSecureToken: storing JWT.");
-        getContext()
-            .getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)
+        getContext().getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)
             .edit().putString(TOKEN_KEY, token).apply();
         call.resolve();
     }
 
-    /**
-     * Retrieves the stored JWT from EncryptedSharedPreferences.
-     */
     @PluginMethod
     public void getSecureToken(PluginCall call) {
-        String token = getContext()
-            .getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)
+        String token = getContext().getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)
             .getString(TOKEN_KEY, null);
-        Log.d(TAG, "getSecureToken: token found=" + (token != null));
         JSObject ret = new JSObject();
         ret.put("token", token);
         call.resolve(ret);
+    }
+
+    @PluginMethod
+    public void saveBirds(PluginCall call) {
+        JSArray birdsArray = call.getArray("birds");
+        if (birdsArray == null) {
+            call.reject("Must provide birds array");
+            return;
+        }
+
+        java.util.List<BirdEntity> entities = new java.util.ArrayList<>();
+        try {
+            for (int i = 0; i < birdsArray.length(); i++) {
+                JSObject obj = JSObject.fromJSONObject(birdsArray.getJSONObject(i));
+                BirdEntity b = new BirdEntity();
+                b.id = obj.getString("id");
+                b.name = obj.getString("name");
+                b.scientificName = obj.getString("scientificName");
+                b.birdType = obj.getString("birdType");
+                b.rarity = obj.getString("rarity");
+                b.hp = obj.getInteger("hp", 0);
+                b.maxHp = obj.getInteger("maxHp", 0);
+                b.stamina = obj.getInteger("stamina", 0);
+                b.maxStamina = obj.getInteger("maxStamina", 0);
+                b.canto = obj.getInteger("canto", 0);
+                b.plumaje = obj.getInteger("plumaje", 0);
+                b.vuelo = obj.getInteger("vuelo", 0);
+                b.level = obj.getInteger("level", 1);
+                b.xp = obj.getInteger("xp", 0);
+                b.maxXp = obj.getInteger("maxXp", 100);
+                b.imageUrl = obj.getString("image");
+                b.audioUrl = obj.getString("audioUrl");
+                b.fact = obj.getString("fact");
+                b.status = obj.getString("status");
+                entities.add(b);
+            }
+        } catch (Exception e) {
+            call.reject("JSON parsing error: " + e.getMessage());
+            return;
+        }
+
+        disposables.add(
+            getBirdDao().insertBirds(entities)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    () -> call.resolve(),
+                    error -> call.reject("Error saving to Room: " + error.getMessage())
+                )
+        );
+    }
+
+    @PluginMethod
+    public void saveInventory(PluginCall call) {
+        JSArray itemsArray = call.getArray("items");
+        if (itemsArray == null) {
+            call.reject("Must provide items array");
+            return;
+        }
+
+        java.util.List<InventoryEntity> entities = new java.util.ArrayList<>();
+        try {
+            for (int i = 0; i < itemsArray.length(); i++) {
+                JSObject obj = JSObject.fromJSONObject(itemsArray.getJSONObject(i));
+                InventoryEntity item = new InventoryEntity();
+                item.id = obj.getString("id");
+                item.name = obj.getString("name");
+                item.icon = obj.getString("icon");
+                item.count = obj.getInteger("count", 1);
+                item.description = obj.getString("description");
+                entities.add(item);
+            }
+        } catch (Exception e) {
+            call.reject("JSON parsing error: " + e.getMessage());
+            return;
+        }
+
+        disposables.add(
+            getBirdDao().insertInventory(entities)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    () -> call.resolve(),
+                    error -> call.reject("Error saving to Room: " + error.getMessage())
+                )
+        );
     }
 
     @Override

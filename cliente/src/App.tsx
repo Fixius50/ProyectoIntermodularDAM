@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import AvisCore from './services/avisCore';
 import { useAppStore } from './store/useAppStore';
 import Navbar from './components/Navbar';
 import ElSantuario from './screens/home/ElSantuario';
@@ -15,20 +16,32 @@ function App() {
   const { currentScreen, currentUser, updateTime, updateWeather, hydrateBirdMedia } = useAppStore();
 
   useEffect(() => {
+    const initApp = async () => {
+      // Solicitud de permisos nativa (Android) al arrancar
+      await AvisCore.ensurePermissions().catch(err => console.error("Error solicitando permisos:", err));
+
+      if (currentUser) {
+        updateTime();
+        updateWeather();
+        hydrateBirdMedia();
+      }
+    };
+
+    initApp();
+
+    let tInterval: number;
+    let wInterval: number;
+
     if (currentUser) {
-      updateTime();
-      updateWeather();
-      hydrateBirdMedia();
-
-      const tInterval = setInterval(updateTime, 60000);
-      const wInterval = setInterval(updateWeather, 600000);
-
-      return () => {
-        clearInterval(tInterval);
-        clearInterval(wInterval);
-      };
+      tInterval = window.setInterval(updateTime, 60000);
+      wInterval = window.setInterval(updateWeather, 600000);
     }
-  }, [currentUser, updateTime, updateWeather]);
+
+    return () => {
+      if (tInterval) clearInterval(tInterval);
+      if (wInterval) clearInterval(wInterval);
+    };
+  }, [currentUser, updateTime, updateWeather, hydrateBirdMedia]);
 
   if (!currentUser) {
     return <Login />;
@@ -54,9 +67,9 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col min-h-[100dvh] font-sans bg-cream dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+    <div className="flex flex-col h-[100dvh] font-sans bg-cream dark:bg-slate-950 text-slate-900 dark:text-slate-100">
       <Navbar />
-      <main className="flex-1 flex flex-col pb-28 md:pb-12 w-full">
+      <main className="flex-1 flex flex-col overflow-y-auto w-full" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 5rem)' }}>
         {renderContent()}
       </main>
       <BottomNav />

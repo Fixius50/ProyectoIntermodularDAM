@@ -13,7 +13,7 @@ AVIS es una aplicación móvil híbrida de ornitología y estrategia. La arquite
 | **Frontend Web** | React 18 + Vite + TypeScript | UI renderizada en WebView |
 | **Capa Nativa Android** | Capacitor 6 + Java + Hilt | Bridge JS ↔ Android, plugins nativos |
 | **Conectividad VPN** | Tailscale (Go/tsnet → `.aar`) | Túnel seguro al servidor privado |
-| **Backend** | Spring Boot 3 + WebFlux (Java 21) | API REST + RSocket + lógica de juego |
+| **Backend** | Spring Boot 4 + WebFlux (Java 22) | API REST + RSocket + lógica de juego |
 | **Persistencia** | Supabase (PostgreSQL) + R2DBC | BD reactiva no bloqueante |
 | **Caché / Locks** | Redis + Redisson | Marketplace, anti-doble-gasto |
 | **Mensajería** | RabbitMQ | Recompensas post-combate asíncronas |
@@ -83,7 +83,7 @@ AVIS es una aplicación móvil híbrida de ornitología y estrategia. La arquite
 | Tailwind CSS | **v4** | Utility-first CSS |
 | Framer Motion | ^12 | Animaciones |
 | Leaflet + react-leaflet | 1.9 / 4.2 | Mapa de expedición |
-| Axios | ^1.13 | HTTP client |
+| Zustand i18n | Custom | Soporte ES/EN dinámico |
 
 ### 2.2 Tailwind CSS v4 — Configuración
 
@@ -210,7 +210,7 @@ Android App  ──[tailscalebridge.aar/Go tsnet]──▶  Tailscale Mesh ─�
 
 ---
 
-## 5. Backend (Spring Boot 3 + WebFlux)
+## 5. Backend (Spring Boot 4.0.0 + WebFlux)
 
 ### 5.1 Arquitectura Reactiva
 

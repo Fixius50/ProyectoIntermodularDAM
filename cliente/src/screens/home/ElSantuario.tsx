@@ -47,17 +47,17 @@ const ElSantuario: React.FC = () => {
         <div className="flex flex-col flex-1 font-display">
             <main className="flex-1 flex flex-col px-4 sm:px-6 md:px-12 py-6 md:py-8 max-w-7xl mx-auto w-full">
 
-                <header className="flex flex-col gap-3 py-6 md:py-12">
+                <header className="flex flex-col gap-3 pt-2 pb-6 md:pt-4 md:pb-8">
                     <div className="flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full w-fit">
                         <span className="material-symbols-outlined text-sm text-primary">{time.icon}</span>
                         <span className="text-[10px] font-black uppercase tracking-widest text-primary">{time.phase}</span>
                     </div>
-                    <h2 className="text-4xl lg:text-6xl font-black text-slate-900 dark:text-slate-100 leading-tight">
+                    <h2 className="text-2xl md:text-4xl lg:text-6xl font-black text-slate-900 dark:text-slate-100 leading-tight">
                         ¡Buenos días,<br />{currentUser?.name || 'Explorador'}!
                     </h2>
                 </header>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-10">
 
                     <GlassPanel className="md:col-span-1 lg:col-span-1 relative w-full aspect-square flex items-center justify-center overflow-hidden rounded-3xl group p-0 border-none shadow-none bg-transparent">
                         <div className="absolute inset-0 tree-gradient opacity-60"></div>

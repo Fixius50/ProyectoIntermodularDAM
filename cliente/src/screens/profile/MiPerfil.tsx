@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import GlassPanel from '../../components/ui/GlassPanel';
 import { Bird } from '../../types';
+import { translations } from '../../i18n/translations';
 
 const AVATAR_OPTIONS = [
     'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix',
@@ -22,8 +23,13 @@ const MiPerfil: React.FC = () => {
         categories,
         activityHistory,
         setAvatar,
-        setFavoriteBird
+        setFavoriteBird,
+        language,
+        setLanguage
     } = useAppStore();
+
+    const t = translations[language].profile;
+    const tc = translations[language].common;
 
     const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
     const [isFavBirdModalOpen, setIsFavBirdModalOpen] = useState(false);
@@ -50,10 +56,10 @@ const MiPerfil: React.FC = () => {
     }
 
     const stats = [
-        { label: 'Especies Vistas', value: uniqueSpeciesCount, icon: 'visibility', color: 'text-blue-500' },
-        { label: 'Nivel Explorador', value: currentUser?.level || 1, icon: 'auto_awesome', color: 'text-amber-500' },
-        { label: 'Expediciones', value: expeditionsCount, icon: 'explore', color: 'text-primary' },
-        { label: 'Logros', value: badges.length, icon: 'workspace_premium', color: 'text-purple-500' }
+        { label: t.stats.species, value: uniqueSpeciesCount, icon: 'visibility', color: 'text-blue-500' },
+        { label: t.stats.level, value: currentUser?.level || 1, icon: 'auto_awesome', color: 'text-amber-500' },
+        { label: t.stats.expeditions, value: expeditionsCount, icon: 'explore', color: 'text-primary' },
+        { label: t.stats.achievements, value: badges.length, icon: 'workspace_premium', color: 'text-purple-500' }
     ];
 
     // dynamic badges previously removed
@@ -80,21 +86,36 @@ const MiPerfil: React.FC = () => {
     const getRelativeTime = (timestamp: number) => {
         const diff = Date.now() - timestamp;
         const minutes = Math.floor(diff / 60000);
-        if (minutes < 1) return 'Justo ahora';
-        if (minutes < 60) return `Hace ${minutes} min`;
+        if (minutes < 1) return language === 'es' ? 'Justo ahora' : 'Just now';
+        if (minutes < 60) return language === 'es' ? `Hace ${minutes} min` : `${minutes} min ago`;
         const hours = Math.floor(minutes / 60);
-        if (hours < 24) return `Hace ${hours} h`;
+        if (hours < 24) return language === 'es' ? `Hace ${hours} h` : `${hours}h ago`;
         const days = Math.floor(hours / 24);
-        return `Hace ${days} días`;
+        return language === 'es' ? `Hace ${days} días` : `${days} days ago`;
     };
 
     return (
         <div className="flex flex-col flex-1 font-display bg-cream dark:bg-slate-950">
             <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 md:px-12 py-6 md:py-8">
 
-                {/* Header & Avatar */}
                 <header className="flex flex-col gap-3 py-8 md:py-12 items-center text-center animate-fade-in relative">
                     <div className="absolute top-0 w-full h-48 bg-gradient-to-b from-primary/20 to-transparent -z-10 rounded-b-[3rem]"></div>
+
+                    {/* Language Selector */}
+                    <div className="absolute top-4 right-0 flex gap-2">
+                        <button
+                            onClick={() => setLanguage('es')}
+                            className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter transition-all border ${language === 'es' ? 'bg-primary text-slate-900 border-primary shadow-lg' : 'bg-white/50 dark:bg-slate-900/50 text-slate-500 border-slate-200 dark:border-slate-800'}`}
+                        >
+                            ESP
+                        </button>
+                        <button
+                            onClick={() => setLanguage('en')}
+                            className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter transition-all border ${language === 'en' ? 'bg-primary text-slate-900 border-primary shadow-lg' : 'bg-white/50 dark:bg-slate-900/50 text-slate-500 border-slate-200 dark:border-slate-800'}`}
+                        >
+                            ENG
+                        </button>
+                    </div>
 
                     <div className="relative group cursor-pointer" onClick={() => setIsAvatarModalOpen(true)}>
                         <div className="absolute -inset-1 bg-gradient-to-r from-primary to-green-400 rounded-full blur opacity-25 group-hover:opacity-60 transition duration-500 group-hover:duration-200"></div>
@@ -128,14 +149,14 @@ const MiPerfil: React.FC = () => {
                     <div className="flex items-center justify-between mb-4">
                         <h3 className="text-lg font-black uppercase tracking-widest flex items-center gap-2">
                             <span className="material-symbols-outlined text-rose-500">favorite</span>
-                            Compañero Favorito
+                            {t.favCompanion}
                         </h3>
                         {playerBirds.length > 0 && (
                             <button
                                 onClick={() => setIsFavBirdModalOpen(true)}
                                 className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/70 transition-colors"
                             >
-                                Cambiar
+                                {t.change}
                             </button>
                         )}
                     </div>
@@ -189,7 +210,7 @@ const MiPerfil: React.FC = () => {
                     <div className="flex flex-col gap-4">
                         <h3 className="text-lg font-black uppercase tracking-widest flex items-center gap-2">
                             <span className="material-symbols-outlined text-primary">pie_chart</span>
-                            Progreso de Colección
+                            {t.progress}
                         </h3>
                         <GlassPanel className="p-6 md:p-8 flex-1">
                             <div className="space-y-6">
@@ -225,7 +246,7 @@ const MiPerfil: React.FC = () => {
                     <div className="flex flex-col gap-4">
                         <h3 className="text-lg font-black uppercase tracking-widest flex items-center gap-2">
                             <span className="material-symbols-outlined text-amber-500">military_tech</span>
-                            Tus Insignias
+                            {t.badges}
                         </h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1 content-start">
                             {badges.map(badge => (
@@ -248,7 +269,7 @@ const MiPerfil: React.FC = () => {
                     <div className="flex items-center justify-between mb-4">
                         <h3 className="text-lg font-black uppercase tracking-widest flex items-center gap-2">
                             <span className="material-symbols-outlined text-blue-500">history_toggle_off</span>
-                            Bitácora de Logros
+                            {t.history}
                         </h3>
                     </div>
 

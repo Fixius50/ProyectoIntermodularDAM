@@ -350,6 +350,16 @@ $adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
 
 ---
 
+## [2026-02-27] - Integración Técnica Completa y Upgrade a Spring Boot 4
+- **Spring Boot 4.0.0**: Actualización del core del servidor a la última versión mayor (basada en Spring Framework 7).
+- **Backend Real**: Sustitución de mocks por API Spring Boot real con persistencia en Supabase.
+- **Autenticación**: Implementación de flujo JWT seguro mediante plugin Capacitor nativo.
+- **Persistencia Híbrida**: Integración de Room DB para caché de aves/inventario y soporte de expediciones offline.
+- **Manejo de Medios**: Nuevo sistema de tracking para audios y fotos locales con sincronización programada.
+- **Corrección de Tipados**: Refactorización de `api.ts` para usar la API standar `Headers`.
+
+---
+
 ### `start_all.ps1` — Entorno de Desarrollo Local
 
 **Ubicación:** `ProyectoIntermodularDAM\start_all.ps1`
@@ -377,3 +387,35 @@ $adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
 **Fix aplicado:** El script original apuntaba a `src/frontend` (no existía). Corregido a `Cliente/`.
 
 **NOTA:** El backend requiere que el servidor Lubuntu (`100.112.239.82`) esté accesible vía Tailscale para peticiones reales. En desarrollo local funciona con datos mock del Zustand store.
+---
+
+### Soporte Multi-idioma e Internacionalización (i18n)
+
+**Fecha:** 2026-02-27
+**Contexto:** Implementar cambio de idioma dinámico (ES/EN) sin recarga de la app.
+**Solución:** 
+1. `src/i18n/translations.ts`: Diccionario anidado para mayor escalabilidad.
+2. `useAppStore.ts`: Estado `language` y acción `setLanguage` integrados en Zustand.
+3. Selectores de región visualmente consistentes en `Login.tsx` y `MiPerfil.tsx`.
+
+---
+
+### Permisos Nativos y Solicitud Proactiva (Capacitor)
+
+**Fecha:** 2026-02-27
+**Contexto:** Evitar cuelgues en Android por falta de permisos de hardware en tiempo de ejecución.
+**Solución:**
+1. `AvisCorePlugin.java`: Implementación de `ensurePermissions()` y anotaciones `@CapacitorPlugin(permissions = {...})` para Cámara, Localización y Grabación.
+2. `App.tsx`: Llamada proactiva a `AvisCore.ensurePermissions()` en el `useEffect` de inicialización.
+
+---
+
+### Ajustes de UI y Safe Areas (Pulido Final)
+
+**Fecha:** 2026-02-27
+**Contexto:** Desbordamiento de elementos en pantallas móviles con "notch".
+- **Social**: Ajuste de márgenes inferiores (`mb-32`) para despejar el `BottomNav`.
+- **Vincular Ave**: Corrección de desbordamiento horizontal mediante `max-w-xs`.
+- **Headers**: Integración suave de Safe Areas en `ElSantuario` y `ElSocial`.
+
+---

@@ -6,7 +6,7 @@
 [ProyectoIntermodularDAM]
 ├── .git/
 ├── .gitignore
-├── pom.xml                    (Agregador Maven apuntando a src/backend)
+├── pom.xml                    (Agregador- **Backend**: Proyecto Spring Boot 4 localizado en `server/`.)
 ├── Docs/                      (Repositorio de Conocimiento Vivo)
 │   ├── Skills/
 │   │   ├── Skill_Build_Tailscale_AAR.md

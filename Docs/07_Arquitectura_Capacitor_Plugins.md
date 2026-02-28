@@ -10,7 +10,7 @@ El frontend nunca usa `fetch()` ni la Geolocation API web. Todo el I/O pasa por 
 
 | Plugin Name         | Clase Java                    | Responsabilidad |
 |---------------------|-------------------------------|-----------------|
-| `AvisCore`          | `AvisCorePlugin.java`         | Datos del juego: inventario, aves, batalla, tokens JWT |
+| `AvisCore`          | `AvisCorePlugin.java`         | Datos del juego: inventario, aves, batalla, tokens JWT y gestión de permisos |
 | `TailscalePlugin`   | `TailscalePlugin.java`        | Conectividad VPN Tailscale (Go/tsnet `.aar`) |
 
 Ambos se registran en `MainActivity.java` antes de `super.onCreate()`:
@@ -57,6 +57,7 @@ interface AvisCorePlugin {
     getPlayerBirds(): Promise<{ birds: Bird[] }>;
     storeSecureToken(opts: { token: string }): Promise<void>;
     getSecureToken(): Promise<{ token: string | null }>;
+    ensurePermissions(): Promise<{ results: any }>;
 }
 ```
 
