@@ -45,7 +45,7 @@ const ElSantuario: React.FC = () => {
 
     return (
         <div className="flex flex-col flex-1 font-display">
-            <main className="flex-1 flex flex-col px-4 md:px-12 py-6 md:py-8 max-w-7xl mx-auto w-full">
+            <main className="flex-1 flex flex-col px-4 sm:px-6 md:px-12 py-6 md:py-8 max-w-7xl mx-auto w-full">
 
                 <header className="flex flex-col gap-3 py-6 md:py-12">
                     <div className="flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full w-fit">
@@ -91,9 +91,9 @@ const ElSantuario: React.FC = () => {
                                 })}
                             </div>
 
-                            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 glass-card px-4 py-2 rounded-full flex items-center gap-2 border-primary/30 shadow-lg whitespace-nowrap">
+                            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 glass-card px-4 py-2 rounded-full flex items-center gap-2 border-primary/30 shadow-lg whitespace-nowrap bg-white/90 dark:bg-slate-900/90 backdrop-blur-md z-10">
                                 <span className="material-symbols-outlined text-primary text-sm animate-bounce-slow">touch_app</span>
-                                <span className="text-[10px] font-bold uppercase tracking-wider">Toca para interactuar</span>
+                                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider">Toca para interactuar</span>
                             </div>
                         </div>
                     </GlassPanel>
@@ -133,15 +133,15 @@ const ElSantuario: React.FC = () => {
                         </GlassPanel>
 
                         <GlassPanel className="p-6 md:p-10 rounded-3xl shadow-sm border-primary/10">
-                            <div className="flex justify-between items-center mb-6">
+                            <div className="flex justify-between items-center mb-6 gap-2">
                                 <h3 className="font-black text-lg tracking-tight uppercase text-[10px] md:text-xs opacity-60 tracking-widest">Tu Inventario</h3>
-                                <button className="text-[10px] font-black uppercase text-primary tracking-widest hover:underline transition-all" onClick={() => setCurrentScreen('store')}>Ver Todo</button>
+                                <button className="text-[10px] md:text-xs font-black uppercase text-primary tracking-widest hover:underline transition-all shrink-0" onClick={() => setCurrentScreen('store')}>Ver Todo</button>
                             </div>
                             <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-4 text-center">
                                 {inventory.map((item) => (
-                                    <div key={item.id} className="aspect-square rounded-2xl bg-primary/5 flex flex-col items-center justify-center border border-primary/20 group hover:bg-primary/10 transition-colors cursor-pointer p-2" title={item.description}>
-                                        <span className="material-symbols-outlined text-primary text-2xl group-hover:scale-110 transition-transform mb-1">{item.icon}</span>
-                                        <span className="text-[9px] font-black uppercase tracking-tighter text-slate-500 line-clamp-1">{item.name}</span>
+                                    <div key={item.id} className="aspect-square rounded-2xl bg-primary/5 flex flex-col items-center justify-center border border-primary/20 group hover:bg-primary/10 transition-colors cursor-pointer p-1 sm:p-2 relative" title={item.description}>
+                                        <span className="material-symbols-outlined text-primary text-xl sm:text-2xl group-hover:scale-110 transition-transform mb-1">{item.icon}</span>
+                                        <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-tighter text-slate-500 line-clamp-1 w-full text-center px-1">{item.name}</span>
                                         <span className="absolute -top-2 -right-2 bg-primary text-slate-900 text-[9px] font-black size-5 flex items-center justify-center rounded-full border border-white/20 shadow-sm">{item.count}</span>
                                     </div>
                                 ))}

@@ -13,7 +13,7 @@ const BottomNav: React.FC = () => {
     ];
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden glass-card border-t-0 rounded-t-2xl px-2 pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))] flex justify-between items-end">
+        <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden glass-card border-t-0 rounded-t-2xl px-1 sm:px-2 pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))] flex justify-between items-end">
             {navItems.slice(0, 2).map((item) => {
                 const isActive = item.id === currentScreen;
                 return (
@@ -35,11 +35,11 @@ const BottomNav: React.FC = () => {
             <div className="flex-1 flex flex-col items-center justify-end relative cursor-pointer" onClick={() => setCurrentScreen('arena')}>
                 <div className="absolute bottom-5">
                     <div className="relative">
-                        <div className="absolute -inset-2 bg-primary/30 blur-lg rounded-full animate-pulse"></div>
+                        <div className="absolute -inset-1 bg-primary/30 blur-md rounded-full animate-pulse"></div>
                         <button
-                            className={`relative w-14 h-14 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform ${currentScreen === 'arena' ? 'bg-primary text-slate-900 shadow-primary/40' : 'bg-slate-800 text-primary shadow-black/20'}`}
+                            className={`relative w-12 h-12 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform ${currentScreen === 'arena' ? 'bg-primary text-slate-900 shadow-primary/40' : 'bg-slate-800 text-primary shadow-black/20'}`}
                         >
-                            <span className="material-symbols-outlined text-3xl">swords</span>
+                            <span className="material-symbols-outlined text-[28px]">swords</span>
                         </button>
                     </div>
                 </div>

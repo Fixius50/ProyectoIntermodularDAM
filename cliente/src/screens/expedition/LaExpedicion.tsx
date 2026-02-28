@@ -239,28 +239,28 @@ const LaExpedicion: React.FC = () => {
             {/* Header / Config Bar */}
             <div className="fixed top-20 md:top-24 left-0 right-0 z-40 px-4 pointer-events-none">
                 <div className="max-w-7xl mx-auto flex justify-center md:justify-end">
-                    <GlassPanel className="p-3 w-fit shadow-xl pointer-events-auto flex items-center gap-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl border border-white/50 dark:border-slate-800">
-                        <div className="flex items-center gap-2">
-                            <span className="material-symbols-outlined text-primary text-xl">satellite_alt</span>
-                            <span className="text-xs font-black uppercase tracking-widest text-slate-600 dark:text-slate-300">Scanner GPS</span>
+                    <GlassPanel className="p-2 md:p-3 w-fit shadow-xl pointer-events-auto flex items-center gap-2 md:gap-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl border border-white/50 dark:border-slate-800">
+                        <div className="flex items-center gap-1 md:gap-2">
+                            <span className="material-symbols-outlined text-primary text-base md:text-xl">satellite_alt</span>
+                            <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-slate-600 dark:text-slate-300">Scanner GPS</span>
                         </div>
-                        <div className="w-px h-6 bg-slate-200 dark:bg-slate-700"></div>
+                        <div className="w-px h-4 md:h-6 bg-slate-200 dark:bg-slate-700"></div>
 
                         {/* Cooldown Display */}
                         {isScanning ? (
-                            <div className="flex items-center gap-2 text-primary">
-                                <span className="material-symbols-outlined animate-spin text-sm">cycle</span>
-                                <span className="text-[10px] font-bold uppercase tracking-widest">Escaneando...</span>
+                            <div className="flex items-center gap-1 md:gap-2 text-primary">
+                                <span className="material-symbols-outlined animate-spin text-xs md:text-sm">cycle</span>
+                                <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest">Escaneando...</span>
                             </div>
                         ) : cooldown > 0 ? (
-                            <div className="flex items-center gap-2 text-rose-500">
-                                <span className="material-symbols-outlined text-sm">schedule</span>
-                                <span className="text-[10px] font-bold uppercase tracking-widest">Espera {formatTime(cooldown)}</span>
+                            <div className="flex items-center gap-1 md:gap-2 text-rose-500">
+                                <span className="material-symbols-outlined text-xs md:text-sm">schedule</span>
+                                <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest">Espera {formatTime(cooldown)}</span>
                             </div>
                         ) : (
-                            <div className="flex items-center gap-2 text-emerald-500">
-                                <span className="material-symbols-outlined text-sm">check_circle</span>
-                                <span className="text-[10px] font-bold uppercase tracking-widest">Listo para escanear</span>
+                            <div className="flex items-center gap-1 md:gap-2 text-emerald-500">
+                                <span className="material-symbols-outlined text-xs md:text-sm">check_circle</span>
+                                <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest">Listo para escanear</span>
                             </div>
                         )}
                     </GlassPanel>
@@ -280,20 +280,20 @@ const LaExpedicion: React.FC = () => {
                                 <span className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(94,232,48,0.8)]"></span>
                                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-800 dark:text-white">{time?.phase || 'Día'} · Pinto</span>
                             </div>
-                            <h2 className="text-3xl font-black text-slate-900 dark:text-white drop-shadow-sm leading-tight text-left">Mapa del Naturalista</h2>
-                            <p className="text-xs font-bold text-slate-600 dark:text-white/60 ml-1">{weather?.temp || 0}°C · {weather?.condition || 'Despejado'}</p>
+                            <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white drop-shadow-sm leading-tight text-left">Mapa del Naturalista</h2>
+                            <p className="text-[10px] md:text-xs font-bold text-slate-600 dark:text-white/60 ml-1">{weather?.temp || 0}°C · {weather?.condition || 'Despejado'}</p>
                         </div>
                     </div>
 
                     {/* Botón de Escaneo */}
-                    <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[500]">
+                    <div className="absolute bottom-6 md:bottom-10 w-full px-6 flex justify-center z-[500]">
                         <button
                             onClick={handleScan}
                             disabled={isScanning || cooldown > 0}
-                            className="bg-primary hover:bg-primary-dark text-slate-900 px-10 py-4 rounded-3xl font-black shadow-2xl transition-all hover:scale-105 active:scale-95 flex items-center gap-3 disabled:opacity-50"
+                            className="w-full md:w-auto bg-primary hover:bg-primary-dark text-slate-900 px-6 py-4 md:px-10 rounded-2xl md:rounded-3xl font-black shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-2 md:gap-3 disabled:opacity-50"
                         >
                             <span className={`material-symbols-outlined text-xl ${isScanning ? 'animate-spin' : ''}`}>radar</span>
-                            {isScanning ? 'BUSCANDO...' : cooldown > 0 ? `${cooldown}s` : 'ESCANEAR ENTORNO'}
+                            <span className="text-sm md:text-base">{isScanning ? 'BUSCANDO...' : cooldown > 0 ? `${cooldown}s` : 'ESCANEAR ENTORNO'}</span>
                         </button>
                     </div>
 
@@ -332,11 +332,11 @@ const LaExpedicion: React.FC = () => {
                                     const speciesId = parts.length >= 2 ? `${parts[0]}-${parts[1]}` : item.id;
                                     return [speciesId, item];
                                 })).values()].map((bird: any) => (
-                                    <div key={bird.id} className="bg-white/60 dark:bg-slate-800/50 p-4 rounded-3xl border border-amber-100/50 dark:border-slate-700 flex gap-4 items-center border-l-[10px] border-primary/20 hover:border-primary/40 transition-all shadow-sm group text-left">
-                                        <div className="w-14 h-14 rounded-2xl bg-cover bg-center shrink-0 border-2 border-white dark:border-slate-600 transition-transform group-hover:scale-105" style={{ backgroundImage: `url('${bird.image}')` }}></div>
-                                        <div className="text-left flex-grow">
-                                            <h4 className="font-handwriting text-xl font-bold text-amber-900 dark:text-amber-100 leading-none mb-1 text-left">{bird.name}</h4>
-                                            <p className="text-[9px] font-bold text-slate-500 italic leading-none truncate max-w-[180px] text-left">{bird.scientificName}</p>
+                                    <div key={bird.id} className="bg-white/60 dark:bg-slate-800/50 p-3 md:p-4 rounded-3xl border border-amber-100/50 dark:border-slate-700 flex gap-3 md:gap-4 items-center border-l-[10px] border-primary/20 hover:border-primary/40 transition-all shadow-sm group text-left">
+                                        <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-cover bg-center shrink-0 border-2 border-white dark:border-slate-600 transition-transform group-hover:scale-105" style={{ backgroundImage: `url('${bird.image}')` }}></div>
+                                        <div className="text-left flex-grow min-w-0">
+                                            <h4 className="font-handwriting text-lg md:text-xl font-bold text-amber-900 dark:text-amber-100 leading-none mb-1 text-left truncate">{bird.name}</h4>
+                                            <p className="text-[8px] md:text-[9px] font-bold text-slate-500 italic leading-none truncate max-w-full text-left">{bird.scientificName}</p>
                                         </div>
                                     </div>
                                 ))
