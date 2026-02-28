@@ -1,10 +1,16 @@
 import AvisCore from './avisCore';
 
-const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const TAILSCALE_IP = '100.112.239.82';
-const API_BASE_URL = isLocal ? `http://${window.location.hostname}:8080/api` : `http://${TAILSCALE_IP}:8080/api`;
+const isWebLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+// Si estamos en un dispositivo (Capacitor), el hostname suele ser 'localhost' pero NO es el servidor de desarrollo.
+// Forzamos la IP de Tailscale si no estamos en un navegador de escritorio local.
+const isApp = (window as any).Capacitor?.getPlatform() !== undefined;
 
-console.log(`[API] Usando Base URL: ${API_BASE_URL}`);
+const TAILSCALE_IP = '100.112.94.34';
+const API_BASE_URL = (isWebLocal && !isApp)
+    ? `http://${window.location.hostname}:8080/`
+    : `http://${TAILSCALE_IP}:8080/`;
+
+console.log(`[API] Entorno: ${isApp ? 'App' : 'Web'}. Usando Base URL: ${API_BASE_URL}`);
 
 async function getAuthHeader(): Promise<Record<string, string>> {
     const { token } = await AvisCore.getSecureToken();

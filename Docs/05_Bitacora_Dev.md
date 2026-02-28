@@ -150,7 +150,7 @@ copy tailscalebridge.aar ..\Cliente\android\app\libs\
 |---|---|
 | `TailscalePlugin.java` | Nuevo plugin Capacitor → `initTailscale`, `stopTailscale`, `testTailscaleConnection` |
 | `AvisCorePlugin.java` | Reescrito con patrón Hilt EntryPoint; `executeBattleAttack` conectado a Retrofit real |
-| `NetworkModule.java` | `BASE_URL` → `http://100.112.239.82:8080/` (Tailscale IP) |
+| `NetworkModule.java` | `OkHttpClient`, `Retrofit` → `AvisApiService`. BASE_URL: `http://100.112.94.34:8080/` |(Tailscale IP) |
 | `AvisApiService.java` | Todos los endpoints: auth, colección, inventario, crafting, expedición, batalla, santuario |
 | `MainActivity.java` | Registra `AvisCorePlugin` y `TailscalePlugin` |
 | `build.gradle (app)` | `implementation(name: 'tailscalebridge', ext: 'aar')` |
@@ -320,7 +320,7 @@ copy tailscalebridge.aar ..\Cliente\android\app\libs\
 
 ```powershell
 $adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
-& $adb install -r "Cliente\android\app\build\outputs\apk\debug\app-debug.apk"
+& $adb install -r ".\app-debug.apk"
 ```
 
 ---
@@ -363,6 +363,8 @@ $adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
 ### `start_all.ps1` — Entorno de Desarrollo Local
 
 **Ubicación:** `ProyectoIntermodularDAM\start_all.ps1`
+| **Conectividad VPN** | Tailscale (Go/tsnet → `.aar`) | Túnel seguro (IP: `100.112.94.34`) |
+| **Backend** | Spring Boot 4 + WebFlux (Java 22) | API en `http://100.112.94.34:8080/` |
 **Propósito:** Arranca el backend Spring Boot y el dev server de Vite para desarrollo en navegador.
 
 **Uso:**
@@ -386,7 +388,21 @@ $adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
 
 **Fix aplicado:** El script original apuntaba a `src/frontend` (no existía). Corregido a `Cliente/`.
 
-**NOTA:** El backend requiere que el servidor Lubuntu (`100.112.239.82`) esté accesible vía Tailscale para peticiones reales. En desarrollo local funciona con datos mock del Zustand store.
+**NOTA:** El servidor debe escuchar en la interfaz de **Tailscale** (`100.112.94.34`) para ser accesible desde la App.
+
+**application.yml:**
+```yaml
+server:
+  address: 0.0.0.0
+  port: 8080
+```
+
+**Configuración CORS:**
+Debe permitir explícitamente:
+- `http://localhost:5173`
+- `capacitor://localhost`
+- `http://100.112.94.34:8080`
+En desarrollo local funciona con datos mock del Zustand store.
 ---
 
 ### Soporte Multi-idioma e Internacionalización (i18n)
@@ -421,21 +437,16 @@ $adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
 
 ---
 
-## [2026-02-28] - Interceptor Android Nativo y Actualización Documental
+### [2026-02-28] - Integración Tailscale y Red Privada (Hito Final)
 
-### Implementación Interceptor OkHttp (JWT Native)
-**Contexto:** Conectar la capa nativa Android (AvisCorePlugin / llamadas asíncronas HTTP retro-compatibles) con el Backend requería inyectar el JWT token generado en el frontend Web/Supabase.
-**Solución:** Modificación estructural en `NetworkModule.java` (inyección Dagger Hilt):
-1. Inclusión de `@ApplicationContext Context context` en las dependencias hilt.
-2. Lectura en disco de las `SharedPreferences` correspondientes al almacenamiento puente de Capacitor (`CapacitorStorage`).
-3. Creación de un `Interceptor` interceptando toda llamada saliente de API en OkHttp y añadiendo dinámicamente el header `Authorization: Bearer <token>`.
-4. Tests de compilación exitosos (Gradle `assembleDebug`).
+**Cambios Técnicos Clave:**
+- **Nueva IP Maestro**: Actualizada a `100.112.94.34`. Se ha abandonado la IP previa para asegurar la conectividad con el nuevo nodo central.
+- **URL Base**: Establecida exactamente como `http://100.112.94.34:8080/`.
+- **Mecanismo de Bootstrap**: Implementada lógica en `App.tsx` y `useAppStore.ts` que inicia una sesión Tailscale con una AuthKey temporal al arrancar. Esto permite que la app vea al servidor incluso antes de que el usuario se identifique.
+- **Transición Dinámica**: Tras el login/registro exitoso, la app reinicia el túnel nativo usando las credenciales privadas del usuario (`tailscaleUser` / `tailscalePass`), garantizando un canal cifrado personal.
+- **Saneamiento de Tipos**: Refactorizado el store de Zustand para eliminar duplicados y restaurar interfaces perdidas tras la migración masiva.
 
-*Nota:* Módulos como 'ElTaller' (Crafting visual) y 'ElAlbum' quedan postergados a favor del flujo actual estable priorizado por el usuario.
-
-### Auditoría y Actualización de Componentes / Flujos
-**Contexto:** Reflejar la discrepancia histórica entre el documento inicial `02_Diseño_UI_UX_y_Gameplay.md` y las features finales.
-**Acción Realizada:**
-- Inspección a fondo de las pantallas implementadas (`App.tsx`, `ElSantuario`, `LaExpedicion`, `ElCertamen`, `ElSocial`, `ElTienda`, `MiPerfil`, `Login`).
-- Modificación pesada en `02_Diseño_UI_UX_y_Gameplay.md` reemplazando los borradores abstractos por la arquitectura viva de los flujos de usuario presentes.
-- Detalladas las mecánicas de "cooldown" geográficas, modificadores cruzados de clima (wttr.in) x tiempo, minijuegos de economía de batallas de rondas reactivas y el muro de comunidad colaborativo.
+**Solución de Errores Críticos:**
+- **CORS**: Reemplazado el wildcard `*` en el backend por orígenes explícitos (`capacitor://localhost`, `http://localhost:5173`) para permitir el envío de cookies/cabeceras de autorización.
+- **Build AAB/APK**: Verificada la compilación con NDK 29 para soporte de alineación de 16 KB (compatibilidad con dispositivos Android 15+).
+- **Tipado TS**: Corregidos errores de asignación en `theme` y `language` mediante casting explícito en el store.

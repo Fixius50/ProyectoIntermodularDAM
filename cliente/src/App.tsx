@@ -13,21 +13,26 @@ import MiPerfil from './screens/profile/MiPerfil';
 import './App.css';
 
 function App() {
-  const { currentScreen, currentUser, theme, updateTime, updateWeather, hydrateBirdMedia } = useAppStore();
+  const { currentScreen, currentUser, theme, updateTime, updateWeather, hydrateBirdMedia, initApp, isTailscaleReady } = useAppStore();
 
   useEffect(() => {
-    const initApp = async () => {
-      // Solicitud de permisos nativa (Android) al arrancar
+    // Iniciar bootstrap de Tailscale si no está listo
+    if (!isTailscaleReady) {
+      initApp();
+    }
+
+    const setupApp = async () => {
+      // Solicitud de permisos nativa (Android)
       await AvisCore.ensurePermissions().catch(err => console.error("Error solicitando permisos:", err));
 
-      if (currentUser) {
+      if (currentUser && isTailscaleReady) {
         updateTime();
         updateWeather();
         hydrateBirdMedia();
       }
     };
 
-    initApp();
+    setupApp();
 
     // Sincronizar tema con el DOM (para darkMode: 'class')
     if (theme === 'dark') {

@@ -87,6 +87,8 @@ export interface User {
     email?: string;
     guildId?: string;
     favoriteBirdId?: string;
+    tailscaleUser?: string;
+    tailscalePass?: string;
 }
 
 export interface Activity {

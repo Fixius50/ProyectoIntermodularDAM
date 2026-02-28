@@ -38,6 +38,8 @@ public class TailscalePlugin extends Plugin {
     public void initTailscale(PluginCall call) {
         String authKey  = call.getString("authKey", "");
         String hostname = call.getString("hostname", "aery-android");
+        String tailscaleUser = call.getString("tailscaleUser", "");
+        String tailscalePass = call.getString("tailscalePass", "");
 
         // Use the app's private data directory for tsnet state persistence.
         String dataDir = getContext().getFilesDir().getAbsolutePath() + "/tsnet";
@@ -46,7 +48,7 @@ public class TailscalePlugin extends Plugin {
 
         // Run in a background thread — tsnet.Start() blocks until the socket is ready.
         new Thread(() -> {
-            String result = Tailscalebridge.startProxy(dataDir, authKey, hostname, "1055");
+            String result = Tailscalebridge.startProxy(dataDir, authKey, hostname, "1055", tailscaleUser, tailscalePass);
             Log.d(TAG, "Tailscale StartProxy result: " + result);
 
             JSObject ret = new JSObject();

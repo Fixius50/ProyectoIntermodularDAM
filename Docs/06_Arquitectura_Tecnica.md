@@ -12,8 +12,8 @@ AVIS es una aplicación móvil híbrida de ornitología y estrategia. La arquite
 |---|---|---|
 | **Frontend Web** | React 18 + Vite + TypeScript | UI renderizada en WebView |
 | **Capa Nativa Android** | Capacitor 6 + Java + Hilt | Bridge JS ↔ Android, plugins nativos |
-| **Conectividad VPN** | Tailscale (Go/tsnet → `.aar`) | Túnel seguro al servidor privado |
-| **Backend** | Spring Boot 4 + WebFlux (Java 22) | API REST + RSocket + lógica de juego |
+| **Conectividad VPN** | Tailscale (Go/tsnet → `.aar`) | Túnel seguro (IP: `100.112.94.34`) |
+| **Backend** | Spring Boot 4 + WebFlux (Java 22) | API en `http://100.112.94.34:8080/` |
 | **Persistencia** | Supabase (PostgreSQL) + R2DBC | BD reactiva no bloqueante |
 | **Caché / Locks** | Redis + Redisson | Marketplace, anti-doble-gasto |
 | **Mensajería** | RabbitMQ | Recompensas post-combate asíncronas |
@@ -162,7 +162,7 @@ AvisApiService svc = EntryPoints.get(
 
 | Módulo | Provee |
 |---|---|
-| `NetworkModule.java` | `OkHttpClient`, `Retrofit` → `AvisApiService`. BASE_URL: `http://100.112.239.82:8080/` |
+| `NetworkModule.java` | `OkHttpClient`, `Retrofit` → `AvisApiService`. BASE_URL: `http://100.112.94.34:8080/` |
 | `DatabaseModule.java` | `AppDatabase` (Room), `BirdDao` |
 
 ### 3.3 Endpoints Retrofit (`AvisApiService.java`)
@@ -199,14 +199,16 @@ Resultado: `tailscalebridge.aar` (~60 MB, arm64 + armeabi-v7a + x86 + x86_64).
 ## 4. Conectividad — Tailscale VPN
 
 ```
-Android App  ──[tailscalebridge.aar/Go tsnet]──▶  Tailscale Mesh ──▶  Servidor Lubuntu
-                                                                        100.112.239.82
+Android App  ──[tailscalebridge.aar/Go tsnet]──▶  Tailscale Mesh ──▶  Servidor Maestro
+                                                                         100.112.94.34
 ```
 
 - El plugin `TailscalePlugin.java` llama a `TailscaleLib.initTailscale()` antes de cualquier petición Retrofit.
-- `NetworkModule.java` configura `BASE_URL = http://100.112.239.82:8080/`.
+- `NetworkModule.java` configura `BASE_URL = http://100.112.94.34:8080/`.
+- Procedimiento de Bootstrap: La app usa `aery-bootstrap` y una AuthKey compartida para el acceso inicial.
+- Post-Login: Reconfiguración dinámica a `aery-<username>` con credenciales privadas.
 - El servidor Spring Boot escucha en `server.address: 0.0.0.0` para aceptar conexiones de la interfaz virtual de Tailscale.
-- Acceso SSH al servidor: `ssh lubuntu@100.112.239.82` (password en Bitácora).
+- Acceso SSH al servidor: `ssh lubuntu@100.112.94.34` (password en Bitácora).
 
 ---
 

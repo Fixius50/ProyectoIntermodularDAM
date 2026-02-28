@@ -35,7 +35,7 @@ public class NetworkModule {
     // Tailscale IP of the AVIS Spring Boot server (Lubuntu machine).
     // This address is only reachable once the Tailscale node is active on the
     // device.
-    private static final String BASE_URL = "http://100.112.239.82:8080/";
+    private static final String BASE_URL = "http://100.112.94.34:8080/";
 
     // Auth Constants
     private static final String PREFS_FILE = "aery_secure_prefs";
@@ -47,7 +47,12 @@ public class NetworkModule {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
+        // Configure SOCKS5 Proxy for Tailscale (localhost:1055)
+        java.net.Proxy proxy = new java.net.Proxy(java.net.Proxy.Type.SOCKS, 
+                new java.net.InetSocketAddress("127.0.0.1", 1055));
+
         return new OkHttpClient.Builder()
+                .proxy(proxy)
                 .addInterceptor(logging)
                 .addInterceptor(chain -> {
                     Request original = chain.request();
@@ -67,8 +72,8 @@ public class NetworkModule {
 
                     return chain.proceed(original);
                 })
-                .connectTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
-                .readTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
+                .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+                .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
                 .build();
     }
 

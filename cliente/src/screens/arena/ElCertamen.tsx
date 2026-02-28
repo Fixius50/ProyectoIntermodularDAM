@@ -435,7 +435,7 @@ const ElCertamen: React.FC = () => {
                             <h5 className="text-[10px] font-black uppercase tracking-widest opacity-40 dark:text-white">{t.logTitle}</h5>
                             <div className="flex gap-2">
                                 <span className="text-[8px] font-black uppercase text-primary bg-primary/10 px-2 py-0.5 rounded-full">{weather?.condition}</span>
-                                <span className="text-[8px] font-black uppercase text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full">{time.phase}</span>
+                                <span className="text-[8px] font-black uppercase text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full">{translations[language].sanctuary.timePhases[time.phase as keyof typeof translations.es.sanctuary.timePhases] || time.phase}</span>
                             </div>
                         </div>
                         <div className="flex-grow space-y-2 overflow-y-auto max-h-[220px] custom-scrollbar pr-2">
@@ -531,7 +531,9 @@ const ElCertamen: React.FC = () => {
                     <div className="flex items-center gap-6 justify-center md:justify-start">
                         <div className="flex items-center gap-2">
                             <span className="material-symbols-outlined text-primary">{time.icon}</span>
-                            <span className="text-[10px] font-black uppercase opacity-40">{time.phase}</span>
+                            <span className="text-[10px] font-black uppercase opacity-40">
+                                {translations[language].sanctuary.timePhases[time.phase as keyof typeof translations.es.sanctuary.timePhases] || time.phase}
+                            </span>
                         </div>
                         <div className="flex items-center gap-2">
                             <span className="material-symbols-outlined text-blue-500">{weather?.condition.includes('Sun') ? 'sunny' : 'cloudy'}</span>

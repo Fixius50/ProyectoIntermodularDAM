@@ -46,7 +46,12 @@ export interface AvisCorePlugin {
 
 /** Tailscale VPN connectivity plugin. */
 export interface TailscalePluginInterface {
-    initTailscale(options: { authKey: string; hostname: string }): Promise<{ status: string }>;
+    initTailscale(options: {
+        authKey: string;
+        hostname: string;
+        tailscaleUser?: string;
+        tailscalePass?: string;
+    }): Promise<{ status: string }>;
     stopTailscale(): Promise<void>;
     testTailscaleConnection(options: { url: string }): Promise<{ result: string }>;
 }
@@ -90,7 +95,10 @@ const avisCoreWebMock: AvisCorePlugin = {
 };
 
 const tailscaleWebMock: TailscalePluginInterface = {
-    async initTailscale() { return { status: 'Web mode' }; },
+    async initTailscale(options) {
+        console.log('[Web Mock] initTailscale', options);
+        return { status: 'Web mode' };
+    },
     async stopTailscale() { },
     async testTailscaleConnection() { return { result: 'Web mode' }; },
 };
