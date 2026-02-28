@@ -33,8 +33,6 @@
 - [x] **Soporte Multi-idioma (i18n)**: Diccionarios ES/EN y selector de región.
 - [x] **Gestión Proactiva de Permisos**: Solicitud nativa de Cámara, GPS y Audio.
 - [x] **Optimización UI/UX**: Ajustes de Safe Area y responsividad en móviles.
-- [ ] Sistema de Inventario y Plumas (pantalla `ElTaller`).
-- [ ] Álbum de Colección (pantalla `ElAlbum`).
 - [x] Persistencia de sesión segura via `storeSecureToken` / `getSecureToken`.
 - [x] Integración real Room DB → `fetchInventory()` / `getPlayerBirds()` desde SQLite nativo.
 - [/] Integración JWT: interceptor OkHttp + `storeSecureToken` en flujo login (pendiente interceptor nativo).
