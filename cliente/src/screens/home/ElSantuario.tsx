@@ -12,8 +12,8 @@ const ElSantuario: React.FC = () => {
         removeBirdFromSantuario, addNotification
     } = useAppStore();
 
-    const t = translations[language].sanctuary;
-    const commonBirds = translations[language].common.birds;
+    const t: any = (translations[language] as any).sanctuary;
+    const commonBirds: any = (translations[language] as any).common.birds;
 
     const [currentTip, setCurrentTip] = useState(t.tips[0]);
     const [selectedBird, setSelectedBird] = useState<Bird | null>(null);
@@ -46,8 +46,8 @@ const ElSantuario: React.FC = () => {
         setSelectedBird(null);
         addNotification({
             type: 'system',
-            title: t.notifications.releaseTitle,
-            message: t.notifications.releaseMsg
+            title: (t as any).notifications?.releaseTitle || "Liberar",
+            message: (t as any).notifications?.releaseMsg || "Ave liberada"
         });
     };
 
@@ -59,7 +59,7 @@ const ElSantuario: React.FC = () => {
                     <div className="flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full w-fit">
                         <span className="material-symbols-outlined text-sm text-primary">{time.icon}</span>
                         <span className="text-[10px] font-black uppercase tracking-widest text-primary">
-                            {t.timePhases[time.phase as keyof typeof t.timePhases] || time.phase}
+                            {(t?.timePhases as any)?.[time.phase] || time.phase}
                         </span>
                     </div>
                     <h2 className="text-2xl md:text-4xl lg:text-6xl font-black text-slate-900 dark:text-white leading-tight">
@@ -121,7 +121,7 @@ const ElSantuario: React.FC = () => {
                                 <p className="text-xl font-black text-slate-900 dark:text-white leading-none">
                                     {weather?.temp || 0}°C<br />
                                     <span className="text-xs text-slate-500 dark:text-zinc-500 uppercase tracking-widest mt-1 inline-block">
-                                        {translations[language].common.weather[weather?.condition as keyof typeof translations['es']['common']['weather']] || weather?.condition}
+                                        {((translations[language] as any).common.weather || {})[weather?.condition || ''] || weather?.condition}
                                     </span>
                                 </p>
                             </div>
@@ -243,8 +243,8 @@ const ElSantuario: React.FC = () => {
 
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-end mb-1 px-1">
-                                        <p className="text-[10px] font-black text-slate-500 dark:text-zinc-500 uppercase tracking-widest">EXPERIENCIA</p>
-                                        <p className="text-xs font-black text-primary">NV.{selectedBird.level}</p>
+                                        <p className="text-[10px] font-black text-slate-500 dark:text-zinc-500 uppercase tracking-widest">{(translations[language] as any).profile.stats.xp || 'EXPERIENCIA'}</p>
+                                        <p className="text-xs font-black text-primary">{(translations[language] as any).profile.rank} {selectedBird.level}</p>
                                     </div>
                                     <div className="h-2 w-full bg-slate-100 dark:bg-zinc-800 rounded-full overflow-hidden">
                                         <div className="h-full bg-primary rounded-full shadow-[0_0_10px_rgba(94,232,48,0.5)] w-[40%]"></div>
@@ -278,7 +278,7 @@ const ElSantuario: React.FC = () => {
                                     onClick={() => handleRelease(selectedBird.id)}
                                     className="text-[9px] font-black text-slate-300 dark:text-zinc-600 uppercase tracking-[0.3em] text-center hover:text-rose-500 transition-colors"
                                 >
-                                    {t.birdDetail.release}
+                                    {(t as any).notifications?.releaseTitle || "Liberar"}
                                 </button>
                             </div>
                         </div>

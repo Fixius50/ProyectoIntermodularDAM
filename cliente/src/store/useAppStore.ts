@@ -340,7 +340,26 @@ export const useAppStore = create<CombinedState>()(
                     commentList: []
                 }
             ],
-            guildChats: {},
+            guildChats: {
+                'g1': [
+                    {
+                        id: 'm1-f1',
+                        userId: 'm1',
+                        userName: 'Laura_Orni',
+                        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Laura_Orni',
+                        text: '¡Hola equipo! Acabo de ver un Cernícalo cerca de la torre. ¿Alguien más ha tenido suerte hoy?',
+                        timestamp: Date.now() - 3600000
+                    },
+                    {
+                        id: 'm2-f1',
+                        userId: 'm2',
+                        userName: 'Pablo_Nat',
+                        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Pablo_Nat',
+                        text: '¡Buen avistamiento Laura! Yo estoy por el parque Cabeza de Hierro, de momento solo gorriones.',
+                        timestamp: Date.now() - 1800000
+                    }
+                ]
+            },
             availableGuilds: [
                 {
                     id: 'g1',

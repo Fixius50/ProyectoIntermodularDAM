@@ -37,9 +37,22 @@ export const translations = {
             progress: "Progreso de Colección",
             badges: "Tus Insignias",
             history: "Bitácora de Logros",
+            viewFullHistory: "Ver historial completo",
             noActivity: "Aún no hay actividad registrada.",
             goExplore: "¡Sal a explorar!",
-            viewFullHistory: "Ver historial completo",
+            badgesList: {
+                novice: { name: "Naturalista Novato", desc: "Tu viaje acaba de comenzar." },
+                firstSighting: { name: "Primer Avistamiento", desc: "Has capturado tu primer ave." },
+                guardian: { name: "Guardián del Santuario", desc: "Tienes 5 o más aves en tu santuario." },
+                collector: { name: "Coleccionista Común", desc: "Has alcanzado el nivel 5 de explorador." },
+                expert: { name: "Experto en Aves", desc: "Has avistado 10 especies diferentes." }
+            },
+            historyLabels: {
+                justNow: "Justo ahora",
+                agoMin: "Hace {n} min",
+                agoHours: "Hace {n} h",
+                agoDays: "Hace {n} días"
+            },
             chooseAvatar: "Elige tu Avatar",
             settings: "Ajustes de Aplicación",
             theme: "Tema Visual",
@@ -56,6 +69,7 @@ export const translations = {
             activeSession: "Sesión Activa",
             guest: "Invitado",
             unknown: "Desconocido",
+            noSightings: "Sin avistamientos registrados",
             nav: {
                 home: "El Santuario",
                 arena: "El Certamen",
@@ -78,6 +92,8 @@ export const translations = {
                 i2: "Pluma de Viento",
                 i3: "Baya de Brillo",
                 i4: "Mezcla de Energía",
+                i5: "Prismáticos HD",
+                i6: "Guía de Hábitats",
                 "Semillas de Melodía": "Semillas de Melodía",
                 "Pluma de Viento": "Pluma de Viento",
                 "Baya de Brillo": "Baya de Brillo",
@@ -104,6 +120,12 @@ export const translations = {
         sanctuary: {
             welcome: "¡Buenos días,",
             explorer: "Explorador",
+            timePhases: {
+                Morning: "Mañana",
+                Afternoon: "Tarde",
+                Evening: "Atardecer",
+                Night: "Noche"
+            },
             clima: "Clima",
             activeBirds: "Aves Activas",
             perched: "Perchadas",
@@ -132,7 +154,11 @@ export const translations = {
                 "Para fabricar 'Néctar de Tormenta' se requiere lluvia. Atento al widget del clima local.",
                 "Las aves rapaces son más activas al mediodía, aprovechando las corrientes de aire caliente para planear.",
                 "Escucha atentamente por la mañana: el 'Coro del Alba' es cuando la mayoría de aves cantoras marcan su territorio."
-            ]
+            ],
+            notifications: {
+                releaseTitle: "Liberar Ave",
+                releaseMsg: "Has liberated el ave con éxito. ¡Vuela libre!",
+            }
         },
         expedition: {
             title: "Mapa del Naturalista",
@@ -238,16 +264,34 @@ export const translations = {
             battleStarted: "El certamen ha comenzado. ¡Suerte, explorador!",
             combo: "¡Combo",
             neutralWeather: "Clima neutral",
+            tips: [
+                "¡El clima influye en el jurado! Las aves acuáticas lucen mejor bajo la lluvia.",
+                "¡No agotes a tu campeón! Una racha de victorias consume más stamina.",
+                "Los objetos de la tienda pueden darte el empuje final en rondas reñidas.",
+                "Cada victoria en el certamen te otorga Plumas de Oro para la Tienda.",
+                "Sube de nivel a tus aves en el Santuario para mejorar sus stats base."
+            ],
+            opponents: {
+                o1: "Petirrojo de Éboli",
+                o2: "Halcón del Castillo",
+                o3: "Paloma Mensajera"
+            },
+            weatherBonuses: {
+                sunny: " Cielo despejado +20%",
+                rainy: " Humedad alta +20%",
+                morning: " Coro del alba +15%",
+                neutral: "Condiciones estándar"
+            },
             rewards: {
                 champion: "¡Campeón!",
                 honorable: "Lucha Honorable",
                 juryDraw: "Empate del jurado",
                 finalResult: "Resultado Final",
-                xp: "XP Acumulada",
+                xp: "Experiencia",
                 feathers: "Plumas de Oro",
-                comboBonus: "¡BONO INCLUIDO!",
+                comboBonus: "Bono por Combo",
                 energy: "Energía Consumida",
-                claim: "Reclamar y Volver"
+                claim: "Reclamar Recompensas"
             }
         },
         store: {
@@ -259,7 +303,7 @@ export const translations = {
             tabSell: "Reventa",
             limitedOffer: "Oferta Limitada",
             passTitle: "Pase de Expedición",
-            passDesc: "Aumenta tus probabilidades de avistamientos raros y acorta las travesías.",
+            passDesc: "Conviértete en un Explorador Maestro y domina las reservas naturales de Pinto.",
             viewDetails: "Ver Detalles",
             dynamicCatalog: "Catálogo Dinámico",
             season: "Temporada:",
@@ -273,7 +317,19 @@ export const translations = {
             earn: "Ganar",
             openingPack: "Abriendo Sobre...",
             newDiscoveries: "¡Nuevos Descubrimientos!",
-            goSantuario: "Ir al Santuario"
+            goSantuario: "Ir al Santuario",
+            backpackTitle: "Tu Mochila",
+            eliteSubscription: "Suscripción Élite",
+            buyPass: "Adquirir Pase",
+            itemDesc1: "+15% a Canto en el Certamen.",
+            itemDesc2: "+15% a Vuelo en el Certamen.",
+            itemDesc3: "+15% a Plumaje en el Certamen.",
+            passBenefits: [
+                { text: 'Tiempo de espera entre escaneos reducido un 50%', icon: 'timer' },
+                { text: 'Probabilidad de avistar aves raras o legendarias aumentada', icon: 'visibility' },
+                { text: 'Doble XP en todas las expediciones', icon: 'stat_2' },
+                { text: 'Néctar exclusivo diario en el Santuario', icon: 'water_drop' }
+            ]
         }
     },
     en: {
@@ -314,9 +370,22 @@ export const translations = {
             progress: "Collection Progress",
             badges: "Your Badges",
             history: "Achievement Log",
+            viewFullHistory: "View full history",
             noActivity: "No activity recorded yet.",
             goExplore: "Go explore!",
-            viewFullHistory: "View full history",
+            badgesList: {
+                novice: { name: "Novice Naturalist", desc: "Your journey has just begun." },
+                firstSighting: { name: "First Sighting", desc: "You've captured your first bird." },
+                guardian: { name: "Sanctuary Guardian", desc: "You have 5 or more birds in your sanctuary." },
+                collector: { name: "Common Collector", desc: "You've reached explorer level 5." },
+                expert: { name: "Bird Expert", desc: "You've spotted 10 different species." }
+            },
+            historyLabels: {
+                justNow: "Just now",
+                agoMin: "{n} min ago",
+                agoHours: "{n}h ago",
+                agoDays: "{n} days ago"
+            },
             chooseAvatar: "Choose your Avatar",
             settings: "App Settings",
             theme: "Visual Theme",
@@ -333,6 +402,7 @@ export const translations = {
             activeSession: "Active Session",
             guest: "Guest",
             unknown: "Unknown",
+            noSightings: "No sightings registered",
             nav: {
                 home: "Sanctuary",
                 arena: "Arena",
@@ -355,6 +425,8 @@ export const translations = {
                 i2: "Wind Feather",
                 i3: "Shine Berry",
                 i4: "Energy Mix",
+                i5: "HD Binoculars",
+                i6: "Habitat Guide",
                 "Melody Seeds": "Melody Seeds",
                 "Wind Feather": "Wind Feather",
                 "Shine Berry": "Shine Berry",
@@ -368,6 +440,12 @@ export const translations = {
         sanctuary: {
             welcome: "Good morning,",
             explorer: "Explorer",
+            timePhases: {
+                Morning: "Morning",
+                Afternoon: "Afternoon",
+                Evening: "Evening",
+                Night: "Night"
+            },
             clima: "Weather",
             activeBirds: "Active Birds",
             perched: "Perched",
@@ -396,7 +474,11 @@ export const translations = {
                 "Rain is required to craft 'Storm Nectar'. Watch the local weather widget.",
                 "Birds of prey are most active at noon, taking advantage of warm air currents to glide.",
                 "Listen carefully in the morning: the 'Dawn Chorus' is when most songbirds mark their territory."
-            ]
+            ],
+            notifications: {
+                releaseTitle: "Release Bird",
+                releaseMsg: "You have released the bird successfully. Fly free!",
+            }
         },
         expedition: {
             title: "Naturalist Map",
@@ -502,16 +584,34 @@ export const translations = {
             battleStarted: "The arena has begun. Good luck, explorer!",
             combo: "¡Combo",
             neutralWeather: "Neutral weather",
+            tips: [
+                "Weather influences the jury! Water birds look better in the rain.",
+                "Don't exhaust your champion! A win streak consumes more stamina.",
+                "Store items can give you the final push in close rounds.",
+                "Each victory in the arena grants you Gold Feathers for the Store.",
+                "Level up your birds in the Sanctuary to improve their base stats."
+            ],
+            opponents: {
+                o1: "Eboli Robin",
+                o2: "Castle Hawk",
+                o3: "Carrier Pigeon"
+            },
+            weatherBonuses: {
+                sunny: " Clear sky +20%",
+                rainy: " High humidity +20%",
+                morning: " Dawn chorus +15%",
+                neutral: "Standard conditions"
+            },
             rewards: {
                 champion: "Champion!",
                 honorable: "Honorable Fight",
                 juryDraw: "Jury Draw",
                 finalResult: "Final Result",
-                xp: "Accumulated XP",
+                xp: "Experience",
                 feathers: "Gold Feathers",
-                comboBonus: "BONUS INCLUDED!",
+                comboBonus: "Combo Bonus",
                 energy: "Energy Consumed",
-                claim: "Claim and Return"
+                claim: "Claim Rewards"
             }
         },
         store: {
@@ -523,7 +623,7 @@ export const translations = {
             tabSell: "Resale",
             limitedOffer: "Limited Offer",
             passTitle: "Expedition Pass",
-            passDesc: "Increase your chances of rare sightings and shorten journeys.",
+            passDesc: "Become a Master Explorer and dominate Pinto's nature reserves.",
             viewDetails: "View Details",
             dynamicCatalog: "Dynamic Catalog",
             season: "Season:",
@@ -537,7 +637,19 @@ export const translations = {
             earn: "Earn",
             openingPack: "Opening Pack...",
             newDiscoveries: "New Discoveries!",
-            goSantuario: "Go to Sanctuary"
+            goSantuario: "Go to Sanctuary",
+            backpackTitle: "Your Backpack",
+            eliteSubscription: "Elite Subscription",
+            buyPass: "Get Pass",
+            itemDesc1: "+15% to Song in the Arena.",
+            itemDesc2: "+15% to Flight in the Arena.",
+            itemDesc3: "+15% to Plumage in the Arena.",
+            passBenefits: [
+                { text: 'Wait time between scans reduced by 50%', icon: 'timer' },
+                { text: 'Increased probability of sighting rare or legendary birds', icon: 'visibility' },
+                { text: 'Double XP on all expeditions', icon: 'stat_2' },
+                { text: 'Daily exclusive nectar in the Sanctuary', icon: 'water_drop' }
+            ]
         }
     }
 };

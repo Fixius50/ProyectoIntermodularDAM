@@ -8,6 +8,7 @@ const ElSocial: React.FC = () => {
         currentUser, posts, availableGuilds,
         addPost, reactToPost, contributeToMission,
         joinGuild, sendGuildMessage, guildChats, addNotification,
+        playerBirds,
         language
     } = useAppStore();
 
@@ -228,24 +229,24 @@ const ElSocial: React.FC = () => {
                                                 <span className="material-symbols-outlined text-base">photo_camera</span> {t.attachPhoto}
                                             </button>
 
-                                            <div className="relative group">
-                                                <button className={`px-4 py-2 ${selectedBirdId ? 'bg-primary text-slate-900' : 'bg-slate-100 dark:bg-slate-800 dark:text-slate-300'} rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all`}>
-                                                    <span className="material-symbols-outlined text-base">local_library</span>
-                                                    {selectedBirdId ? (commonT.birds[BIRD_CATALOG.find(b => b.id === selectedBirdId)?.name as keyof typeof commonT.birds] || BIRD_CATALOG.find(b => b.id === selectedBirdId)?.name) : t.linkBird}
-                                                </button>
-                                                <div className="absolute top-full left-0 mt-2 w-64 max-w-[calc(100vw-3rem)] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 p-2 hidden group-hover:block z-[100] animate-scale-in">
-                                                    <div className="grid grid-cols-1 gap-1 max-h-60 overflow-y-auto custom-scrollbar">
-                                                        {BIRD_CATALOG.map(b => (
+                                            <div className="absolute bottom-full left-0 mb-2 w-64 max-w-[calc(100vw-3rem)] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 p-2 hidden group-hover:block z-[9999] animate-scale-in">
+                                                <div className="grid grid-cols-1 gap-1 max-h-60 overflow-y-auto custom-scrollbar">
+                                                    {playerBirds.length === 0 ? (
+                                                        <p className="p-4 text-[10px] font-black uppercase text-slate-400 text-center italic">{commonT.noSightings || 'Sin avistamientos'}</p>
+                                                    ) : (
+                                                        playerBirds.map(pb => (
                                                             <button
-                                                                key={b.id}
-                                                                onClick={() => setSelectedBirdId(b.id)}
+                                                                key={pb.id}
+                                                                onClick={() => setSelectedBirdId(pb.id)}
                                                                 className="flex items-center gap-3 p-2 hover:bg-primary/10 rounded-xl transition-colors text-left"
                                                             >
-                                                                <img src={b.image} className="size-8 rounded-lg object-cover" />
-                                                                <span className="text-xs font-bold">{b.name}</span>
+                                                                <img src={pb.image} className="size-8 rounded-lg object-cover" />
+                                                                <span className="text-xs font-bold">
+                                                                    {commonT.birds[pb.id.split('-')[1] as keyof typeof commonT.birds] || pb.name}
+                                                                </span>
                                                             </button>
-                                                        ))}
-                                                    </div>
+                                                        ))
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -402,7 +403,11 @@ const ElSocial: React.FC = () => {
                     onClick={() => setIsChatOpen(true)}
                     className="fixed bottom-28 right-8 z-[50] size-16 bg-primary text-slate-900 rounded-[2rem] shadow-2xl shadow-primary/40 flex items-center justify-center animate-bounce-slow hover:scale-110 active:scale-90 transition-all group"
                 >
-                    <div className="absolute -top-1 -right-1 size-5 bg-red-500 text-white text-[10px] font-black flex items-center justify-center rounded-full border-2 border-white">2</div>
+                    {currentChat.length > 0 && (
+                        <div className="absolute -top-1 -right-1 size-5 bg-red-500 text-white text-[10px] font-black flex items-center justify-center rounded-full border-2 border-white animate-pulse">
+                            {currentChat.length}
+                        </div>
+                    )}
                     <span className="material-symbols-outlined text-3xl">forum</span>
                 </button>
             )}

@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 $SdkPath = "$env:LOCALAPPDATA\Android\Sdk"
-$NdkPath = "$SdkPath\ndk\25.0.8775105"
+$NdkPath = "$SdkPath\ndk\25.2.9519653"
 $env:ANDROID_HOME     = $SdkPath
 $env:ANDROID_SDK_ROOT = $SdkPath
 $env:ANDROID_NDK_HOME = $NdkPath

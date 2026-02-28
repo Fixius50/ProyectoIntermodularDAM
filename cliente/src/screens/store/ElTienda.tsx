@@ -37,17 +37,17 @@ const ElTienda: React.FC = () => {
         if (condition.includes('rain') || condition.includes('lluvia')) {
             setDynamicOffer({ id: 'd1', name: commonT.items.i1, price: 150, type: 'Equipment', image: 'https://images.pexels.com/photos/5412435/pexels-photo-5412435.jpeg?auto=compress&cs=tinysrgb&w=400', desc: t.weatherOffer, icon: 'water_drop' });
         } else if (condition.includes('sun') || condition.includes('clear') || condition.includes('despejado')) {
-            setDynamicOffer({ id: 'd2', name: 'Prismáticos HD', price: 200, type: 'Equipment', image: 'https://images.pexels.com/photos/1036396/pexels-photo-1036396.jpeg?auto=compress&cs=tinysrgb&w=400', desc: t.weatherOffer, icon: 'wb_sunny' });
+            setDynamicOffer({ id: 'd2', name: commonT.items.i5 || 'Prismáticos HD', price: 200, type: 'Equipment', image: 'https://images.pexels.com/photos/1036396/pexels-photo-1036396.jpeg?auto=compress&cs=tinysrgb&w=400', desc: t.weatherOffer, icon: 'wb_sunny' });
         } else {
-            setDynamicOffer({ id: 'd3', name: 'Guía de Hábitats', price: 100, type: 'Consumable', image: 'https://images.pexels.com/photos/33283/stack-of-books-vintage-books-book-books.jpg?auto=compress&cs=tinysrgb&w=400', desc: t.weatherOffer, icon: 'menu_book' });
+            setDynamicOffer({ id: 'd3', name: commonT.items.i6 || 'Guía de Hábitats', price: 100, type: 'Consumable', image: 'https://images.pexels.com/photos/33283/stack-of-books-vintage-books-book-books.jpg?auto=compress&cs=tinysrgb&w=400', desc: t.weatherOffer, icon: 'menu_book' });
         }
     }, [weather]);
 
     const storeItems = [
         { id: 's1', name: commonT.items.i1, price: 500, type: 'Card Pack', image: 'https://images.pexels.com/photos/4060435/pexels-photo-4060435.jpeg?auto=compress&cs=tinysrgb&w=400', desc: t.openingPack, icon: 'style' },
-        { id: 'i1', name: commonT.items.i1, price: 10, type: 'Consumable', image: 'https://images.pexels.com/photos/1013444/pexels-photo-1013444.jpeg?auto=compress&cs=tinysrgb&w=400', desc: '+15% a Canto en el Certamen.', icon: 'water_drop' },
-        { id: 'i2', name: commonT.items.i2, price: 10, type: 'Consumable', image: 'https://images.pexels.com/photos/3951631/pexels-photo-3951631.jpeg?auto=compress&cs=tinysrgb&w=400', desc: '+15% a Vuelo en el Certamen.', icon: 'grass' },
-        { id: 'i3', name: commonT.items.i3, price: 10, type: 'Consumable', image: 'https://images.pexels.com/photos/33130/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=400', desc: '+15% a Plumaje en el Certamen.', icon: 'stylus' },
+        { id: 'i1', name: commonT.items.i1, price: 10, type: 'Consumable', image: 'https://images.pexels.com/photos/1013444/pexels-photo-1013444.jpeg?auto=compress&cs=tinysrgb&w=400', desc: t.itemDesc1 || '+15% a Canto en el Certamen.', icon: 'water_drop' },
+        { id: 'i2', name: commonT.items.i2, price: 10, type: 'Consumable', image: 'https://images.pexels.com/photos/3951631/pexels-photo-3951631.jpeg?auto=compress&cs=tinysrgb&w=400', desc: t.itemDesc2 || '+15% a Vuelo en el Certamen.', icon: 'grass' },
+        { id: 'i3', name: commonT.items.i3, price: 10, type: 'Consumable', image: 'https://images.pexels.com/photos/33130/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=400', desc: t.itemDesc3 || '+15% a Plumaje en el Certamen.', icon: 'stylus' },
         ...(dynamicOffer ? [dynamicOffer] : [])
     ];
 
@@ -179,7 +179,7 @@ const ElTienda: React.FC = () => {
                                             </div>
                                             {isDynamic && (
                                                 <div className="absolute top-3 right-3 bg-amber-500 text-white px-2 py-1 rounded text-[8px] font-black uppercase tracking-widest animate-pulse">
-                                                    ¡Oferta Clima!
+                                                    {t.weatherOffer}
                                                 </div>
                                             )}
                                         </div>
@@ -223,7 +223,7 @@ const ElTienda: React.FC = () => {
                 {activeTab === 'vender' && (
                     <div className="animate-slide-in-right">
                         <div className="flex items-center gap-3 mb-6">
-                            <h3 className="font-black uppercase tracking-widest text-lg">Tu Mochila</h3>
+                            <h3 className="font-black uppercase tracking-widest text-lg dark:text-white">{t.backpackTitle || 'Tu Mochila'}</h3>
                         </div>
 
                         {inventory.length === 0 ? (
@@ -249,8 +249,8 @@ const ElTienda: React.FC = () => {
                                             onClick={() => handleSell(item)}
                                             className="px-4 py-2 bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400 rounded-xl font-black text-[10px] uppercase tracking-widest border border-amber-200 dark:border-amber-800 hover:bg-amber-100 transition-colors flex flex-col items-center"
                                         >
-                                            <span>Vender</span>
-                                            <span className="flex items-center"><span className="material-symbols-outlined text-[10px] mr-0.5">add</span> 5 Plumas</span>
+                                            <span>{t.sellButton}</span>
+                                            <span className="flex items-center"><span className="material-symbols-outlined text-[10px] mr-1">add</span> 5 {t.currency}</span>
                                         </button>
                                     </div>
                                 ))}
@@ -264,7 +264,7 @@ const ElTienda: React.FC = () => {
             {isOpeningPack && (
                 <div className="fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-xl flex flex-col items-center justify-center p-4">
                     <h2 className="text-4xl font-black text-white text-center mb-12 animate-pulse font-handwriting italic">
-                        {packResults.length === 0 ? 'Abriendo Sobre...' : '¡Nuevos Descubrimientos!'}
+                        {packResults.length === 0 ? t.openingPack : t.newDiscoveries}
                     </h2>
 
                     {packResults.length === 0 ? (
@@ -316,17 +316,12 @@ const ElTienda: React.FC = () => {
                         </div>
 
                         <div className="p-8 text-center bg-[#fcfaf0] dark:bg-slate-900 dark:text-white -mt-10 relative z-10">
-                            <span className="inline-block px-4 py-1.5 bg-amber-500 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full mb-4 shadow-lg border-2 border-amber-400">Suscripción Élite</span>
-                            <h3 className="text-3xl font-black mb-2">Pase de Expedición</h3>
-                            <p className="text-slate-500 dark:text-slate-400 text-sm font-bold max-w-sm mx-auto mb-8">Conviértete en un Explorador Maestro y domina las reservas naturales de Pinto.</p>
+                            <span className="inline-block px-4 py-1.5 bg-amber-500 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full mb-4 shadow-lg border-2 border-amber-400">{t.eliteSubscription || 'Suscripción Élite'}</span>
+                            <h3 className="text-3xl font-black mb-2">{t.passTitle}</h3>
+                            <p className="text-slate-500 dark:text-slate-400 text-sm font-bold max-w-sm mx-auto mb-8">{t.passDesc}</p>
 
                             <ul className="text-left space-y-4 mb-8">
-                                {[
-                                    { text: 'Tiempo de espera entre escaneos reducido un 50%', icon: 'timer' },
-                                    { text: 'Probabilidad de avistar aves raras o legendarias aumentada', icon: 'visibility' },
-                                    { text: 'Doble XP en todas las expediciones', icon: 'stat_2' },
-                                    { text: 'Néctar exclusivo diario en el Santuario', icon: 'water_drop' }
-                                ].map((perk, i) => (
+                                {(t.passBenefits || []).map((perk: any, i: number) => (
                                     <li key={i} className="flex gap-4 items-center bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
                                         <div className="size-10 bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 rounded-xl flex items-center justify-center shrink-0">
                                             <span className="material-symbols-outlined">{perk.icon}</span>
@@ -337,7 +332,7 @@ const ElTienda: React.FC = () => {
                             </ul>
 
                             <button className="w-full py-4 bg-amber-500 text-white rounded-2xl font-black uppercase tracking-widest text-sm shadow-[0_10px_30px_rgba(245,158,11,0.4)] hover:scale-[1.02] active:scale-95 transition-all">
-                                Adquirir Pase • 5.99€
+                                {t.buyPass || 'Adquirir Pase'} • 5.99€
                             </button>
                         </div>
                     </div>

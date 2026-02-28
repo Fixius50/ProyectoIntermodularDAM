@@ -40,9 +40,9 @@ const ElCertamen: React.FC = () => {
     // Opponent generation
     const generateOpponent = () => {
         const opponents = [
-            { id: 'o1', name: 'Petirrojo de Éboli', level: 3, type: 'Songbird', hp: 90, maxHp: 90, canto: 70, plumaje: 40, vuelo: 50, image: 'https://images.pexels.com/photos/59523/pexels-photo-59523.jpeg?auto=compress&cs=tinysrgb&w=400' },
-            { id: 'o2', name: 'Halcón del Castillo', level: 5, type: 'Raptor', hp: 110, maxHp: 110, canto: 30, plumaje: 60, vuelo: 90, image: 'https://images.pexels.com/photos/14840742/pexels-photo-14840742.jpeg?auto=compress&cs=tinysrgb&w=400' },
-            { id: 'o3', name: 'Paloma Mensajera', level: 4, type: 'Flight', hp: 100, maxHp: 100, canto: 20, plumaje: 50, vuelo: 80, image: 'https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg?auto=compress&cs=tinysrgb&w=400' }
+            { id: 'o1', name: t.opponents.o1, level: 3, type: 'Songbird', hp: 90, maxHp: 90, canto: 70, plumaje: 40, vuelo: 50, image: 'https://images.pexels.com/photos/59523/pexels-photo-59523.jpeg?auto=compress&cs=tinysrgb&w=400' },
+            { id: 'o2', name: t.opponents.o2, level: 5, type: 'Raptor', hp: 110, maxHp: 110, canto: 30, plumaje: 60, vuelo: 90, image: 'https://images.pexels.com/photos/14840742/pexels-photo-14840742.jpeg?auto=compress&cs=tinysrgb&w=400' },
+            { id: 'o3', name: t.opponents.o3, level: 4, type: 'Flight', hp: 100, maxHp: 100, canto: 20, plumaje: 50, vuelo: 80, image: 'https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg?auto=compress&cs=tinysrgb&w=400' }
         ];
         return opponents[Math.floor(Math.random() * opponents.length)] as Bird;
     };
@@ -103,14 +103,14 @@ const ElCertamen: React.FC = () => {
         let weatherStatus = comboCount > 0 ? `${t.combo} x${comboBonus.toFixed(1)}! ` : t.neutralWeather;
 
         if (cond.includes('clear') || cond.includes('sun')) {
-            if (userAttr === 'vuelo') { userScore *= 1.2; weatherStatus += " Cielo despejado +20%"; }
+            if (userAttr === 'vuelo') { userScore *= 1.2; weatherStatus += ` ${t.weatherBonuses.sunny}`; }
         } else if (cond.includes('rain') || cond.includes('cloud')) {
-            if (userAttr === 'plumaje') { userScore *= 1.2; weatherStatus += " Humedad alta +20%"; }
+            if (userAttr === 'plumaje') { userScore *= 1.2; weatherStatus += ` ${t.weatherBonuses.rainy}`; }
         }
 
         if (time.phase === 'Morning' && userAttr === 'canto') {
             userScore *= 1.15;
-            weatherStatus += " Coro del alba +15%";
+            weatherStatus += ` ${t.weatherBonuses.morning}`;
         }
 
         // Apply Item Buffs
@@ -535,7 +535,9 @@ const ElCertamen: React.FC = () => {
                         </div>
                         <div className="flex items-center gap-2">
                             <span className="material-symbols-outlined text-blue-500">{weather?.condition.includes('Sun') ? 'sunny' : 'cloudy'}</span>
-                            <span className="text-[10px] font-black uppercase opacity-40">{weather?.condition}</span>
+                            <span className="text-[10px] font-black uppercase opacity-40">
+                                {((translations[language] as any).common.weather || {})[weather?.condition || ''] || weather?.condition}
+                            </span>
                         </div>
                     </div>
                 </header>

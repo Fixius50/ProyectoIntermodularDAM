@@ -47,14 +47,14 @@ const MiPerfil: React.FC = () => {
 
     // Dynamic badges based on real stats
     const badges = [];
-    if (uniqueSpeciesCount > 0) badges.push({ id: 1, name: 'Primer Avistamiento', icon: 'egg', desc: 'Has capturado tu primer ave.' });
-    if (playerBirds.length >= 5) badges.push({ id: 2, name: 'Guardián del Santuario', icon: 'park', desc: 'Tienes 5 o más aves en tu santuario.' });
-    if (currentUser && currentUser.level >= 5) badges.push({ id: 3, name: 'Coleccionista Común', icon: 'collections_bookmark', desc: 'Has alcanzado el nivel 5 de explorador.' });
-    if (uniqueSpeciesCount >= 10) badges.push({ id: 4, name: 'Experto en Aves', icon: 'military_tech', desc: 'Has avistado 10 especies diferentes.' });
+    if (uniqueSpeciesCount > 0) badges.push({ id: 1, name: t.badgesList.firstSighting.name, icon: 'egg', desc: t.badgesList.firstSighting.desc });
+    if (playerBirds.length >= 5) badges.push({ id: 2, name: t.badgesList.guardian.name, icon: 'park', desc: t.badgesList.guardian.desc });
+    if (currentUser && currentUser.level >= 5) badges.push({ id: 3, name: t.badgesList.collector.name, icon: 'collections_bookmark', desc: t.badgesList.collector.desc });
+    if (uniqueSpeciesCount >= 10) badges.push({ id: 4, name: t.badgesList.expert.name, icon: 'military_tech', desc: t.badgesList.expert.desc });
 
     // Fallback if no badges
     if (badges.length === 0) {
-        badges.push({ id: 0, name: 'Naturalista Novato', icon: 'card_membership', desc: 'Tu viaje acaba de comenzar.' });
+        badges.push({ id: 0, name: t.badgesList.novice.name, icon: 'card_membership', desc: t.badgesList.novice.desc });
     }
 
     const stats = [
@@ -63,13 +63,6 @@ const MiPerfil: React.FC = () => {
         { label: t.stats.expeditions, value: expeditionsCount, icon: 'explore', color: 'text-primary' },
         { label: t.stats.achievements, value: badges.length, icon: 'workspace_premium', color: 'text-purple-500' }
     ];
-
-    // dynamic badges previously removed
-
-    // Fallback if no badges
-    if (badges.length === 0) {
-        badges.push({ id: 0, name: 'Naturalista Novato', icon: 'card_membership', desc: 'Tu viaje acaba de comenzar.' });
-    }
 
     const favoriteBird = currentUser?.favoriteBirdId
         ? birds.find((b: Bird) => b.id === currentUser.favoriteBirdId)
@@ -88,22 +81,20 @@ const MiPerfil: React.FC = () => {
     const getRelativeTime = (timestamp: number) => {
         const diff = Date.now() - timestamp;
         const minutes = Math.floor(diff / 60000);
-        if (minutes < 1) return language === 'es' ? 'Justo ahora' : 'Just now';
-        if (minutes < 60) return language === 'es' ? `Hace ${minutes} min` : `${minutes} min ago`;
+        if (minutes < 1) return t.historyLabels.justNow;
+        if (minutes < 60) return t.historyLabels.agoMin.replace('{n}', minutes.toString());
         const hours = Math.floor(minutes / 60);
-        if (hours < 24) return language === 'es' ? `Hace ${hours} h` : `${hours}h ago`;
+        if (hours < 24) return t.historyLabels.agoHours.replace('{n}', hours.toString());
         const days = Math.floor(hours / 24);
-        return language === 'es' ? `Hace ${days} días` : `${days} days ago`;
+        return t.historyLabels.agoDays.replace('{n}', days.toString());
     };
 
     return (
-        <div className="flex flex-col flex-1 font-display bg-cream dark:bg-slate-950 transition-colors duration-300">
+        <div className="flex flex-col flex-1 font-display bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
             <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 md:px-12 py-6 md:py-8">
 
                 <header className="flex flex-col gap-3 py-8 md:py-12 items-center text-center animate-fade-in relative">
                     <div className="absolute top-0 w-full h-48 bg-gradient-to-b from-primary/20 to-transparent -z-10 rounded-b-[3rem]"></div>
-
-
 
                     <div className="relative group cursor-pointer" onClick={() => setIsAvatarModalOpen(true)}>
                         <div className="absolute -inset-1 bg-gradient-to-r from-primary to-green-400 rounded-full blur opacity-25 group-hover:opacity-60 transition duration-500 group-hover:duration-200"></div>
@@ -263,8 +254,6 @@ const MiPerfil: React.FC = () => {
                                     // Count occurrences of this species in user's collection
                                     const speciesInstances = playerBirds.filter((b: Bird) => b.name === cat);
                                     const capturedCount = speciesInstances.length;
-                                    // Mapping logic: if you have at least 1, it's 100% for that bar (assuming 1 per species in progress)
-                                    // Or if user wants "n/total", here total is 1 for each species bar
                                     const percentage = capturedCount > 0 ? 100 : 0;
                                     // Translate cat name if it's a key
                                     const displayName = translations[language].common.birds?.[cat as keyof typeof translations.es.common.birds] || cat;
@@ -326,8 +315,8 @@ const MiPerfil: React.FC = () => {
                         {activityHistory.length === 0 ? (
                             <div className="p-8 text-center text-slate-500">
                                 <span className="material-symbols-outlined text-4xl mb-2 opacity-50">hourglass_empty</span>
-                                <p className="text-sm font-bold">Aún no hay actividad registrada.</p>
-                                <p className="text-[10px] uppercase tracking-widest mt-1">¡Sal a explorar!</p>
+                                <p className="text-sm font-bold">{t.noActivity}</p>
+                                <p className="text-[10px] uppercase tracking-widest mt-1">{t.goExplore}</p>
                             </div>
                         ) : (
                             <div className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -348,7 +337,7 @@ const MiPerfil: React.FC = () => {
                                 ))}
                                 {activityHistory.length > 5 && (
                                     <button className="w-full py-4 bg-slate-50/50 dark:bg-slate-900/30 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-primary/5 transition-colors text-center">
-                                        Ver historial completo
+                                        {t.viewFullHistory}
                                     </button>
                                 )}
                             </div>
@@ -363,8 +352,8 @@ const MiPerfil: React.FC = () => {
                     <div className="bg-white dark:bg-slate-900 w-full md:max-w-md mx-auto rounded-t-[2rem] md:rounded-[2rem] shadow-2xl overflow-hidden animate-slide-up md:animate-scale-in">
                         <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
                             <div>
-                                <h3 className="font-black text-xl">Elige tu Avatar</h3>
-                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Identidad de Explorador</p>
+                                <h3 className="font-black text-xl">{t.chooseAvatar}</h3>
+                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t.identity}</p>
                             </div>
                             <button
                                 onClick={() => setIsAvatarModalOpen(false)}
@@ -399,8 +388,8 @@ const MiPerfil: React.FC = () => {
                     <div className="bg-white dark:bg-slate-900 w-full md:max-w-2xl mx-auto rounded-[2rem] shadow-2xl flex flex-col h-[70vh] md:h-[60vh] max-h-[600px] animate-scale-in">
                         <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center relative z-10">
                             <div>
-                                <h3 className="font-black text-xl">Compañero Favorito</h3>
-                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Selecciona un ave de tu Santuario</p>
+                                <h3 className="font-black text-xl">{t.favCompanion}</h3>
+                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t.noCompanionDesc}</p>
                             </div>
                             <button
                                 onClick={() => setIsFavBirdModalOpen(false)}

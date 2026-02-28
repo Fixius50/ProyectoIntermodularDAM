@@ -1,6 +1,10 @@
 import AvisCore from './avisCore';
 
-const API_BASE_URL = 'http://100.112.239.82:8080/api';
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const TAILSCALE_IP = '100.112.239.82';
+const API_BASE_URL = isLocal ? `http://${window.location.hostname}:8080/api` : `http://${TAILSCALE_IP}:8080/api`;
+
+console.log(`[API] Usando Base URL: ${API_BASE_URL}`);
 
 async function getAuthHeader(): Promise<Record<string, string>> {
     const { token } = await AvisCore.getSecureToken();

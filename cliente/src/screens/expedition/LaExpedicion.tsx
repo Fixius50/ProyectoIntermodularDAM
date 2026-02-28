@@ -243,29 +243,29 @@ const LaExpedicion: React.FC = () => {
                 </div>
             )}
 
-            <main className="flex-1 flex flex-col lg:flex-row gap-6 p-4 lg:p-10 mb-2 mt-4 max-w-[1440px] mx-auto w-full" style={{ height: 'calc(100dvh - 8rem)' }}>
+            <header className="px-6 py-8 flex flex-col md:flex-row md:justify-between items-start gap-4 animate-fade-in">
+                <div className="text-left w-full">
+                    <div className="flex items-center gap-3 mb-3 w-fit">
+                        <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse shadow-[0_0_12px_rgba(94,232,48,0.8)]"></span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 dark:text-zinc-400">
+                            {(translations[language] as any).sanctuary.timePhases[time?.phase || 'Afternoon']} · Pinto
+                        </span>
+                    </div>
+                    <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white leading-tight tracking-tight text-left mb-1">{t.title}</h2>
+                    <p className="text-xs md:text-base font-bold text-slate-400 dark:text-zinc-500 ml-1 uppercase tracking-widest">{weather?.temp || 0}°C · {((translations[language] as any).common.weather || {})[weather?.condition || ''] || weather?.condition}</p>
+                </div>
+            </header>
+
+            <main className="flex-1 flex flex-col lg:flex-row gap-6 p-4 lg:p-10 mb-2 max-w-[1440px] mx-auto w-full overflow-hidden">
                 {/* Contenedor del Mapa */}
-                <div className="flex-grow bg-slate-200 dark:bg-zinc-900 rounded-[3rem] overflow-hidden border-8 border-white dark:border-zinc-800 relative shadow-2xl flex flex-col min-h-[450px] transition-all duration-500">
+                <div className="flex-grow bg-slate-200 dark:bg-zinc-900 rounded-[3rem] overflow-hidden border-8 border-white dark:border-zinc-800 relative shadow-2xl flex flex-col min-h-[400px] transition-all duration-500">
 
                     <div ref={mapRef} className="absolute inset-0 z-10" />
 
                     {/* Superposiciones de UI */}
-                    <div className="absolute top-0 left-0 right-0 p-6 md:p-10 z-[400] flex flex-col gap-4 md:flex-row md:justify-between items-end md:items-start pointer-events-none">
 
-                        {/* Título */}
-                        <div className="pointer-events-auto text-left w-full order-2 md:order-1">
-                            <div className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border border-slate-200 dark:border-zinc-800 px-4 py-2 rounded-full flex items-center gap-3 mb-3 w-fit shadow-xl shadow-black/5">
-                                <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse shadow-[0_0_12px_rgba(94,232,48,0.8)]"></span>
-                                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-900 dark:text-white">
-                                    {language === 'es' ? (time?.phase === 'Night' ? 'Noche' : (time?.phase === 'Morning' ? 'Mañana' : 'Tarde')) : time?.phase} · Pinto
-                                </span>
-                            </div>
-                            <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white drop-shadow-xl leading-none tracking-tight text-left mb-1">{t.title}</h2>
-                            <p className="text-[10px] md:text-sm font-black text-slate-600 dark:text-zinc-400 ml-1.5 uppercase tracking-widest">{weather?.temp || 0}°C · {weather?.condition || 'Clear'}</p>
-                        </div>
-
-                        {/* Scanner GPS */}
-                        <div className="pointer-events-auto w-full md:w-auto flex justify-end order-1 md:order-2">
+                    <div className="absolute top-10 right-10 z-[400] pointer-events-none">
+                        <div className="pointer-events-auto flex justify-end">
                             <div className="p-3 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl border border-slate-100 dark:border-zinc-800 rounded-3xl shadow-2xl flex items-center gap-5 transition-all duration-500">
                                 <div className="flex items-center gap-3 pl-2">
                                     <span className="material-symbols-outlined text-primary text-2xl animate-pulse">satellite_alt</span>

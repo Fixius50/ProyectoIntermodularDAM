@@ -1,0 +1,20 @@
+﻿gomobile : 
+C:\Users\Fixius50\go\bin\gomobile.exe: No 
+compiler for arm was found in the NDK (tried C:
+\Users\Fixius50\AppData\Local\Android\Sdk\ndk\2
+1.4.7075529\toolchains\llvm\prebuilt\windows\bi
+n\armv7a-linux-androideabi21-clang). Make sure 
+your NDK version is >= r19c. Use `sdkmanager 
+--update` to update it.
+En línea: 1 Carácter: 152
++ ... 4.7075529"; gomobile bind 
+-target=android -androidapi 21 -v > log.txt ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C 
+   :\Users\Fixius...` to update it.:String) [  
+  ], RemoteException
+    + FullyQualifiedErrorId : NativeCommandErr 
+   or
+ 
+
