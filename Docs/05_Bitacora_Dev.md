@@ -418,4 +418,24 @@ $adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
 - **Vincular Ave**: Corrección de desbordamiento horizontal mediante `max-w-xs`.
 - **Headers**: Integración suave de Safe Areas en `ElSantuario` y `ElSocial`.
 
+
 ---
+
+## [2026-02-28] - Interceptor Android Nativo y Actualización Documental
+
+### Implementación Interceptor OkHttp (JWT Native)
+**Contexto:** Conectar la capa nativa Android (AvisCorePlugin / llamadas asíncronas HTTP retro-compatibles) con el Backend requería inyectar el JWT token generado en el frontend Web/Supabase.
+**Solución:** Modificación estructural en `NetworkModule.java` (inyección Dagger Hilt):
+1. Inclusión de `@ApplicationContext Context context` en las dependencias hilt.
+2. Lectura en disco de las `SharedPreferences` correspondientes al almacenamiento puente de Capacitor (`CapacitorStorage`).
+3. Creación de un `Interceptor` interceptando toda llamada saliente de API en OkHttp y añadiendo dinámicamente el header `Authorization: Bearer <token>`.
+4. Tests de compilación exitosos (Gradle `assembleDebug`).
+
+*Nota:* Módulos como 'ElTaller' (Crafting visual) y 'ElAlbum' quedan postergados a favor del flujo actual estable priorizado por el usuario.
+
+### Auditoría y Actualización de Componentes / Flujos
+**Contexto:** Reflejar la discrepancia histórica entre el documento inicial `02_Diseño_UI_UX_y_Gameplay.md` y las features finales.
+**Acción Realizada:**
+- Inspección a fondo de las pantallas implementadas (`App.tsx`, `ElSantuario`, `LaExpedicion`, `ElCertamen`, `ElSocial`, `ElTienda`, `MiPerfil`, `Login`).
+- Modificación pesada en `02_Diseño_UI_UX_y_Gameplay.md` reemplazando los borradores abstractos por la arquitectura viva de los flujos de usuario presentes.
+- Detalladas las mecánicas de "cooldown" geográficas, modificadores cruzados de clima (wttr.in) x tiempo, minijuegos de economía de batallas de rondas reactivas y el muro de comunidad colaborativo.

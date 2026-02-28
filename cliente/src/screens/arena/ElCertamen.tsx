@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import GlassPanel from '../../components/ui/GlassPanel';
 import { Bird } from '../../types';
+import { translations } from '../../i18n/translations';
 
 type BattlePhase = 'selection' | 'preparation' | 'combat' | 'rewards';
 
@@ -9,8 +10,12 @@ const ElCertamen: React.FC = () => {
     const {
         playerBirds, inventory, weather, time,
         battleLogs, addBattleLog, clearBattleLogs, completeBattle,
-        consumeItem, updateStamina, setCurrentScreen
+        consumeItem, updateStamina, setCurrentScreen,
+        language
     } = useAppStore();
+
+    const t = translations[language].arena;
+    const commonT = translations[language].common;
 
     const [phase, setPhase] = useState<BattlePhase>('selection');
     const [selectedPlayerBird, setSelectedPlayerBird] = useState<Bird | null>(null);
@@ -44,7 +49,7 @@ const ElCertamen: React.FC = () => {
 
     const handleSelectBird = (bird: Bird) => {
         if (bird.stamina < 20) {
-            alert("Tu ave está exhausta. Necesita descansar en el Santuario.");
+            alert(t.exhaustedAlert);
             return;
         }
         setSelectedPlayerBird(bird);
@@ -57,7 +62,7 @@ const ElCertamen: React.FC = () => {
             consumeItem(selectedItem);
         }
         clearBattleLogs();
-        addBattleLog('El certamen ha comenzado. ¡Suerte, explorador!');
+        addBattleLog(t.battleStarted);
         setPhase('combat');
     };
 
@@ -95,7 +100,7 @@ const ElCertamen: React.FC = () => {
 
         // Weather & Time Bonuses
         const cond = weather?.condition.toLowerCase() || 'clear';
-        let weatherStatus = comboCount > 0 ? `¡Combo x${comboBonus.toFixed(1)}! ` : "Clima neutral";
+        let weatherStatus = comboCount > 0 ? `${t.combo} x${comboBonus.toFixed(1)}! ` : t.neutralWeather;
 
         if (cond.includes('clear') || cond.includes('sun')) {
             if (userAttr === 'vuelo') { userScore *= 1.2; weatherStatus += " Cielo despejado +20%"; }
@@ -171,15 +176,15 @@ const ElCertamen: React.FC = () => {
     const renderSelection = () => (
         <div className="flex flex-col gap-8 animate-fade-in">
             <div className="text-center">
-                <h3 className="text-2xl font-black mb-2">Selecciona a tu Campeón</h3>
-                <p className="text-slate-500 font-bold italic text-sm">Elige el ave que mejor se adapte al clima actual: {weather?.condition}</p>
+                <h3 className="text-2xl font-black mb-2 dark:text-white">{t.selectChampion}</h3>
+                <p className="text-slate-500 dark:text-slate-400 font-bold italic text-sm">{t.selectChampionDesc} {weather?.condition}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {playerBirds.length === 0 ? (
                     <GlassPanel className="col-span-full p-12 text-center border-dashed">
-                        <span className="material-symbols-outlined text-4xl text-slate-300 mb-4">nest_eco_leaf</span>
-                        <p className="font-bold text-slate-400">No tienes aves en tu santuario.</p>
-                        <button onClick={() => setCurrentScreen('expedition')} className="mt-4 text-primary font-black uppercase tracking-widest text-xs hover:underline">Ir a expedición</button>
+                        <span className="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-700 mb-4">nest_eco_leaf</span>
+                        <p className="font-bold text-slate-400">{t.noBirds}</p>
+                        <button onClick={() => setCurrentScreen('expedition')} className="mt-4 text-primary font-black uppercase tracking-widest text-xs hover:underline">{t.goExpedition}</button>
                     </GlassPanel>
                 ) : playerBirds.map(bird => (
                     <GlassPanel
@@ -190,14 +195,14 @@ const ElCertamen: React.FC = () => {
                         <div className="h-40 bg-cover bg-center relative" style={{ backgroundImage: `url(${bird.image})` }}>
                             {bird.stamina < 20 && (
                                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                                    <span className="bg-red-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase">Exhausto</span>
+                                    <span className="bg-red-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase">{t.exhausted}</span>
                                 </div>
                             )}
                         </div>
                         <div className="p-6">
                             <div className="flex justify-between items-start mb-2">
                                 <div>
-                                    <h4 className="font-black text-lg leading-tight">{bird.name}</h4>
+                                    <h4 className="font-black text-lg leading-tight dark:text-white">{commonT.birds[bird.name as keyof typeof commonT.birds] || bird.name}</h4>
                                     <p className="text-[10px] font-black uppercase text-primary tracking-widest">{bird.type}</p>
                                 </div>
                                 <div className="text-right">
@@ -212,16 +217,16 @@ const ElCertamen: React.FC = () => {
                             </div>
                             <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-slate-50 dark:border-slate-800">
                                 <div className="text-center">
-                                    <p className="text-[8px] font-black opacity-40 uppercase">Canto</p>
-                                    <p className="font-bold">{bird.canto}</p>
+                                    <p className="text-[8px] font-black opacity-40 uppercase dark:text-white">{t.statCanto}</p>
+                                    <p className="font-bold dark:text-slate-300">{bird.canto}</p>
                                 </div>
                                 <div className="text-center">
-                                    <p className="text-[8px] font-black opacity-40 uppercase">Pluma</p>
-                                    <p className="font-bold">{bird.plumaje}</p>
+                                    <p className="text-[8px] font-black opacity-40 uppercase dark:text-white">{t.statPluma}</p>
+                                    <p className="font-bold dark:text-slate-300">{bird.plumaje}</p>
                                 </div>
                                 <div className="text-center">
-                                    <p className="text-[8px] font-black opacity-40 uppercase">Vuelo</p>
-                                    <p className="font-bold">{bird.vuelo}</p>
+                                    <p className="text-[8px] font-black opacity-40 uppercase dark:text-white">{t.statVuelo}</p>
+                                    <p className="font-bold dark:text-slate-300">{bird.vuelo}</p>
                                 </div>
                             </div>
                         </div>
@@ -234,38 +239,38 @@ const ElCertamen: React.FC = () => {
     const renderPreparation = () => (
         <div className="flex flex-col gap-10 animate-fade-in max-w-4xl mx-auto w-full">
             <div className="text-center">
-                <h3 className="text-2xl font-black mb-2">Fase de Preparación</h3>
-                <p className="text-slate-500 font-bold italic text-sm">Equipa a {selectedPlayerBird?.name} antes del duelo.</p>
+                <h3 className="text-2xl font-black mb-2 dark:text-white">{t.preparation}</h3>
+                <p className="text-slate-500 dark:text-slate-400 font-bold italic text-sm">{t.preparationDesc.replace('{name}', commonT.birds[selectedPlayerBird?.name as keyof typeof commonT.birds] || selectedPlayerBird?.name || '')}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <GlassPanel className="p-8 flex flex-col items-center">
                     <img src={selectedPlayerBird?.image} className="size-40 rounded-3xl object-cover mb-4 border-4 border-primary shadow-xl" />
-                    <h4 className="text-xl font-black">{selectedPlayerBird?.name}</h4>
-                    <p className="text-xs font-black text-primary uppercase tracking-widest">Atributo Principal: {selectedPlayerBird?.type}</p>
+                    <h4 className="text-xl font-black dark:text-white">{commonT.birds[selectedPlayerBird?.name as keyof typeof commonT.birds] || selectedPlayerBird?.name}</h4>
+                    <p className="text-xs font-black text-primary uppercase tracking-widest">{t.statPluma}: {selectedPlayerBird?.type}</p>
 
                     <div className="bg-primary/5 p-4 rounded-2xl mt-6 w-full text-center border border-primary/10">
-                        <p className="text-[9px] font-black uppercase text-primary mb-1">Habilidad Especial</p>
-                        <p className="text-xs font-bold italic">
-                            {selectedPlayerBird?.type === 'Raptor' && "Intimidación: El rival pierde 30% de puntuación."}
-                            {(selectedPlayerBird?.type === 'Songbird' || selectedPlayerBird?.type === 'Song') && "Solo Virtuoso: +50% de puntuación en Canto."}
-                            {selectedPlayerBird?.type === 'Flight' && "Supersónico: +50 de puntuación base en Vuelo."}
-                            {!['Raptor', 'Songbird', 'Song', 'Flight'].includes(selectedPlayerBird?.type || '') && "Esfuerzo: +30% de puntuación total."}
+                        <p className="text-[9px] font-black uppercase text-primary mb-1">{t.specialAbility}</p>
+                        <p className="text-xs font-bold italic dark:text-slate-300">
+                            {selectedPlayerBird?.type === 'Raptor' && t.abilities.raptor}
+                            {(selectedPlayerBird?.type === 'Songbird' || selectedPlayerBird?.type === 'Song') && t.abilities.song}
+                            {selectedPlayerBird?.type === 'Flight' && t.abilities.flight}
+                            {!['Raptor', 'Songbird', 'Song', 'Flight'].includes(selectedPlayerBird?.type || '') && t.abilities.effort}
                         </p>
                     </div>
 
                     <div className="flex items-center gap-3 mt-8 pt-8 border-t border-slate-100 dark:border-slate-800 w-full">
                         <img src={selectedOpponentBird?.image} className="size-16 rounded-2xl object-cover border-2 border-red-500" />
                         <div className="text-left flex-grow">
-                            <p className="text-[9px] font-black uppercase text-slate-400">Rival Directo</p>
-                            <p className="font-bold leading-none">{selectedOpponentBird?.name}</p>
+                            <p className="text-[9px] font-black uppercase text-slate-400">{t.opponent}</p>
+                            <p className="font-bold leading-none dark:text-white">{commonT.birds[selectedOpponentBird?.name as keyof typeof commonT.birds] || selectedOpponentBird?.name}</p>
                             <p className="text-[8px] font-black uppercase text-red-500 mt-1">Lvl {selectedOpponentBird?.level} • {selectedOpponentBird?.type}</p>
                         </div>
                     </div>
                 </GlassPanel>
 
                 <div className="flex flex-col gap-4">
-                    <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">Consumibles Disponibles</h5>
+                    <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t.consumables}</h5>
                     <div className="flex-1 space-y-3 overflow-y-auto max-h-[300px] pr-2 custom-scrollbar">
                         {consumables.length > 0 ? consumables.map(item => (
                             <button
@@ -275,15 +280,15 @@ const ElCertamen: React.FC = () => {
                             >
                                 <span className={`material-symbols-outlined text-2xl ${selectedItem === item.id ? 'text-primary' : 'text-slate-400'}`}>{item.icon}</span>
                                 <div className="text-left flex-grow">
-                                    <p className="font-bold text-sm leading-tight">{item.name}</p>
-                                    <p className="text-[9px] font-black uppercase text-slate-400">Posees {item.count}</p>
+                                    <p className="font-bold text-sm leading-tight dark:text-white">{commonT.items[item.name as keyof typeof commonT.items] || item.name}</p>
+                                    <p className="text-[9px] font-black uppercase text-slate-400">{commonT.inventory.quantity}: {item.count}</p>
                                 </div>
                                 {selectedItem === item.id && <span className="material-symbols-outlined text-primary">check_circle</span>}
                             </button>
                         )) : (
                             <div className="h-full border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col items-center justify-center p-6 text-slate-400 text-center">
                                 <span className="material-symbols-outlined text-4xl mb-2">inventory_2</span>
-                                <p className="text-xs font-bold">No tienes objetos de batalla.</p>
+                                <p className="text-xs font-bold">{t.noItems}</p>
                             </div>
                         )}
                     </div>
@@ -292,13 +297,13 @@ const ElCertamen: React.FC = () => {
                             onClick={() => setPhase('selection')}
                             className="flex-1 py-4 font-black uppercase tracking-widest text-[10px] text-slate-400 hover:text-slate-600 transition-colors"
                         >
-                            Cambiar Ave
+                            {t.changeBird}
                         </button>
                         <button
                             onClick={handleStartCombat}
                             className="flex-[2] bg-primary text-slate-900 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
                         >
-                            Iniciar Duelo
+                            {t.startDuel}
                         </button>
                     </div>
                 </div>
@@ -316,7 +321,7 @@ const ElCertamen: React.FC = () => {
                             <p className="text-[8px] font-black uppercase text-primary">Tú</p>
                             {comboCount > 1 && <span className="bg-primary text-slate-900 text-[8px] font-black px-1.5 py-0.5 rounded-full animate-bounce">COMBO X{comboCount}</span>}
                         </div>
-                        <p className="font-bold text-sm leading-tight">{selectedPlayerBird?.name}</p>
+                        <p className="font-bold text-sm leading-tight dark:text-white">{commonT.birds[selectedPlayerBird?.name as keyof typeof commonT.birds] || selectedPlayerBird?.name}</p>
                         <div className="flex gap-1 mt-1">
                             {[1, 2, 3, 4, 5].map(i => <div key={i} className={`size-2 rounded-full ${i <= playerRounds ? 'bg-primary shadow-[0_0_8px_var(--primary)]' : 'bg-white/10'}`}></div>)}
                         </div>
@@ -324,14 +329,14 @@ const ElCertamen: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col items-center">
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">Ronda</p>
-                    <p className="text-3xl font-black italic">{currentRound}/5</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 dark:text-white">{t.round}</p>
+                    <p className="text-3xl font-black italic dark:text-white">{currentRound}/5</p>
                 </div>
 
                 <div className="flex items-center gap-4 text-right">
                     <div>
                         <p className="text-[8px] font-black uppercase text-red-500">Rival</p>
-                        <p className="font-bold text-sm leading-tight">{selectedOpponentBird?.name}</p>
+                        <p className="font-bold text-sm leading-tight dark:text-white">{commonT.birds[selectedOpponentBird?.name as keyof typeof commonT.birds] || selectedOpponentBird?.name}</p>
                         <div className="flex gap-1 mt-1 justify-end">
                             {[1, 2, 3, 4, 5].map(i => <div key={i} className={`size-2 rounded-full ${i <= opponentRounds ? 'bg-red-500 shadow-[0_0_8px_#ef4444]' : 'bg-white/10'}`}></div>)}
                         </div>
@@ -361,7 +366,7 @@ const ElCertamen: React.FC = () => {
                             </div>
                         </div>
                         <p className={`text-2xl font-black uppercase tracking-tighter ${lastResult.winner === 'user' ? 'text-primary' : lastResult.winner === 'opponent' ? 'text-red-500' : 'text-slate-500'}`}>
-                            {lastResult.winner === 'user' ? '¡Ronda Ganada!' : lastResult.winner === 'opponent' ? 'Ronda Perdida' : 'Empate'}
+                            {lastResult.winner === 'user' ? t.roundWon : lastResult.winner === 'opponent' ? t.roundLost : t.draw}
                         </p>
                         <p className="text-[10px] font-black text-white/40 mt-2 italic uppercase max-w-xs">{lastResult.weatherStatus}</p>
                     </div>
@@ -377,7 +382,7 @@ const ElCertamen: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <GlassPanel className="lg:col-span-4 p-6 flex flex-col gap-4">
-                    <h5 className="text-[10px] font-black uppercase tracking-widest opacity-40">Tácticas Disponibles</h5>
+                    <h5 className="text-[10px] font-black uppercase tracking-widest opacity-40 dark:text-white">{t.tactics}</h5>
                     <div className="grid grid-cols-1 gap-3">
                         <button
                             onClick={() => calculateRound('canto')}
@@ -386,7 +391,7 @@ const ElCertamen: React.FC = () => {
                         >
                             <div className="flex items-center gap-3">
                                 <span className="material-symbols-outlined text-amber-500">music_note</span>
-                                <span className="text-xs font-black uppercase tracking-wide">Canto Melódico</span>
+                                <span className="text-xs font-black uppercase tracking-wide dark:text-slate-300">{t.tacticCanto}</span>
                             </div>
                             <span className="text-[10px] font-black text-amber-600">{selectedPlayerBird?.canto}</span>
                         </button>
@@ -397,7 +402,7 @@ const ElCertamen: React.FC = () => {
                         >
                             <div className="flex items-center gap-3">
                                 <span className="material-symbols-outlined text-emerald-500">shield</span>
-                                <span className="text-xs font-black uppercase tracking-wide">Postura Gallarda</span>
+                                <span className="text-xs font-black uppercase tracking-wide dark:text-slate-300">{t.tacticPlumaje}</span>
                             </div>
                             <span className="text-[10px] font-black text-emerald-600">{selectedPlayerBird?.plumaje}</span>
                         </button>
@@ -408,7 +413,7 @@ const ElCertamen: React.FC = () => {
                         >
                             <div className="flex items-center gap-3">
                                 <span className="material-symbols-outlined text-blue-500">air</span>
-                                <span className="text-xs font-black uppercase tracking-wide">Picado Veloz</span>
+                                <span className="text-xs font-black uppercase tracking-wide dark:text-slate-300">{t.tacticVuelo}</span>
                             </div>
                             <span className="text-[10px] font-black text-blue-600">{selectedPlayerBird?.vuelo}</span>
                         </button>
@@ -420,14 +425,14 @@ const ElCertamen: React.FC = () => {
                         className={`mt-2 p-5 rounded-2xl border-2 flex flex-col items-center gap-1 transition-all ${abilityUsed ? 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 opacity-50' : 'bg-primary/20 border-primary text-primary hover:bg-primary/30'}`}
                     >
                         <span className="material-symbols-outlined text-4xl">{abilityUsed ? 'lock' : 'bolt'}</span>
-                        <span className="text-[10px] font-black uppercase tracking-widest">{abilityUsed ? 'Habilidad Usada' : '¡Habilidad Especial!'}</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest">{abilityUsed ? t.abilityUsed : t.abilityReady}</span>
                     </button>
                 </GlassPanel>
 
                 <div className="lg:col-span-8 flex flex-col gap-6">
                     <GlassPanel className="flex-1 p-6 flex flex-col">
                         <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
-                            <h5 className="text-[10px] font-black uppercase tracking-widest opacity-40">Crónica del duelo</h5>
+                            <h5 className="text-[10px] font-black uppercase tracking-widest opacity-40 dark:text-white">{t.logTitle}</h5>
                             <div className="flex gap-2">
                                 <span className="text-[8px] font-black uppercase text-primary bg-primary/10 px-2 py-0.5 rounded-full">{weather?.condition}</span>
                                 <span className="text-[8px] font-black uppercase text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full">{time.phase}</span>
@@ -439,7 +444,7 @@ const ElCertamen: React.FC = () => {
                                     <span className="text-[10px] font-black text-primary opacity-40">T{battleLogs.length - i}</span>
                                     <p className="text-[11px] font-bold text-slate-600 dark:text-slate-400 leading-tight">{log}</p>
                                 </div>
-                            )) : <p className="text-sm italic text-slate-400 p-4 text-center">Inicia una ronda para registrar los eventos del certamen.</p>}
+                            )) : <p className="text-sm italic text-slate-400 p-4 text-center">{t.logEmpty}</p>}
                         </div>
                     </GlassPanel>
                 </div>
@@ -462,38 +467,38 @@ const ElCertamen: React.FC = () => {
 
                     <div>
                         <h2 className="text-4xl font-black uppercase tracking-tighter italic text-slate-800 dark:text-white">
-                            {winner === 'user' ? '¡Campeón!' : (winner === 'opponent' ? 'Lucha Honorable' : 'Empate del jurado')}
+                            {winner === 'user' ? t.rewards.champion : (winner === 'opponent' ? t.rewards.honorable : t.rewards.juryDraw)}
                         </h2>
-                        <p className="text-slate-500 font-bold italic mt-1">Resultado Final: {playerRounds} V - {opponentRounds} D</p>
+                        <p className="text-slate-500 dark:text-slate-400 font-bold italic mt-1">{t.rewards.finalResult}: {playerRounds} V - {opponentRounds} D</p>
                     </div>
 
                     <div className="space-y-3">
                         <div className="flex justify-between items-center bg-white/50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-700">
                             <div className="flex items-center gap-3">
                                 <span className="material-symbols-outlined text-primary">add_circle</span>
-                                <span className="text-xs font-black uppercase opacity-60">XP Acumulada</span>
+                                <span className="text-xs font-black uppercase opacity-60 dark:text-white">{t.rewards.xp}</span>
                             </div>
                             <span className="text-lg font-black text-primary">+{rewardXP}</span>
                         </div>
                         <div className="flex justify-between items-center bg-white/50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-700">
                             <div className="flex items-center gap-3">
                                 <span className="material-symbols-outlined text-amber-500">payments</span>
-                                <span className="text-xs font-black uppercase opacity-60">Plumas de Oro</span>
+                                <span className="text-xs font-black uppercase opacity-60 dark:text-white">{t.rewards.feathers}</span>
                             </div>
                             <span className="text-lg font-black text-amber-500">+{rewardPlumas}</span>
                         </div>
                         {comboCount > 1 && (
                             <div className="flex justify-between items-center bg-primary/10 p-4 rounded-2xl border border-primary/20">
-                                <span className="text-[10px] font-black uppercase text-primary">Bono Combo x{comboCount}</span>
-                                <span className="text-xs font-black text-primary">¡BONO INCLUIDO!</span>
+                                <span className="text-[10px] font-black uppercase text-primary">{t.combo} x{comboCount}</span>
+                                <span className="text-xs font-black text-primary">{t.rewards.comboBonus}</span>
                             </div>
                         )}
                         <div className="flex justify-between items-center p-4 border-t border-slate-100 dark:border-slate-800">
                             <div className="flex items-center gap-3">
                                 <span className="material-symbols-outlined text-red-500">bolt</span>
-                                <span className="text-xs font-black uppercase opacity-60">Energía Consumida</span>
+                                <span className="text-xs font-black uppercase opacity-60 dark:text-white">{t.rewards.energy}</span>
                             </div>
-                            <span className="text-sm font-black text-red-500">-20 Stamina</span>
+                            <span className="text-sm font-black text-red-500">-20 {t.stamina}</span>
                         </div>
                     </div>
 
@@ -507,7 +512,7 @@ const ElCertamen: React.FC = () => {
                         }}
                         className="w-full bg-primary text-slate-900 py-5 rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl shadow-primary/30 hover:bg-primary-dark transition-all"
                     >
-                        Reclamar y Volver
+                        {t.rewards.claim}
                     </button>
                 </GlassPanel>
             </div>
@@ -520,9 +525,9 @@ const ElCertamen: React.FC = () => {
                 <header className="flex flex-col gap-3 py-3 md:py-8 text-center md:text-left border-b border-slate-100 dark:border-slate-800 mb-4">
                     <div className="flex items-center gap-2 px-3 py-1 bg-red-500/10 rounded-full w-fit mx-auto md:mx-0">
                         <span className="material-symbols-outlined text-sm text-red-500">swords</span>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-red-500">Gala Competitiva de Pinto</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-red-500">{t.competitive}</span>
                     </div>
-                    <h2 className="text-xl md:text-4xl lg:text-5xl font-black leading-tight">Él Certamen de Pinto</h2>
+                    <h2 className="text-xl md:text-4xl lg:text-5xl font-black leading-tight dark:text-white">{t.title}</h2>
                     <div className="flex items-center gap-6 justify-center md:justify-start">
                         <div className="flex items-center gap-2">
                             <span className="material-symbols-outlined text-primary">{time.icon}</span>

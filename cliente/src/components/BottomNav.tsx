@@ -1,26 +1,24 @@
 import React from 'react';
 import { useAppStore } from '../store/useAppStore';
+import { translations } from '../i18n/translations';
 
 const BottomNav: React.FC = () => {
-    const { currentScreen, setCurrentScreen } = useAppStore();
+    const { currentScreen, setCurrentScreen, language } = useAppStore();
+    const t = translations[language].common;
 
     const navItems = [
-        { id: 'home', label: 'Santuario', icon: 'home' },
-        { id: 'expedition', label: 'Expedición', icon: 'explore' },
-        { id: 'arena', label: 'Certamen', icon: 'swords' },
-        { id: 'social', label: 'Social', icon: 'group' },
-        { id: 'store', label: 'Tienda', icon: 'shopping_cart' }
+        { id: 'home', label: t.nav.home, icon: 'home' },
+        { id: 'expedition', label: t.nav.expedition, icon: 'explore' },
+        { id: 'arena', label: t.nav.arena, icon: 'swords' },
+        { id: 'social', label: t.nav.social, icon: 'group' },
+        { id: 'store', label: t.nav.store, icon: 'shopping_cart' }
     ];
 
     return (
-<<<<<<< HEAD
-        <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden glass-card border-t-0 rounded-t-2xl px-1 sm:px-2 pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))] flex justify-between items-end">
-=======
         <nav
             style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 0.75rem)' }}
-            className="fixed bottom-0 left-0 right-0 z-50 md:hidden glass-card border-t-0 rounded-t-2xl px-2 pt-3 flex justify-between items-end"
+            className="fixed bottom-0 left-0 right-0 z-50 md:hidden glass-card border-t-0 rounded-t-2xl px-1 sm:px-2 pt-3 flex justify-between items-end"
         >
->>>>>>> cba0c9590c1661a7b7154d24dbd21b98784cae04
             {navItems.slice(0, 2).map((item) => {
                 const isActive = item.id === currentScreen;
                 return (
@@ -51,7 +49,7 @@ const BottomNav: React.FC = () => {
                     </div>
                 </div>
                 <span className={`text-[10px] font-bold uppercase tracking-tighter truncate w-full text-center mt-[1.75rem] ${currentScreen === 'arena' ? 'text-primary' : 'text-slate-500'}`}>
-                    Certamen
+                    {t.nav.arena}
                 </span>
             </div>
 

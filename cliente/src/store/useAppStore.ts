@@ -30,6 +30,7 @@ interface AppActions {
     markAllNotificationsAsRead: () => void;
     setCurrentScreen: (screen: string) => void;
     login: (email: string, pass: string) => Promise<boolean>;
+    testLogin: () => void;
     register: (name: string, email: string, pass: string) => Promise<boolean>;
     logout: () => void;
     syncInventory: () => Promise<void>;
@@ -40,7 +41,7 @@ interface AppActions {
     // Social Actions
     addPost: (post: Omit<SocialPost, 'id' | 'time' | 'likes' | 'comments' | 'reactions' | 'userId' | 'userName' | 'userAvatar'>) => void;
     reactToPost: (postId: string, reaction: string) => void;
-    addComment: (postId: string) => void;
+    addComment: (postId: string, text: string) => void;
 
     // Guild Actions
     joinGuild: (guildId: string) => void;
@@ -61,6 +62,7 @@ interface AppActions {
     updateStamina: (birdId: string, amount: number) => void;
     addBirdToSantuario: (birdId: string, media?: { audioPath?: string; photoPath?: string; notes?: string }) => Promise<void>;
     levelUpBird: (birdId: string) => void;
+    removeBirdFromSantuario: (birdId: string) => void;
 
     // Environment Actions
     updateTime: () => void;
@@ -72,6 +74,8 @@ interface AppActions {
     addItemToInventory: (item: Omit<InventoryItem, 'count'> & { count?: number }) => void;
     syncGlobalBirds: () => Promise<void>;
     setLanguage: (lang: 'es' | 'en') => void;
+    setTheme: (theme: 'light' | 'dark') => void;
+    toggleTheme: () => void;
 }
 
 type CombinedState = AppState & AppActions & { currentScreen: string };
@@ -113,8 +117,8 @@ const DEFAULT_PINNED_LINKS: QuickLink[] = [
 
 export const BIRD_CATALOG: CatalogBird[] = [
     {
-        id: 'pinto-1',
-        name: 'Cernícalo Primilla',
+        id: 'cernicalo-primilla',
+        name: 'cernicalo',
         scientificName: 'Falco naumanni',
         fact: 'Es el emblema de Pinto. Cría en la Torre de Éboli y la Iglesia de Santo Domingo.',
         level: 1,
@@ -137,8 +141,8 @@ export const BIRD_CATALOG: CatalogBird[] = [
         status: 'Expedicion'
     },
     {
-        id: 'pinto-2',
-        name: 'Cigüeña Blanca',
+        id: 'ciguena-blanca',
+        name: 'ciguena',
         scientificName: 'Ciconia ciconia',
         fact: 'Se las puede ver en casi todos los campanarios y torres de Pinto.',
         level: 1,
@@ -160,9 +164,9 @@ export const BIRD_CATALOG: CatalogBird[] = [
         status: 'Expedicion'
     },
     {
-        id: 'pinto-3',
-        name: 'Abubilla',
-        scientificName: 'Upupa epops',
+        id: 'abejaruco-europeo',
+        name: 'abejaruco',
+        scientificName: 'Merops apiaster',
         fact: 'Muy común en el Parque Municipal Cabeza de Hierro por su suelo arenoso.',
         level: 1,
         xp: 0,
@@ -178,7 +182,7 @@ export const BIRD_CATALOG: CatalogBird[] = [
         image: 'https://images.pexels.com/photos/14234384/pexels-photo-14234384.jpeg?auto=compress&cs=tinysrgb&w=400',
         audioUrl: 'https://upload.wikimedia.org/wikipedia/commons/7/7a/Upupa_epops.ogg',
         origin: 'Parque Cabeza de Hierro',
-        preferredPhase: ['Morning', 'Afternoon'],
+        preferredPhase: ['Night'],
         rarity: 'common',
         status: 'Expedicion'
     },
@@ -206,8 +210,8 @@ export const BIRD_CATALOG: CatalogBird[] = [
         status: 'Expedicion'
     },
     {
-        id: 'pinto-5',
-        name: 'Vencejo Común',
+        id: 'vencejo-comun',
+        name: 'vencejo',
         scientificName: 'Apus apus',
         fact: 'Pueblan el aire de Pinto en verano con sus gritos y vuelos rápidos.',
         level: 1,
@@ -293,13 +297,47 @@ export const useAppStore = create<CombinedState>()(
                     id: 'p1',
                     userId: 'u1',
                     userName: 'Pablo_Nat',
-                    userAvatar: 'https://i.pravatar.cc/150?u=post_1',
+                    userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Pablo_Nat',
                     time: 'Hace 2 horas',
                     location: 'Parque Juan Carlos I',
                     text: '¡Increíble encuentro hoy! Logré fotografiar a un Cernícalo Primilla en pleno vuelo. Sus colores eran espectaculares bajo la luz del atardecer.',
                     imageUrl: 'https://images.pexels.com/photos/14840742/pexels-photo-14840742.jpeg?auto=compress&cs=tinysrgb&w=800',
+                    birdId: 'pinto-1',
                     likes: 20,
-                    comments: 5
+                    reactions: { '🐦': 15, '🪶': 5, '📷': 8 } as Record<string, number>,
+                    comments: 2,
+                    commentList: [
+                        {
+                            id: 'c1-1',
+                            userId: 'u2',
+                            userName: 'Laura_Orni',
+                            avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Laura_Orni',
+                            text: '¡Qué buena captura! Yo llevo días intentando ver uno por la torre.',
+                            timestamp: Date.now() - 3600000
+                        },
+                        {
+                            id: 'c1-2',
+                            userId: 'u3',
+                            userName: 'Carlos_Bird',
+                            avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Carlos_Bird',
+                            text: 'El enfoque de la cámara es espectacular. ¡Felicidades, gran avistamiento!',
+                            timestamp: Date.now() - 1800000
+                        }
+                    ]
+                },
+                {
+                    id: 'p2',
+                    userId: 'u2',
+                    userName: 'Laura_Orni',
+                    userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Laura_Orni',
+                    time: 'Hace 5 horas',
+                    location: 'Iglesia Sto. Domingo',
+                    text: 'Las cigüeñas ya están preparando sus nidos. Es precioso ver cómo trabajan en equipo.',
+                    birdId: 'pinto-2',
+                    likes: 12,
+                    reactions: { '🐦': 8, '❤️': 4 } as Record<string, number>,
+                    comments: 0,
+                    commentList: []
                 }
             ],
             guildChats: {},
@@ -312,12 +350,32 @@ export const useAppStore = create<CombinedState>()(
                     mission: 'Avistar 50 Rapaces de Pinto',
                     missionProgress: 32,
                     missionTarget: 50,
-                    missionTimeLeft: 'Termina en 2d'
+                    missionTimeLeft: 'Termina en 2d',
+                    memberList: [
+                        { id: 'm1', name: 'Laura_Orni', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Laura_Orni', role: 'Líder', contributions: 12 },
+                        { id: 'm2', name: 'Pablo_Nat', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Pablo_Nat', role: 'Veterano', contributions: 8 },
+                        { id: 'm3', name: 'Carlos_Bird', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Carlos_Bird', role: 'Miembro', contributions: 5 }
+                    ]
+                },
+                {
+                    id: 'g2',
+                    name: 'Plumas Nocturnas',
+                    level: 8,
+                    members: 12,
+                    mission: 'Avistar 20 Aves Nocturnas',
+                    missionProgress: 5,
+                    missionTarget: 20,
+                    missionTimeLeft: 'Termina en 5d',
+                    memberList: [
+                        { id: 'm4', name: 'NightOwl99', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=NightOwl99', role: 'Líder', contributions: 4 },
+                        { id: 'm5', name: 'LunaWatcher', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=LunaWatcher', role: 'Miembro', contributions: 1 }
+                    ]
                 }
             ],
             currentScreen: 'login',
             battleLogs: [],
-            categories: ['Oop', 'Gaviota', 'Herrerillo', 'Golondrina', 'Cuervo', 'Águila', 'Búho'],
+            categories: BIRD_CATALOG.map(b => b.name),
+            theme: 'light',
             activityHistory: [],
             birds: BIRD_CATALOG,
             language: 'es',
@@ -344,6 +402,76 @@ export const useAppStore = create<CombinedState>()(
                 notifications: state.notifications.map(n => ({ ...n, isRead: true }))
             })),
             setCurrentScreen: (currentScreen: string) => set({ currentScreen }),
+
+            testLogin: async () => {
+                const username = 'TestExplorer';
+                const password = 'testpassword123';
+
+                try {
+                    // Try to log in first
+                    const { token, player } = await api.post('/auth/login', { username, password });
+                    await AvisCore.storeSecureToken({ token });
+
+                    const userObj: User = {
+                        id: player.id,
+                        name: player.username,
+                        rank: 'Ornitólogo de Pruebas',
+                        level: player.level || 50,
+                        xp: player.xp || 4500,
+                        maxXp: player.maxXp || 5000,
+                        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${player.username}`,
+                        feathers: player.feathers || 9999,
+                        joinDate: new Date().toISOString()
+                    };
+
+                    set({ currentUser: userObj, currentScreen: 'home' });
+                    get().addNotification({ type: 'system', title: 'Modo Test', message: 'Session backend reanudada con éxito.' });
+                    get().syncPlayerBirds();
+                    get().syncInventory();
+
+                } catch (err) {
+                    // If login fails, try to register the test user
+                    try {
+                        const { token, player } = await api.post('/auth/register', { username, password });
+                        await AvisCore.storeSecureToken({ token });
+
+                        const userObj: User = {
+                            id: player.id,
+                            name: player.username,
+                            rank: 'Ornitólogo de Pruebas',
+                            level: 50,
+                            xp: 4500,
+                            maxXp: 5000,
+                            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${player.username}`,
+                            feathers: 9999,
+                            joinDate: new Date().toISOString()
+                        };
+
+                        set({ currentUser: userObj, currentScreen: 'home' });
+                        get().addNotification({ type: 'system', title: 'Modo Test', message: 'Usuario TestExplorer registrado y conectado en el backend.' });
+                        get().syncPlayerBirds();
+                        get().syncInventory();
+
+                    } catch (regErr) {
+                        console.error('Test Login Failed entirely:', regErr);
+                        get().addNotification({ type: 'system', title: 'Modo Offline', message: 'Backend no disponible. Accediendo con datos locales (mock).' });
+
+                        // Fallback total a la version mock anterior si el backend esta apagado
+                        const dummyUser: User = {
+                            id: 'test-user-offline',
+                            name: 'TestExplorer_Offline',
+                            rank: 'Ornitólogo Aislado',
+                            level: 50,
+                            xp: 4500,
+                            maxXp: 5000,
+                            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=offline`,
+                            feathers: 9999,
+                            joinDate: new Date().toISOString()
+                        };
+                        set({ currentUser: dummyUser, currentScreen: 'home' });
+                    }
+                }
+            },
 
             login: async (username: string, pass: string) => {
                 try {
@@ -430,6 +558,23 @@ export const useAppStore = create<CombinedState>()(
             })),
 
             setLanguage: (language: 'es' | 'en') => set({ language }),
+            setTheme: (theme: 'light' | 'dark') => {
+                set({ theme });
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            },
+            toggleTheme: () => set((state) => {
+                const newTheme = state.theme === 'light' ? 'dark' : 'light';
+                if (newTheme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+                return { theme: newTheme };
+            }),
 
             addActivity: (action: string, icon: string) => set((state) => ({
                 activityHistory: [{
@@ -459,7 +604,9 @@ export const useAppStore = create<CombinedState>()(
             syncPlayerBirds: async () => {
                 try {
                     // 1. Fetch from server (owned birds)
+                    // Currently backend CollectionController doesn't exist, this will throw.
                     const birds = await api.get('/collection');
+
                     // 2. Save to local Room
                     await AvisCore.saveBirds({ birds });
                     // 3. Update store state
@@ -469,13 +616,21 @@ export const useAppStore = create<CombinedState>()(
                     });
                     get().hydrateBirdMedia();
                 } catch (err) {
-                    console.error('Error syncing player birds:', err);
-                    // Fallback to local Room
-                    const { birds } = await AvisCore.getPlayerBirds();
-                    set({
-                        playerBirds: birds,
-                        activeBirdsCount: birds.filter(b => b.status === 'Santuario').length
-                    });
+                    // Fallback to local
+                    try {
+                        const { birds } = await AvisCore.getPlayerBirds();
+                        if (birds && birds.length > 0) {
+                            set({
+                                playerBirds: birds,
+                                activeBirdsCount: birds.filter(b => b.status === 'Santuario').length
+                            });
+                        }
+                        // We do not override playerBirds with empty if the catch block fails 
+                        // to get native birds (e.g. in web mockup) unless it's strictly necessary,
+                        // to preserve birds added organically during the session.
+                    } catch (e) {
+                        console.warn("Could not fetch native birds fallback.");
+                    }
                     get().hydrateBirdMedia();
                 }
             },
@@ -593,9 +748,29 @@ export const useAppStore = create<CombinedState>()(
                 })
             })),
 
-            addComment: (postId) => set((state) => ({
-                posts: state.posts.map(p => p.id === postId ? { ...p, comments: p.comments + 1 } : p)
-            })),
+            addComment: (postId: string, text: string) => set((state) => {
+                const currentUser = get().currentUser;
+                return {
+                    posts: state.posts.map(p => {
+                        if (p.id === postId) {
+                            const newComment = {
+                                id: Math.random().toString(36).substring(2, 9),
+                                userId: currentUser?.id || 'anon',
+                                userName: currentUser?.name || 'Anónimo',
+                                avatar: currentUser?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${Math.random()}`,
+                                text: text,
+                                timestamp: Date.now()
+                            };
+                            return {
+                                ...p,
+                                comments: p.comments + 1,
+                                commentList: [...(p.commentList || []), newComment]
+                            };
+                        }
+                        return p;
+                    })
+                };
+            }),
 
             joinGuild: (guildId) => set((state) => ({
                 currentUser: state.currentUser ? { ...state.currentUser, guildId } : null
@@ -747,6 +922,24 @@ export const useAppStore = create<CombinedState>()(
                 const catalogBird = birds.find(b => b.id === birdId) || BIRD_CATALOG.find(b => b.id === birdId);
                 if (!catalogBird) return;
 
+                const newBirdForSantuario: Bird = {
+                    ...catalogBird,
+                    id: birdId + '-' + Date.now().toString(), // Unique instance id
+                    status: 'Santuario',
+                    level: 1,
+                    xp: 0
+                };
+
+                // Optimistic UI Update to ensure it appears in the tree immediately
+                set((s) => {
+                    const newPlayerBirds = [newBirdForSantuario, ...s.playerBirds];
+                    return {
+                        playerBirds: newPlayerBirds,
+                        activeBirdsCount: newPlayerBirds.filter(b => b.status === 'Santuario').length
+                    };
+                });
+                get().hydrateBirdMedia();
+
                 try {
                     // 1. Save to Server (Sighting)
                     const { lat, lng } = await AvisCore.syncLocation();
@@ -770,17 +963,18 @@ export const useAppStore = create<CombinedState>()(
                     });
 
                     // 3. Update Local Collection (fetch again to get server IDs)
-                    await get().syncPlayerBirds();
+                    // We comment this out because if the server doesn't support /collection yet, it will wipe the optimistic update.
+                    // await get().syncPlayerBirds(); 
 
                     addActivity(`Capturaste un ${catalogBird.name} en la Expedición`, 'add_circle');
 
                     addNotification({
                         type: 'achievement',
                         title: '¡Especie Registrada!',
-                        message: `Has encontrado un ${catalogBird.name}. Datos sincronizados con la nube e hilos locales.`
+                        message: `Has encontrado un ${catalogBird.name}. Datos sincronizados.`
                     });
                 } catch (err) {
-                    console.error('Error recording sighting:', err);
+                    console.error('Error recording sighting, keeping optimistic local update:', err);
 
                     // Offline fallback: save only locally
                     const { lat, lng } = await AvisCore.syncLocation();
@@ -796,7 +990,7 @@ export const useAppStore = create<CombinedState>()(
                     addNotification({
                         type: 'system',
                         title: 'Modo Offline',
-                        message: 'Avistamiento guardado localmente. Se sincronizará al recuperar conexión.'
+                        message: 'Avistamiento guardado localmente. Se verá en tu santuario.'
                     });
                 }
             },
@@ -867,6 +1061,16 @@ export const useAppStore = create<CombinedState>()(
             updateWeather: async () => {
                 const weather = await fetchWeather();
                 set({ weather });
+            },
+
+            removeBirdFromSantuario: (birdId: string) => {
+                set((state) => {
+                    const newBirds = state.playerBirds.filter(b => b.id !== birdId);
+                    return {
+                        playerBirds: newBirds,
+                        activeBirdsCount: newBirds.filter(b => b.status === 'Santuario').length
+                    };
+                });
             },
         }),
         {

@@ -96,6 +96,14 @@ export interface Activity {
     icon: string;
 }
 
+export interface GuildMember {
+    id: string;
+    name: string;
+    avatar: string;
+    role: string;
+    contributions: number;
+}
+
 export interface Guild {
     id: string;
     name: string;
@@ -105,6 +113,7 @@ export interface Guild {
     missionProgress: number;
     missionTarget: number;
     missionTimeLeft: string;
+    memberList?: GuildMember[];
 }
 
 export interface ChatMessage {
@@ -129,6 +138,7 @@ export interface SocialPost {
     likes: number; // Keep for legacy but we'll use reactions
     reactions?: Record<string, number>; // { '🐦': 5, '🪶': 2 }
     comments: number;
+    commentList?: ChatMessage[];
 }
 
 export interface AppState {
@@ -150,5 +160,6 @@ export interface AppState {
     battleLogs: string[];
     birds: Bird[];
     categories: string[];
+    theme: 'light' | 'dark';
     activityHistory: Activity[];
 }

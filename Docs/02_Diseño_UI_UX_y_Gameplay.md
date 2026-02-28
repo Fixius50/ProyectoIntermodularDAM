@@ -29,104 +29,83 @@ La aplicación debe sentirse como un **diario de naturalista mágico**.
 
 ---
 
-## 🗺️ Flujo de Pantallas
+## 🗺️ Flujo de Pantallas (Estado Actual Implementado)
 
-### 1. El Santuario (Home)
-Hub principal del juego. Árbol interactivo con pájaros de la colección del jugador animados (CSS: balanceo, caída de hojas). Panel superior con clima actual y recursos (Semillas, Notas, Reputación). Cambia de color según la fase del día (Mañana / Mediodía / Tarde / Noche).
+La aplicación consta actualmente de 7 pantallas principales, cada una con un flujo de usuario detallado y mecánicas interconectadas:
 
-### 2. La Expedición
-El jugador elige un **Bioma** (Bosque, Costa, Montaña) y un **Cebo** (Semillas, Fruta, Insectos) que inicia un temporizador pasivo. Contiene el minijuego de **"Enfoque"**: slider de nitidez de cámara para capturar el _sweet spot_ y ganar Notas de Campo extra.
+### 1. Autenticación (Login / Registro)
+- **Flujo de Usuario:** Pantalla inicial con un selector de idioma (ES/EN). El usuario alterna dinámicamente entre Iniciar Sesión y Registrarse.
+- **Campos:** Email, Contraseña y Nombre (solo registro).
+- **Proceso:** Envía credenciales al backend (Supabase / Spring Boot). Manejo de errores visuales mediante notificaciones tipo *shake* integradas en el panel.
 
-### 3. El Taller (Crafting)
-Mesa de madera con **3 slots** (Foto, Pluma, Notas). Panel inferior con el inventario de materiales. Al completar los slots, se lanza la animación de _"Pintando carta con acuarelas"_ que genera el ave en la colección.
+### 2. El Santuario (Home / Dashboard)
+- **Hub Central:** Visión general del entorno del jugador. Se actualiza en tiempo real basado en la API meteorológica (Clima) y la hora local (Mañana, Tarde, Noche).
+- **Inventario Rápido:** Visualización condensada superior con el estatus de recursos (Plumas, Stamina).
+- **Gestión de Aves:** Un carrusel dinámico ("Aves en el Santuario") con los ejemplares capturados. Permite filtrar por "Favoritos" o "Baja Stamina". Cada ave muestra su salud, y atributos (Canto, Plumaje, Vuelo).
+- **Consejo de Naturalista:** Panel dinámico inferior que da un consejo adaptado al clima del día.
 
-### 4. El Certamen (Batalla 1v1)
-Duelo por turnos. Selección de ave → Arena de batalla con animaciones → Pantalla de resolución con recompensas (Semillas + Reputación).
+### 3. La Expedición (Exploración Local)
+- **Mapa Interactivo:** Integración nativa táctil con Leaflet centrada en Pinto (Madrid) y sus parques. Cambia de tema (Claro/Oscuro) automáticamente.
+- **Escáner GPS:** El usuario escanea el área buscando aves. Tiene un cooldown de seguridad de 60 segundos.
+- **Condiciones Climatológicas:** El escaneo cruza la Fase del Día (Mañana/Tarde/Noche) y el Clima (Lluvia, Sol) con los requisitos biológicos de las aves para determinar cuáles aparecen.
+- **Modal de Estudio (Captura):** Si aparece un ave, se muestra foto, descripción científica y "Nota curiosa". El usuario pulsa "Registrar en Mi Diario" para añadirla al Santuario y recibir Plumas y XP.
+- **Bitácora de Campo (Panel Derecho):** Un resumen visual estilo diario de las especies descubiertas hasta el momento.
 
-### 5. El Álbum (Colección)
-Grid de cartas con estado (descubierta / no descubierta). Cada carta tiene:
-- **Cara A:** Stats de combate (Costo, Postura, HP)
-- **Cara B:** Información educativa real (Nuthatch API: nombre científico, hábitat, audio del canto)
+### 4. El Certamen (Sistema de Batalla 1v1)
+- **Fase de Selección:** El jugador elige a su Campeón desde su Santuario. (Restricción: Las aves con menos de 20 de Stamina no pueden competir).
+- **Fase de Preparación:** Emparejamiento contra un ave local. El usuario puede utilizar consumibles de su mochila (ej. Néctar Floral para subir Canto) antes del duelo.
+- **Fase de Combate (5 Rondas):** Sistema de Piedra-Papel-Tijera modificado (Canto vence Plumaje, Plumaje vence Vuelo, Vuelo vence Canto).
+  - El usuario puede elegir táctica manual por ronda o gastar su "Habilidad Especial" de la raza.
+  - Combos multiplicadores por victorias consecutivas y bufas según el clima (El Vuelo tiene +20% si está despejado).
+- **Fase de Recompensas:** Se otorga experiencia y Plumas según el resultado (Victoria, Empate, Derrota). Se resta 20 de Stamina al ave utilizada.
 
-### 6. Otras pantallas
-- **Market:** Subastas en tiempo real (WebFlux + Redis)
-- **Bandada (Social):** Chat grupal RSocket, eventos de comunidad
-- **Perfil:** Logros, reputación, aves raras
+### 5. El Social (Bandadas y Comunidad)
+- **Panel de Bandada (Gremio):** Muestra los datos de la "Bandada" del jugador (nivel, miembros) y una "Misión Global" cooperativa con barra de progreso. Permite abrir el "Canal de Voz" (Chat grupal interactivo estilo mensajería).
+- **Explorador de Bandadas:** Si el usuario no tiene gremio, ve una lista de gremios disponibles a los que puede unirse en un clic.
+- **Muro de Avistamientos (Feed):** Los usuarios publican texto adjuntando aves de su colección (`selectedBirdId`). Muestra publicaciones de otros usuarios (nombre, hora, ubicación, foto). Los jugadores pueden reaccionar con emojis (🐦, 🪶, 📷).
+
+### 6. La Tienda (Suministros y Reventa)
+- **Caja Rápida de Monedas:** Visualiza en grande las "Plumas" disponibles.
+- **Pestaña Mercado:**
+  - **Oferta Dinámica de Clima:** Se ofrece un ítem temporal dependiente del clima (ej. Botas de agua si llueve).
+  - **Catálogo Fijo:** Consumibles de estadísticas (Néctar, Semillas) y el *Sobre de Iniciación*.
+  - **Apertura de Sobres (Lootbox):** Al comprar un sobre, salta una animación a pantalla completa de 3 segundos revelando 3 nuevas especies de aves y añadiéndolas al Santuario automáticamente.
+- **Pestaña Reventa:** Listado del inventario actual para vender consumibles sobrantes por 5 Plumas cada uno.
+
+### 7. Mi Perfil
+- **Identidad del Jugador:** Avatar modal (integración API DiceBear) y asignación de Título/Rango basado en XP.
+- **Compañero Favorito:** Permite fijar un ave capturada en la tarjeta principal (cara B estadística + arte visual).
+- **Estadísticas Biológicas:** Barras de progreso por categorías según los especímenes disponibles globalmente vs. capturados.
+- **Medallas (Logros):** Evaluador automático que reparte medallas en caliente si el usuario llega a 10 especies, realiza X expediciones, etc.
+- **Historial de Actividad:** Timeline de los últimos eventos (ej. "Capturaste un Petirrojo - Hace 2 min").
 
 ---
 
-## ⚙️ Mecánicas de Juego
+## ⚙️ Mecánicas de Juego y Persistencia Base
 
-### El Ciclo de Vida Diario del Jugador
+### Estado Global Responsivo (Zustand)
+Toda la lógica de recursos y transacciones se mantiene persistente localmente mediante `localStorage` (sin requerir base de datos constante en capa UI).
 
+### El Ciclo Diurno-Nocturno
 ```
-🌅 Mañana  → Expedición: recolectar materiales (Madera, Bayas, Fibras)
-☀️ Mediodía → Taller: construir la Estación de Reclamo combinando materiales
-🌇 Tarde    → Notificación: el servidor sincroniza clima + probabilidad → atrae un ave → foto → carta
-🌙 Noche    → Certamen: usar cartas nuevas para ganar Reputación y Metal (material raro)
+🌅 Mañana  → Expedición: aves madrugadoras en el mapa.
+☀️ Mediodía → Mayor concurrencia social, reabastecimiento en Tienda.
+🌇 Tarde    → Combinaciones raras bajo ciertos climas de transición.
+🌙 Noche    → El Certamen: foco en PvP / PvE táctico.
 ```
 
-### Materiales
-
-| Material | Fuente | Efecto |
+### Triángulo de Batalla en El Certamen
+| Atributo | Fuerte Contra | Razón Práctica |
 |---|---|---|
-| Madera | Expedición bosque | Atrae aves de árbol |
-| Fibras/Hierbas | Expedición montaña | Camuflaje; sin ellas las aves tímidas no aparecen |
-| Metal/Restos | Certamen (noche) | Estructuras urbanas o resistentes |
-| Semillas/Fruta/Insectos | Minijuego Enfoque | Define la dieta y especie probable |
+| 🔴 **Canto** | 🟢 Plumaje | El ruido asusta el exhibicionismo. |
+| 🟢 **Plumaje** | 🔵 Vuelo | La belleza / brillo distrae la trayectoria. |
+| 🔵 **Vuelo** | 🔴 Canto | La agilidad evade la frecuencia. |
 
-### Construcción de la Estación de Reclamo (Crafting → Backend)
-
-El servidor calcula qué pájaro aparece según:
-1. **Base (Madera/Metal):** determina la familia de aves (Madera → Pájaro Carpintero)
-2. **Cebo:** determina la dieta (Insectos → Insectívoros)
-3. **Clima (API wttr.in):** si llueve, aumenta la probabilidad de aves que buscan refugio
-
-La estación tiene **durabilidad limitada** (18h), obligando a reiniciar el ciclo económico.
+*(Nota: Aderezado con Habilidades Especiales como "Intimidación" de Rapaces o "Solo Virtuoso" de Pájaros Cantores).*
 
 ---
 
-## ⚔️ Sistema de Batalla (El Certamen)
-
-### Tablero
-- **Zona de juego:** 3 huecos por jugador
-- **Mana (Semillas):** progresivo — Turno N = N Semillas para invocar aves
-
-### El Triángulo de Poder (Piedra-Papel-Tijera Aviar)
-
-| Postura | ↑ Vence a | Lógica |
-|---|---|---|
-| 🔴 **Canto** | 🟢 Plumaje | El grito asusta a la belleza |
-| 🟢 **Plumaje** | 🔵 Vuelo | La belleza distrae al movimiento |
-| 🔵 **Vuelo** | 🔴 Canto | La velocidad escapa del ruido |
-
-Modificador climático: `"Si llueve, gana +1 en Vuelo"` (Habilidad Pasiva de la carta).
-
-### Resolución del Duelo
-- **Victoria:** El pájaro rival huye (eliminado de la mesa)
-- **Empate:** Ambos quedan "cansados" (permanecen pero debilitados)
-- **Derrota:** Tu pájaro se retira del combate
-
----
-
-## 🌍 Módulo Social
-
-### Bandadas (Sindicatos de Naturalistas)
-- **Chat en tiempo real:** RSocket (baja latencia)
-- **Eventos de comunidad:** misiones grupales con recompensas colectivas
-- **Estrategia compartida:** consejos automáticos post-batalla
-
-### Marketplace Reactivo
-- Compra/venta de cartas crafteadas o repetidas
-- **Subastas en tiempo real:** WebFlux + Redisson (bloqueos distribuidos anti-doble-gasto)
-- Búsquedas en sub-milisegundos con Redis
-
-### Santuarios Visitables
-La sección "El Santuario" de cada jugador puede ser visitada por su Bandada, mostrando aves raras y logros conseguidos.
-
----
-
-## ♿ Accesibilidad
-- Etiquetas descriptivas (`aria-label` / Semantics) en todos los botones interactivos
-- Feedback háptico (vibración suave) en victorias y validaciones del minijuego Enfoque
-- Alto contraste garantizado entre fondo e íconos en todas las fases del día
+## ♿ Accesibilidad Estándar
+- Todo elemento de la UI obedece a **Glassmorphism soft** minimizando estrangulamientos en contornos rígidos.
+- Sistema de paletas Dark Mode unificado gestionado vía TailwindCSS (`dark:bg-slate-900`) garantizando legibilidad nocturna óptima.
+- Textos con familias tipográficas *display / handwriting* para decoración y *sans* (Quicksand / Roboto) robusto para paneles de datos e inventarios.

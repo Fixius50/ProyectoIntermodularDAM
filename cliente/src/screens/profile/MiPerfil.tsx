@@ -25,7 +25,9 @@ const MiPerfil: React.FC = () => {
         setAvatar,
         setFavoriteBird,
         language,
-        setLanguage
+        setLanguage,
+        theme,
+        toggleTheme
     } = useAppStore();
 
     const t = translations[language].profile;
@@ -95,27 +97,13 @@ const MiPerfil: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col flex-1 font-display bg-cream dark:bg-slate-950">
+        <div className="flex flex-col flex-1 font-display bg-cream dark:bg-slate-950 transition-colors duration-300">
             <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 md:px-12 py-6 md:py-8">
 
                 <header className="flex flex-col gap-3 py-8 md:py-12 items-center text-center animate-fade-in relative">
                     <div className="absolute top-0 w-full h-48 bg-gradient-to-b from-primary/20 to-transparent -z-10 rounded-b-[3rem]"></div>
 
-                    {/* Language Selector */}
-                    <div className="absolute top-4 right-0 flex gap-2">
-                        <button
-                            onClick={() => setLanguage('es')}
-                            className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter transition-all border ${language === 'es' ? 'bg-primary text-slate-900 border-primary shadow-lg' : 'bg-white/50 dark:bg-slate-900/50 text-slate-500 border-slate-200 dark:border-slate-800'}`}
-                        >
-                            ESP
-                        </button>
-                        <button
-                            onClick={() => setLanguage('en')}
-                            className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter transition-all border ${language === 'en' ? 'bg-primary text-slate-900 border-primary shadow-lg' : 'bg-white/50 dark:bg-slate-900/50 text-slate-500 border-slate-200 dark:border-slate-800'}`}
-                        >
-                            ENG
-                        </button>
-                    </div>
+
 
                     <div className="relative group cursor-pointer" onClick={() => setIsAvatarModalOpen(true)}>
                         <div className="absolute -inset-1 bg-gradient-to-r from-primary to-green-400 rounded-full blur opacity-25 group-hover:opacity-60 transition duration-500 group-hover:duration-200"></div>
@@ -130,19 +118,76 @@ const MiPerfil: React.FC = () => {
                     </div>
 
                     <div className="mt-4 flex flex-col items-center">
-                        <h2 className="text-3xl md:text-4xl font-black leading-tight">{currentUser?.name || 'Explorador'}</h2>
+                        <h2 className="text-3xl md:text-4xl font-black leading-tight text-slate-900 dark:text-white">{currentUser?.name || t.identity}</h2>
                         <div className="flex items-center gap-2 mt-2">
                             <span className="material-symbols-outlined text-amber-500 text-sm">stars</span>
-                            <p className="text-amber-600 dark:text-amber-500 font-black uppercase tracking-widest text-[10px] md:text-xs">Naturalista de Rango {currentUser?.level || 1}</p>
+                            <p className="text-amber-600 dark:text-amber-500 font-black uppercase tracking-widest text-[10px] md:text-xs">{t.rank} {currentUser?.level || 1}</p>
                             <span className="material-symbols-outlined text-amber-500 text-sm">stars</span>
                         </div>
 
                         <div className="mt-4 px-4 py-2 bg-slate-100 dark:bg-slate-900 rounded-full flex items-center gap-3 border border-slate-200 dark:border-slate-800 shadow-sm">
                             <span className="material-symbols-outlined text-slate-400 text-sm">monetization_on</span>
-                            <span className="font-black text-sm">{currentUser?.feathers || 0} <span className="text-[10px] text-slate-500 uppercase tracking-widest ml-1">Plumas</span></span>
+                            <span className="font-black text-sm">{currentUser?.feathers || 0} <span className="text-[10px] text-slate-500 uppercase tracking-widest ml-1">{t.feathers}</span></span>
                         </div>
                     </div>
                 </header>
+
+                {/* App Settings Section */}
+                <section className="mb-8 animate-slide-up" style={{ animationDelay: '50ms' }}>
+                    <h3 className="text-lg font-black uppercase tracking-widest flex items-center gap-2 mb-4">
+                        <span className="material-symbols-outlined text-primary">settings</span>
+                        {t.settings}
+                    </h3>
+                    <GlassPanel className="p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Theme Toggle */}
+                            <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                <div className="flex items-center gap-3">
+                                    <div className={`p-2 rounded-xl ${theme === 'light' ? 'bg-amber-100 text-amber-600' : 'bg-indigo-900/30 text-indigo-400'}`}>
+                                        <span className="material-symbols-outlined">{theme === 'light' ? 'light_mode' : 'dark_mode'}</span>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-black uppercase tracking-widest">{t.theme}</p>
+                                        <p className="text-[10px] text-slate-500 font-bold">{theme === 'light' ? t.lightMode : t.darkMode}</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => toggleTheme()}
+                                    className={`relative w-12 h-6 rounded-full transition-colors duration-300 focus:outline-none ${theme === 'dark' ? 'bg-primary' : 'bg-slate-300'}`}
+                                >
+                                    <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 ${theme === 'dark' ? 'translate-x-6' : ''}`} />
+                                </button>
+                            </div>
+
+                            {/* Language Selector */}
+                            <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+                                        <span className="material-symbols-outlined">translate</span>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-black uppercase tracking-widest">{t.language}</p>
+                                        <p className="text-[10px] text-slate-500 font-bold">{language === 'es' ? 'Castellano' : 'English'}</p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-1 bg-white dark:bg-slate-800 p-1 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                                    <button
+                                        onClick={() => setLanguage('es')}
+                                        className={`px-3 py-1 rounded-lg text-[9px] font-black transition-all ${language === 'es' ? 'bg-primary text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                                    >
+                                        ES
+                                    </button>
+                                    <button
+                                        onClick={() => setLanguage('en')}
+                                        className={`px-3 py-1 rounded-lg text-[9px] font-black transition-all ${language === 'en' ? 'bg-primary text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                                    >
+                                        EN
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </GlassPanel>
+                </section>
 
                 {/* Favorite Bird Section */}
                 <section className="mb-8 animate-slide-up" style={{ animationDelay: '100ms' }}>
@@ -184,9 +229,9 @@ const MiPerfil: React.FC = () => {
                             <div className="size-12 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-500 mb-3">
                                 <span className="material-symbols-outlined text-2xl">pets</span>
                             </div>
-                            <h4 className="text-base font-black mb-1">Sin Compañero</h4>
+                            <h4 className="text-base font-black mb-1">{t.noCompanion}</h4>
                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest px-4">
-                                {playerBirds.length > 0 ? 'Toca para seleccionar tu ave favorita' : 'Captura aves en la expedición primero'}
+                                {playerBirds.length > 0 ? t.noCompanionDesc : t.captureFirst}
                             </p>
                         </GlassPanel>
                     )}
@@ -215,23 +260,27 @@ const MiPerfil: React.FC = () => {
                         <GlassPanel className="p-6 md:p-8 flex-1">
                             <div className="space-y-6">
                                 {categories.map((cat: string) => {
-                                    // Count unique species captured in this category
-                                    const capturedInCat = new Set(playerBirds.filter((b: Bird) => b.type === cat).map((b: Bird) => getBaseId(b.id))).size;
-                                    const totalInCat = birds.filter((b: Bird) => b.type === cat).length || 1; // avoid division by zero
-                                    const percentage = Math.min(100, (capturedInCat / totalInCat) * 100);
+                                    // Count occurrences of this species in user's collection
+                                    const speciesInstances = playerBirds.filter((b: Bird) => b.name === cat);
+                                    const capturedCount = speciesInstances.length;
+                                    // Mapping logic: if you have at least 1, it's 100% for that bar (assuming 1 per species in progress)
+                                    // Or if user wants "n/total", here total is 1 for each species bar
+                                    const percentage = capturedCount > 0 ? 100 : 0;
+                                    // Translate cat name if it's a key
+                                    const displayName = translations[language].common.birds?.[cat as keyof typeof translations.es.common.birds] || cat;
 
                                     return (
                                         <div key={cat}>
                                             <div className="flex justify-between items-center mb-2">
-                                                <span className="text-sm font-bold capitalize text-slate-700 dark:text-slate-300">{cat}</span>
+                                                <span className="text-sm font-bold capitalize text-slate-700 dark:text-slate-300">{displayName}</span>
                                                 <div className="flex items-baseline gap-1">
-                                                    <span className="font-black">{capturedInCat}</span>
-                                                    <span className="text-[10px] font-bold text-slate-400">/ {totalInCat}</span>
+                                                    <span className={`font-black ${capturedCount > 0 ? 'text-primary' : 'text-slate-300'}`}>{capturedCount}</span>
+                                                    <span className="text-[10px] font-bold text-slate-400">/ 1</span>
                                                 </div>
                                             </div>
                                             <div className="h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden shadow-inner">
                                                 <div
-                                                    className="h-full bg-gradient-to-r from-primary to-green-400 shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)] transition-all duration-1000 ease-out"
+                                                    className={`h-full bg-gradient-to-r ${capturedCount > 0 ? 'from-primary to-green-400' : 'from-slate-200 to-slate-200'} transition-all duration-1000 ease-out`}
                                                     style={{ width: `${percentage}%` }}
                                                 ></div>
                                             </div>
@@ -365,8 +414,8 @@ const MiPerfil: React.FC = () => {
                             {playerBirds.length === 0 ? (
                                 <div className="h-full flex flex-col items-center justify-center text-slate-500">
                                     <span className="material-symbols-outlined text-5xl mb-4 opacity-30">visibility_off</span>
-                                    <p className="font-bold text-center">No tienes aves en tu santuario.</p>
-                                    <p className="text-xs mt-2 text-center">Ve a la Expedición para encontrar compañeros.</p>
+                                    <p className="font-bold text-center">{t.noBirdsInSantuario}</p>
+                                    <p className="text-xs mt-2 text-center">{t.goExpeditionForBirds}</p>
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">

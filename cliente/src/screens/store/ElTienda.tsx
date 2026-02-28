@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAppStore, BIRD_CATALOG } from '../../store/useAppStore';
 import GlassPanel from '../../components/ui/GlassPanel';
 import { Bird, InventoryItem } from '../../types';
+import { translations } from '../../i18n/translations';
 
 const PACK_ANIMATION_DURATION = 3000;
 
@@ -13,8 +14,12 @@ const ElTienda: React.FC = () => {
         purchaseItem,
         sellItem,
         addItemToInventory,
-        addBirdToSantuario
+        addBirdToSantuario,
+        language
     } = useAppStore();
+
+    const t = translations[language as keyof typeof translations].store;
+    const commonT = translations[language as keyof typeof translations].common;
 
     const feathers = currentUser?.feathers || 0;
 
@@ -30,24 +35,24 @@ const ElTienda: React.FC = () => {
         const condition = weather.condition.toLowerCase();
 
         if (condition.includes('rain') || condition.includes('lluvia')) {
-            setDynamicOffer({ id: 'd1', name: 'Botas de Agua', price: 150, type: 'Equipment', image: 'https://images.pexels.com/photos/5412435/pexels-photo-5412435.jpeg?auto=compress&cs=tinysrgb&w=400', desc: 'Evita penalizaciones de Plumaje por lluvia en el Certamen.', icon: 'water_drop' });
+            setDynamicOffer({ id: 'd1', name: commonT.items.i1, price: 150, type: 'Equipment', image: 'https://images.pexels.com/photos/5412435/pexels-photo-5412435.jpeg?auto=compress&cs=tinysrgb&w=400', desc: t.weatherOffer, icon: 'water_drop' });
         } else if (condition.includes('sun') || condition.includes('clear') || condition.includes('despejado')) {
-            setDynamicOffer({ id: 'd2', name: 'Prismáticos HD', price: 200, type: 'Equipment', image: 'https://images.pexels.com/photos/1036396/pexels-photo-1036396.jpeg?auto=compress&cs=tinysrgb&w=400', desc: '+20% de probabilidad de avistamientos raros de día.', icon: 'wb_sunny' });
+            setDynamicOffer({ id: 'd2', name: 'Prismáticos HD', price: 200, type: 'Equipment', image: 'https://images.pexels.com/photos/1036396/pexels-photo-1036396.jpeg?auto=compress&cs=tinysrgb&w=400', desc: t.weatherOffer, icon: 'wb_sunny' });
         } else {
-            setDynamicOffer({ id: 'd3', name: 'Guía de Hábitats', price: 100, type: 'Consumable', image: 'https://images.pexels.com/photos/33283/stack-of-books-vintage-books-book-books.jpg?auto=compress&cs=tinysrgb&w=400', desc: 'Dobla la XP obtenida en el próximo descubrimiento.', icon: 'menu_book' });
+            setDynamicOffer({ id: 'd3', name: 'Guía de Hábitats', price: 100, type: 'Consumable', image: 'https://images.pexels.com/photos/33283/stack-of-books-vintage-books-book-books.jpg?auto=compress&cs=tinysrgb&w=400', desc: t.weatherOffer, icon: 'menu_book' });
         }
     }, [weather]);
 
     const storeItems = [
-        { id: 's1', name: 'Sobre de Iniciación', price: 500, type: 'Card Pack', image: 'https://images.pexels.com/photos/4060435/pexels-photo-4060435.jpeg?auto=compress&cs=tinysrgb&w=400', desc: 'Contiene 3 pájaros misteriosos garantizados.', icon: 'style' },
-        { id: 'i1', name: 'Néctar Floral', price: 10, type: 'Consumable', image: 'https://images.pexels.com/photos/1013444/pexels-photo-1013444.jpeg?auto=compress&cs=tinysrgb&w=400', desc: '+15% a Canto en el Certamen.', icon: 'water_drop' },
-        { id: 'i2', name: 'Semillas de Vigor', price: 10, type: 'Consumable', image: 'https://images.pexels.com/photos/3951631/pexels-photo-3951631.jpeg?auto=compress&cs=tinysrgb&w=400', desc: '+15% a Vuelo en el Certamen.', icon: 'grass' },
-        { id: 'i3', name: 'Pluma de Águila', price: 10, type: 'Consumable', image: 'https://images.pexels.com/photos/33130/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=400', desc: '+15% a Plumaje en el Certamen.', icon: 'stylus' },
+        { id: 's1', name: commonT.items.i1, price: 500, type: 'Card Pack', image: 'https://images.pexels.com/photos/4060435/pexels-photo-4060435.jpeg?auto=compress&cs=tinysrgb&w=400', desc: t.openingPack, icon: 'style' },
+        { id: 'i1', name: commonT.items.i1, price: 10, type: 'Consumable', image: 'https://images.pexels.com/photos/1013444/pexels-photo-1013444.jpeg?auto=compress&cs=tinysrgb&w=400', desc: '+15% a Canto en el Certamen.', icon: 'water_drop' },
+        { id: 'i2', name: commonT.items.i2, price: 10, type: 'Consumable', image: 'https://images.pexels.com/photos/3951631/pexels-photo-3951631.jpeg?auto=compress&cs=tinysrgb&w=400', desc: '+15% a Vuelo en el Certamen.', icon: 'grass' },
+        { id: 'i3', name: commonT.items.i3, price: 10, type: 'Consumable', image: 'https://images.pexels.com/photos/33130/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=400', desc: '+15% a Plumaje en el Certamen.', icon: 'stylus' },
         ...(dynamicOffer ? [dynamicOffer] : [])
     ];
 
     const getInventoryCount = (itemId: string) => {
-        return inventory.find(i => i.id === itemId)?.count || 0;
+        return inventory.find((i: InventoryItem) => i.id === itemId)?.count || 0;
     };
 
     const handleBuy = (item: any) => {
@@ -109,17 +114,17 @@ const ElTienda: React.FC = () => {
                         <div className="flex flex-col gap-3">
                             <div className="flex items-center gap-2 px-3 py-1 bg-amber-500/10 rounded-full w-fit">
                                 <span className="material-symbols-outlined text-sm text-amber-500">shopping_cart</span>
-                                <span className="text-[10px] font-black uppercase tracking-widest text-amber-500">Suministros</span>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-amber-500">{t.supplies}</span>
                             </div>
-                            <h2 className="text-2xl md:text-4xl lg:text-5xl font-black leading-tight">La Tienda</h2>
+                            <h2 className="text-2xl md:text-4xl lg:text-5xl font-black leading-tight dark:text-white">{t.title}</h2>
                         </div>
                         <div className="glass-card px-6 py-3 border-primary/20 flex items-center gap-4 bg-white/50 dark:bg-slate-900/50 shadow-md">
                             <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary shadow-inner">
                                 <span className="material-symbols-outlined text-2xl">monetization_on</span>
                             </div>
                             <div>
-                                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 leading-none mb-1">Balance</p>
-                                <p className="text-2xl font-black leading-none text-primary">{feathers} <span className="text-[10px] text-slate-500">PLUMAS</span></p>
+                                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 leading-none mb-1">{t.balance}</p>
+                                <p className="text-2xl font-black leading-none text-primary">{feathers} <span className="text-[10px] text-slate-500">{t.currency}</span></p>
                             </div>
                         </div>
                     </div>
@@ -131,13 +136,13 @@ const ElTienda: React.FC = () => {
                         onClick={() => setActiveTab('comprar')}
                         className={`flex-1 py-4 font-black uppercase tracking-widest text-sm rounded-2xl transition-all shadow-sm flex items-center justify-center gap-2 ${activeTab === 'comprar' ? 'bg-primary text-slate-900 scale-100' : 'bg-white/50 dark:bg-slate-900/50 text-slate-400 hover:bg-white/80 scale-95'}`}
                     >
-                        <span className="material-symbols-outlined">storefront</span> Mercado
+                        <span className="material-symbols-outlined">storefront</span> {t.tabBuy}
                     </button>
                     <button
                         onClick={() => setActiveTab('vender')}
                         className={`flex-1 py-4 font-black uppercase tracking-widest text-sm rounded-2xl transition-all shadow-sm flex items-center justify-center gap-2 ${activeTab === 'vender' ? 'bg-primary text-slate-900 scale-100' : 'bg-white/50 dark:bg-slate-900/50 text-slate-400 hover:bg-white/80 scale-95'}`}
                     >
-                        <span className="material-symbols-outlined">sell</span> Reventa
+                        <span className="material-symbols-outlined">sell</span> {t.tabSell}
                     </button>
                 </div>
 
@@ -147,16 +152,16 @@ const ElTienda: React.FC = () => {
                             <div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-1000" style={{ backgroundImage: 'url("https://images.pexels.com/photos/450441/pexels-photo-450441.jpeg?auto=compress&cs=tinysrgb&w=1200")' }}></div>
                             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent"></div>
                             <div className="absolute inset-0 flex flex-col justify-center p-8 md:p-12">
-                                <span className="inline-block px-3 py-1 bg-amber-500 text-white text-[9px] font-black uppercase tracking-widest rounded-full w-max mb-4 shadow-lg animate-pulse">Oferta Limitada</span>
-                                <h3 className="text-3xl md:text-5xl font-black text-white mb-4">Pase de Expedición</h3>
-                                <p className="text-white/80 text-sm max-w-md font-medium mb-6">Aumenta tus probabilidades de avistamientos raros y acorta las travesías.</p>
-                                <button className="bg-white text-slate-900 px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-100 shadow-xl transition-transform hover:scale-105 active:scale-95 w-max">Ver Detalles</button>
+                                <span className="inline-block px-3 py-1 bg-amber-500 text-white text-[9px] font-black uppercase tracking-widest rounded-full w-max mb-4 shadow-lg animate-pulse">{t.limitedOffer}</span>
+                                <h3 className="text-3xl md:text-5xl font-black text-white mb-4">{t.passTitle}</h3>
+                                <p className="text-white/80 text-sm max-w-md font-medium mb-6">{t.passDesc}</p>
+                                <button className="bg-white text-slate-900 px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-100 shadow-xl transition-transform hover:scale-105 active:scale-95 w-max">{t.viewDetails}</button>
                             </div>
                         </section>
 
                         <div className="flex items-center gap-3 mb-6">
-                            <h3 className="font-black uppercase tracking-widest text-lg">Catálogo Dinámico</h3>
-                            {weather && <div className="px-2 py-1 bg-blue-500/10 text-blue-500 rounded text-[9px] font-bold uppercase">Temporada: {weather.condition}</div>}
+                            <h3 className="font-black uppercase tracking-widest text-lg dark:text-white">{t.dynamicCatalog}</h3>
+                            {weather && <div className="px-2 py-1 bg-blue-500/10 text-blue-500 rounded text-[9px] font-bold uppercase">{t.season} {weather.condition}</div>}
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -179,23 +184,23 @@ const ElTienda: React.FC = () => {
                                             )}
                                         </div>
                                         <div className="p-6 flex flex-col flex-grow text-center text-left">
-                                            <h4 className="font-black text-lg mb-1 group-hover:text-primary transition-colors text-left">{item.name}</h4>
+                                            <h4 className="font-black text-lg mb-1 group-hover:text-primary transition-colors text-left dark:text-white">{item.name}</h4>
 
-                                            <div className="flex justify-between items-center text-xs text-slate-500 mb-4 text-left">
+                                            <div className="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400 mb-4 text-left">
                                                 <span className="italic">{item.desc}</span>
                                             </div>
 
                                             <div className="mt-auto">
                                                 {item.type !== 'Card Pack' && (
                                                     <div className="flex justify-between items-center text-[10px] font-black text-primary/80 uppercase tracking-widest mb-3 px-2">
-                                                        <span>En mochila:</span>
+                                                        <span>{t.inBackpack}</span>
                                                         <span className="bg-primary/20 px-2 py-0.5 rounded-md">{ownedCount}</span>
                                                     </div>
                                                 )}
 
                                                 <div className="flex items-center justify-center gap-2 mb-4 bg-slate-50 dark:bg-slate-900 py-3 rounded-xl border border-slate-100 dark:border-slate-800 shadow-inner">
                                                     <span className="material-symbols-outlined text-amber-500 text-base">monetization_on</span>
-                                                    <span className="text-xl font-black">{item.price}</span>
+                                                    <span className="text-xl font-black dark:text-white">{item.price}</span>
                                                 </div>
 
                                                 <button
@@ -204,7 +209,7 @@ const ElTienda: React.FC = () => {
                                                     className={`w-full py-4 rounded-xl font-black uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2 ${canAfford ? 'bg-primary text-slate-900 hover:scale-[1.02] active:scale-95 shadow-lg shadow-primary/20' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed opacity-70'}`}
                                                 >
                                                     <span className="material-symbols-outlined text-sm">{canAfford ? 'shopping_bag' : 'lock'}</span>
-                                                    {canAfford ? 'Comprar' : 'Faltan plumas'}
+                                                    {canAfford ? t.buyButton : t.missingFeathers}
                                                 </button>
                                             </div>
                                         </div>
@@ -223,21 +228,21 @@ const ElTienda: React.FC = () => {
 
                         {inventory.length === 0 ? (
                             <GlassPanel className="p-12 text-center flex flex-col items-center border-dashed border-2 border-slate-300 dark:border-slate-700">
-                                <span className="material-symbols-outlined text-6xl text-slate-300 mb-4">backpack</span>
-                                <h4 className="text-xl font-black mb-2 text-slate-400">Tu mochila está vacía</h4>
-                                <p className="text-sm font-bold text-slate-500 max-w-sm">Explora Pinto para encontrar objetos o compra suministros en el Mercado.</p>
+                                <span className="material-symbols-outlined text-6xl text-slate-300 dark:text-slate-700 mb-4">backpack</span>
+                                <h4 className="text-xl font-black mb-2 text-slate-400 dark:text-slate-500">{t.emptyBackpack}</h4>
+                                <p className="text-sm font-bold text-slate-500 dark:text-slate-400 max-w-sm">{t.sellDesc}</p>
                             </GlassPanel>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                                {inventory.map((item) => (
+                                {inventory.map((item: InventoryItem) => (
                                     <div key={item.id} className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-md p-5 rounded-[2rem] border border-white dark:border-slate-800 shadow-sm flex items-center justify-between group hover:shadow-md transition-all">
                                         <div className="flex items-center gap-4">
                                             <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                                                 <span className="material-symbols-outlined">{item.icon || 'category'}</span>
                                             </div>
                                             <div className="text-left">
-                                                <h5 className="font-black text-base leading-none mb-1">{item.name}</h5>
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">x{item.count} en stock</p>
+                                                <h5 className="font-black text-base leading-none mb-1 dark:text-white">{commonT.items[item.name as keyof typeof commonT.items] || item.name}</h5>
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">x{item.count} {t.inBackpack}</p>
                                             </div>
                                         </div>
                                         <button
@@ -272,7 +277,7 @@ const ElTienda: React.FC = () => {
                         </div>
                     ) : (
                         <div className="flex flex-wrap justify-center gap-6 animate-scale-in">
-                            {packResults.map((bird, idx) => (
+                            {packResults.map((bird: Bird, idx: number) => (
                                 <div key={idx} className="w-64 bg-slate-50 dark:bg-slate-900 rounded-[2rem] overflow-hidden shadow-2xl border border-white dark:border-slate-800 transform hover:scale-105 transition-transform delay-100" style={{ animationDelay: `${idx * 200}ms` }}>
                                     <div className="h-48 bg-cover bg-center" style={{ backgroundImage: `url('${bird.image}')` }}></div>
                                     <div className="p-6 text-center">
@@ -293,7 +298,7 @@ const ElTienda: React.FC = () => {
                             onClick={() => setIsOpeningPack(false)}
                             className="mt-12 px-8 py-3 bg-white text-slate-900 rounded-full font-black uppercase tracking-widest shadow-xl hover:scale-105 transition-transform"
                         >
-                            Ir al Santuario
+                            {t.goSantuario}
                         </button>
                     )}
                 </div>

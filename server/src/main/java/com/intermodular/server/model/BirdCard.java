@@ -10,7 +10,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.List;
+
 import java.util.UUID;
 
 @Data
@@ -36,12 +36,12 @@ public class BirdCard implements Serializable {
     private int defense;
     private int luck;
     private int speed;
-    private String type;       // original column (kept for BattleController)
+    private String type; // original column (kept for BattleController)
 
     @Column("bird_type")
-    private String birdType;   // Songbird / Raptor / Flight / Plumage
+    private String birdType; // Songbird / Raptor / Flight / Plumage
 
-    private String rarity;     // common / uncommon / rare / legendary
+    private String rarity; // common / uncommon / rare / legendary
 
     // Extended game stats
     private int hp;

@@ -21,8 +21,8 @@ export default {
                 cream: '#fdfbf7',
             },
             fontFamily: {
-                display: ['Lexend', 'sans-serif'],
-                sans: ['Lexend', 'Inter', 'sans-serif'],
+                display: ['Outfit', 'sans-serif'],
+                sans: ['Outfit', 'sans-serif'],
             },
             animation: {
                 'fade-in-down': 'fade-in-down 0.5s ease-out',
