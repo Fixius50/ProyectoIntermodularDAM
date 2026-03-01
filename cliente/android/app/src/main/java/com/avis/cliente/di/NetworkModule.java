@@ -51,6 +51,7 @@ public class NetworkModule {
                 .addInterceptor(logging)
                 .addInterceptor(chain -> {
                     Request original = chain.request();
+                    android.util.Log.d("AvisNetwork", "--> PETICIÓN NATIVA: " + original.url());
                     Request.Builder builder = original.newBuilder();
 
                     // 1. Persistencia de JWT (Interceptor de Seguridad)

@@ -23,6 +23,7 @@ func init() {
 	os.Setenv("TS_DEBUG_NO_NETLINK", "true")
 	os.Setenv("TS_NETSTACK_NETLINK", "0")
 	os.Setenv("TS_SKIP_NETLINK_BIND", "true")
+	log.Println("Tailscale Bridge: NETLINK Bypass Activado")
 }
 
 // StartProxy inicia Tailscale y levanta un Proxy Inverso HTTP en el puerto indicado.
