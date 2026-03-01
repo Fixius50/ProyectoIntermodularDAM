@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import GlassPanel from '../../components/ui/GlassPanel';
 import { Bird } from '../../types';
@@ -35,6 +35,16 @@ const MiPerfil: React.FC = () => {
 
     const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
     const [isFavBirdModalOpen, setIsFavBirdModalOpen] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setAvatar(url);
+            setIsAvatarModalOpen(false);
+        }
+    };
 
     const getBaseId = (id: string) => {
         const match = id.match(/^pinto-\d+/);
@@ -112,7 +122,9 @@ const MiPerfil: React.FC = () => {
                         <h2 className="text-3xl md:text-4xl font-black leading-tight text-slate-900 dark:text-white">{currentUser?.name || t.identity}</h2>
                         <div className="flex items-center gap-2 mt-2">
                             <span className="material-symbols-outlined text-amber-500 text-sm">stars</span>
-                            <p className="text-amber-600 dark:text-amber-500 font-black uppercase tracking-widest text-[10px] md:text-xs">{t.rank} {currentUser?.level || 1}</p>
+                            <p className="text-amber-600 dark:text-amber-500 font-black uppercase tracking-widest text-[10px] md:text-xs">
+                                {t.ranks[currentUser?.rank as keyof typeof t.ranks] || currentUser?.rank || t.rank} {currentUser?.level || 1}
+                            </p>
                             <span className="material-symbols-outlined text-amber-500 text-sm">stars</span>
                         </div>
 
@@ -208,7 +220,7 @@ const MiPerfil: React.FC = () => {
                                 <span className="inline-block px-2 py-0.5 bg-rose-500/80 backdrop-blur-md rounded text-[8px] font-black uppercase tracking-widest mb-1 shadow-sm">
                                     Favorito
                                 </span>
-                                <h4 className="text-2xl font-black truncate">{favoriteBird.name}</h4>
+                                <h4 className="text-2xl font-black truncate">{tc.birds[favoriteBird.name as keyof typeof tc.birds] || favoriteBird.name}</h4>
                                 <p className="text-xs text-white/70 italic">{favoriteBird.scientificName || favoriteBird.type}</p>
                             </div>
                         </div>
@@ -348,7 +360,7 @@ const MiPerfil: React.FC = () => {
 
             {/* Avatar Selection Modal */}
             {isAvatarModalOpen && (
-                <div className="fixed inset-0 z-50 flex flex-col justify-end md:justify-center bg-slate-900/80 backdrop-blur-sm animate-fade-in">
+                <div className="fixed inset-0 z-[100] flex flex-col justify-end md:justify-center bg-slate-900/80 backdrop-blur-sm animate-fade-in">
                     <div className="bg-white dark:bg-slate-900 w-full md:max-w-md mx-auto rounded-t-[2rem] md:rounded-[2rem] shadow-2xl overflow-hidden animate-slide-up md:animate-scale-in">
                         <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
                             <div>
@@ -362,7 +374,14 @@ const MiPerfil: React.FC = () => {
                                 <span className="material-symbols-outlined text-sm">close</span>
                             </button>
                         </div>
-                        <div className="p-6 grid grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto">
+                        <div className="p-6 grid grid-cols-3 sm:grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto">
+                            <button
+                                onClick={() => fileInputRef.current?.click()}
+                                className="relative aspect-square flex flex-col items-center justify-center rounded-2xl overflow-hidden border-2 border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group cursor-pointer"
+                            >
+                                <span className="material-symbols-outlined text-3xl text-slate-400 group-hover:text-primary transition-colors mb-1">add_photo_alternate</span>
+                                <span className="text-[9px] font-black uppercase text-slate-500 group-hover:text-primary tracking-widest text-center px-1 leading-tight">{t.uploadPhoto}</span>
+                            </button>
                             {AVATAR_OPTIONS.map((url, idx) => (
                                 <button
                                     key={idx}
@@ -381,6 +400,14 @@ const MiPerfil: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileUpload}
+                accept="image/*"
+                className="hidden"
+            />
 
             {/* Favorite Bird Selection Modal */}
             {isFavBirdModalOpen && (
@@ -427,7 +454,7 @@ const MiPerfil: React.FC = () => {
                                                 <div className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" style={{ backgroundImage: `url('${bird.image}')` }}></div>
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                                                 <div className="absolute bottom-0 p-3 text-white w-full">
-                                                    <p className="font-black text-sm leading-tight truncate">{bird.name}</p>
+                                                    <p className="font-black text-sm leading-tight truncate">{tc.birds[bird.name as keyof typeof tc.birds] || bird.name}</p>
                                                     <p className="text-[9px] text-white/70 uppercase tracking-widest">{bird.type}</p>
                                                 </div>
                                                 {isFav && (

@@ -3,6 +3,8 @@
 /* Tailwind v4 — all theme config lives here via @theme */
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* --- Corporate Palettes: White, Black, Green --- */
   --color-primary: #336142;

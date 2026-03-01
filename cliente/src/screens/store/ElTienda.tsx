@@ -23,6 +23,13 @@ const ElTienda: React.FC = () => {
 
     const feathers = currentUser?.feathers || 0;
 
+    const getTranslatedType = (type: string) => {
+        if (type === 'Card Pack') return t.types?.cardPack || type;
+        if (type === 'Consumable') return t.types?.consumable || type;
+        if (type === 'Equipment') return t.types?.equipment || type;
+        return type;
+    };
+
     const [activeTab, setActiveTab] = useState<'comprar' | 'vender'>('comprar');
     const [isOpeningPack, setIsOpeningPack] = useState(false);
     const [packResults, setPackResults] = useState<Bird[]>([]);
@@ -35,19 +42,19 @@ const ElTienda: React.FC = () => {
         const condition = weather.condition.toLowerCase();
 
         if (condition.includes('rain') || condition.includes('lluvia')) {
-            setDynamicOffer({ id: 'd1', name: commonT.items.i1, price: 150, type: 'Equipment', image: 'https://images.pexels.com/photos/5412435/pexels-photo-5412435.jpeg?auto=compress&cs=tinysrgb&w=400', desc: t.weatherOffer, icon: 'water_drop' });
+            setDynamicOffer({ id: 'i4', name: commonT.items.i4 || 'Mezcla de Energía', price: 150, type: 'Consumable', image: '/assets/store/semillas app pajaros.png', desc: t.weatherOffer, icon: 'battery_charging_full' });
         } else if (condition.includes('sun') || condition.includes('clear') || condition.includes('despejado')) {
-            setDynamicOffer({ id: 'd2', name: commonT.items.i5 || 'Prismáticos HD', price: 200, type: 'Equipment', image: 'https://images.pexels.com/photos/1036396/pexels-photo-1036396.jpeg?auto=compress&cs=tinysrgb&w=400', desc: t.weatherOffer, icon: 'wb_sunny' });
+            setDynamicOffer({ id: 'i5', name: commonT.items.i5 || 'Prismáticos HD', price: 200, type: 'Equipment', image: '/assets/store/imagen prismaticos app.png', desc: t.weatherOffer, icon: 'wb_sunny' });
         } else {
-            setDynamicOffer({ id: 'd3', name: commonT.items.i6 || 'Guía de Hábitats', price: 100, type: 'Consumable', image: 'https://images.pexels.com/photos/33283/stack-of-books-vintage-books-book-books.jpg?auto=compress&cs=tinysrgb&w=400', desc: t.weatherOffer, icon: 'menu_book' });
+            setDynamicOffer({ id: 'i6', name: commonT.items.i6 || 'Guía de Hábitats', price: 100, type: 'Consumable', image: 'https://images.pexels.com/photos/33283/stack-of-books-vintage-books-book-books.jpg?auto=compress&cs=tinysrgb&w=400', desc: t.weatherOffer, icon: 'menu_book' });
         }
     }, [weather]);
 
     const storeItems = [
-        { id: 's1', name: commonT.items.i1, price: 500, type: 'Card Pack', image: 'https://images.pexels.com/photos/4060435/pexels-photo-4060435.jpeg?auto=compress&cs=tinysrgb&w=400', desc: t.openingPack, icon: 'style' },
-        { id: 'i1', name: commonT.items.i1, price: 10, type: 'Consumable', image: 'https://images.pexels.com/photos/1013444/pexels-photo-1013444.jpeg?auto=compress&cs=tinysrgb&w=400', desc: t.itemDesc1 || '+15% a Canto en el Certamen.', icon: 'water_drop' },
-        { id: 'i2', name: commonT.items.i2, price: 10, type: 'Consumable', image: 'https://images.pexels.com/photos/3951631/pexels-photo-3951631.jpeg?auto=compress&cs=tinysrgb&w=400', desc: t.itemDesc2 || '+15% a Vuelo en el Certamen.', icon: 'grass' },
-        { id: 'i3', name: commonT.items.i3, price: 10, type: 'Consumable', image: 'https://images.pexels.com/photos/33130/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=400', desc: t.itemDesc3 || '+15% a Plumaje en el Certamen.', icon: 'stylus' },
+        { id: 's1', name: commonT.items.s1 || 'Sobre Especial', price: 500, type: 'Card Pack', image: '/assets/store/foto sobre app pajaros.png', desc: t.openingPack, icon: 'style' },
+        { id: 'i1', name: commonT.items.i1, price: 10, type: 'Consumable', image: '/assets/store/semillas app pajaros.png', desc: t.itemDesc1 || '+15% a Canto en el Certamen.', icon: 'water_drop' },
+        { id: 'i2', name: commonT.items.i2, price: 10, type: 'Consumable', image: '/assets/store/plumas app pajaros.png', desc: t.itemDesc2 || '+15% a Vuelo en el Certamen.', icon: 'grass' },
+        { id: 'i3', name: commonT.items.i3, price: 10, type: 'Consumable', image: '/assets/store/nectar pajaros app.png', desc: t.itemDesc3 || '+15% a Plumaje en el Certamen.', icon: 'stylus' },
         ...(dynamicOffer ? [dynamicOffer] : [])
     ];
 
@@ -175,7 +182,7 @@ const ElTienda: React.FC = () => {
                                         <div className="aspect-[4/3] overflow-hidden m-2 rounded-[2rem] relative">
                                             <img src={item.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={item.name} />
                                             <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest flex items-center gap-1">
-                                                <span className="material-symbols-outlined text-[10px]">{item.icon}</span> {item.type}
+                                                <span className="material-symbols-outlined text-[10px]">{item.icon}</span> {getTranslatedType(item.type)}
                                             </div>
                                             {isDynamic && (
                                                 <div className="absolute top-3 right-3 bg-amber-500 text-white px-2 py-1 rounded text-[8px] font-black uppercase tracking-widest animate-pulse">
@@ -276,20 +283,30 @@ const ElTienda: React.FC = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className="flex flex-wrap justify-center gap-6 animate-scale-in">
-                            {packResults.map((bird: Bird, idx: number) => (
-                                <div key={idx} className="w-64 bg-slate-50 dark:bg-slate-900 rounded-[2rem] overflow-hidden shadow-2xl border border-white dark:border-slate-800 transform hover:scale-105 transition-transform delay-100" style={{ animationDelay: `${idx * 200}ms` }}>
-                                    <div className="h-48 bg-cover bg-center" style={{ backgroundImage: `url('${bird.image}')` }}></div>
-                                    <div className="p-6 text-center">
-                                        <p className="text-[10px] font-black uppercase text-primary tracking-widest mb-1">{bird.type}</p>
-                                        <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">{bird.name}</h3>
-                                        <div className="flex justify-center gap-4 text-xs font-black text-slate-500 mb-4 bg-slate-100 dark:bg-slate-800 py-2 rounded-lg">
-                                            <span className="flex items-center gap-1"><span className="material-symbols-outlined text-xs text-rose-500">favorite</span> {bird.hp}</span>
-                                            <span className="flex items-center gap-1"><span className="material-symbols-outlined text-xs text-amber-500">music_note</span> {bird.canto}</span>
+                        <div className="flex flex-wrap justify-center gap-6 animate-scale-in max-w-5xl mx-auto">
+                            {packResults.map((bird: Bird, idx: number) => {
+                                const translatedName = commonT.birds[bird.name as keyof typeof commonT.birds] || bird.name;
+                                return (
+                                    <div key={idx} className="w-64 bg-slate-50 dark:bg-slate-900 rounded-[2rem] overflow-hidden shadow-2xl border border-white dark:border-slate-800 transform hover:scale-105 transition-transform delay-100 flex flex-col" style={{ animationDelay: `${idx * 200}ms` }}>
+                                        <div className="h-48 bg-cover bg-center relative" style={{ backgroundImage: `url('${bird.image}')` }}>
+                                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
+                                            <div className="absolute bottom-3 left-3">
+                                                <p className="font-primary text-[10px] text-white/80 uppercase tracking-widest">{bird.type}</p>
+                                            </div>
+                                        </div>
+                                        <div className="p-5 text-center flex-col flex flex-1">
+                                            <h3 className="text-xl font-black text-slate-900 dark:text-white leading-tight mb-1">{translatedName}</h3>
+                                            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-primary mb-4 italic">{bird.scientificName}</p>
+
+                                            <div className="flex justify-center gap-3 text-xs font-black text-slate-500 mt-auto bg-slate-100 dark:bg-slate-800 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                                                <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm text-rose-500">favorite</span> {bird.hp}</span>
+                                                <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm text-cyan-500">air</span> {bird.vuelo}</span>
+                                                <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm text-amber-500">music_note</span> {bird.canto}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
 
@@ -306,7 +323,7 @@ const ElTienda: React.FC = () => {
 
             {/* Expedition Pass Modal */}
             {showPassModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in text-slate-900">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in text-slate-900 dark:text-white">
                     <div className="bg-[#fcfaf0] dark:bg-slate-900 rounded-[3rem] shadow-2xl w-full max-w-lg overflow-hidden animate-scale-in border-4 border-amber-500 relative flex flex-col">
                         <div className="h-40 bg-cover bg-center relative" style={{ backgroundImage: 'url("https://images.pexels.com/photos/450441/pexels-photo-450441.jpeg?auto=compress&cs=tinysrgb&w=800")' }}>
                             <div className="absolute inset-0 bg-gradient-to-t from-[#fcfaf0] dark:from-slate-900 to-transparent"></div>

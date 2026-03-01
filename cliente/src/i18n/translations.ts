@@ -1,5 +1,52 @@
 export const translations = {
     es: {
+        appNotifications: {
+            testModeTitle: "Modo Test",
+            testModeMsg1: "Session backend reanudada con éxito.",
+            testModeMsg2: "Usuario TestExplorer registrado y conectado en el backend.",
+            offlineModeTitle: "Modo Offline",
+            offlineModeMsg: "Backend no disponible. Accediendo con datos locales (mock).",
+            sessionRestoredTitle: "Sesión Restaurada",
+            sessionRestoredMsg: "Has vuelto a conectar como {name}.",
+            dailyStreakTitle: "¡Racha Diaria!",
+            dailyStreakMsg: "Has iniciado sesión {days} días seguidos.",
+            weatherChangeTitle: "Cambio de Clima",
+            weatherChangeMsg: "Atención: Condiciones de {condition} detectadas.",
+            levelUpTitle: "Nivel Superior",
+            levelUpMsg: "¡{bird} ha alcanzado el nivel {level}!",
+            affinityUpTitle: "Afinidad Aumentada",
+            affinityUpMsg: "Tu vínculo con {bird} se fortalece.",
+            companionAssignedTitle: "Compañero Asignado",
+            companionAssignedMsg: "{bird} es ahora tu compañero Principal.",
+            suppliesImprovedTitle: "Suministros Mejorados",
+            suppliesImprovedMsg: "Alimento x{amount} añadido a tu inventario.",
+            goldenFeatherTitle: "Pluma Dorada",
+            goldenFeatherMsg: "Has encontrado una pluma dorada especial (+5 plumas).",
+            songStreakTitle: "Racha de Canto",
+            songStreakMsg: "El coro del amanecer te ha otorgado XP extra.",
+            favorableBreezeTitle: "Brisa Favorable",
+            favorableBreezeMsg: "El viento a favor reduce el tiempo de expedición.",
+            sharedExpeditionTitle: "Expedición Compartida",
+            sharedExpeditionMsg: "Has compartido un avistamiento con tu bandada.",
+            requiredPermissionsTitle: "Permisos Requeridos",
+            requiredPermissionsMsg: "Debes ser Líder para modificar las opciones de la bandada.",
+            exceptionalCareTitle: "Cuidado Excepcional",
+            exceptionalCareMsg: "Has mejorado el plumaje de tu ave favorita.",
+            newSpeciesTitle: "¡Nueva Especie!",
+            newSpeciesMsg: "Has registrado a {bird} en tu Cuaderno de Campo.",
+            knownSpeciesTitle: "Especie Conocida",
+            knownSpeciesMsg: "Has vuelto a avistar a {bird} (+{xp} XP).",
+            noFeathersTitle: "Sin Plumas",
+            noFeathersMsg: "Necesitas {cost} plumas para subir de nivel a esta ave.",
+            speciesLoggedTitle: "¡Especie Registrada!",
+            speciesLoggedMsg: "Has encontrado un {bird}. Datos sincronizados.",
+            offlineSightingTitle: "Modo Offline",
+            offlineSightingMsg: "Avistamiento guardado localmente. Se verá en tu santuario.",
+            purchaseCompleteTitle: "Compra Realizada",
+            purchaseCompleteMsg: "Has adquirido un objeto por {price} plumas.",
+            saleCompleteTitle: "Venta Realizada",
+            saleCompleteMsg: "Has vendido un objeto por {price} plumas."
+        },
         auth: {
             login: "Acceder",
             register: "Unirse",
@@ -54,11 +101,23 @@ export const translations = {
                 agoDays: "Hace {n} días"
             },
             chooseAvatar: "Elige tu Avatar",
+            uploadPhoto: "Subir Foto",
             settings: "Ajustes de Aplicación",
             theme: "Tema Visual",
             lightMode: "Modo Claro",
             darkMode: "Modo Oscuro",
-            language: "Idioma de Interfaz"
+            language: "Idioma de Interfaz",
+            roles: {
+                leader: "Líder",
+                veteran: "Veterano",
+                member: "Miembro"
+            },
+            ranks: {
+                testRank: "Ornitólogo de Pruebas",
+                isolatedRank: "Ornitólogo Aislado",
+                noviceRank: "Ornitólogo Novel",
+                rookieRank: "Novato"
+            }
         },
         common: {
             language: "Idioma",
@@ -94,6 +153,7 @@ export const translations = {
                 i4: "Mezcla de Energía",
                 i5: "Prismáticos HD",
                 i6: "Guía de Hábitats",
+                s1: "Sobre Especial",
                 "Semillas de Melodía": "Semillas de Melodía",
                 "Pluma de Viento": "Pluma de Viento",
                 "Baya de Brillo": "Baya de Brillo",
@@ -115,6 +175,15 @@ export const translations = {
             inventory: {
                 quantity: "Posees",
                 empty: "Tu mochila está vacía"
+            },
+            notifications: {
+                title: "Notificaciones",
+                markRead: "Marcar leídas",
+                empty: "Todo tranquilo en el bosque",
+                justNow: "Hace un momento",
+                agoMin: "Hace {n} min",
+                agoHours: "Hace {n} horas",
+                agoDays: "Hace {n} días"
             }
         },
         sanctuary: {
@@ -324,6 +393,11 @@ export const translations = {
             itemDesc1: "+15% a Canto en el Certamen.",
             itemDesc2: "+15% a Vuelo en el Certamen.",
             itemDesc3: "+15% a Plumaje en el Certamen.",
+            types: {
+                cardPack: "Sobre de Cartas",
+                consumable: "Consumible",
+                equipment: "Equipamiento"
+            },
             passBenefits: [
                 { text: 'Tiempo de espera entre escaneos reducido un 50%', icon: 'timer' },
                 { text: 'Probabilidad de avistar aves raras o legendarias aumentada', icon: 'visibility' },
@@ -333,6 +407,53 @@ export const translations = {
         }
     },
     en: {
+        appNotifications: {
+            testModeTitle: "Test Mode",
+            testModeMsg1: "Backend session resumed successfully.",
+            testModeMsg2: "TestExplorer user registered and connected to backend.",
+            offlineModeTitle: "Offline Mode",
+            offlineModeMsg: "Backend unavailable. Accessing with local data (mock).",
+            sessionRestoredTitle: "Session Restored",
+            sessionRestoredMsg: "You have reconnected as {name}.",
+            dailyStreakTitle: "Daily Streak!",
+            dailyStreakMsg: "You have logged in {days} days in a row.",
+            weatherChangeTitle: "Weather Change",
+            weatherChangeMsg: "Attention: {condition} conditions detected.",
+            levelUpTitle: "Level Up",
+            levelUpMsg: "{bird} has reached level {level}!",
+            affinityUpTitle: "Affinity Increased",
+            affinityUpMsg: "Your bond with {bird} grows stronger.",
+            companionAssignedTitle: "Companion Assigned",
+            companionAssignedMsg: "{bird} is now your Main companion.",
+            suppliesImprovedTitle: "Supplies Improved",
+            suppliesImprovedMsg: "Food x{amount} added to your inventory.",
+            goldenFeatherTitle: "Golden Feather",
+            goldenFeatherMsg: "You found a special golden feather (+5 feathers).",
+            songStreakTitle: "Song Streak",
+            songStreakMsg: "The dawn chorus granted you extra XP.",
+            favorableBreezeTitle: "Favorable Breeze",
+            favorableBreezeMsg: "Tailwind reduces expedition time.",
+            sharedExpeditionTitle: "Shared Expedition",
+            sharedExpeditionMsg: "You shared a sighting with your flock.",
+            requiredPermissionsTitle: "Required Permissions",
+            requiredPermissionsMsg: "You must be a Leader to modify flock settings.",
+            exceptionalCareTitle: "Exceptional Care",
+            exceptionalCareMsg: "You improved the plumage of your favorite bird.",
+            newSpeciesTitle: "New Species!",
+            newSpeciesMsg: "You recorded {bird} in your Field Journal.",
+            knownSpeciesTitle: "Known Species",
+            knownSpeciesMsg: "You spotted {bird} again (+{xp} XP).",
+            noFeathersTitle: "Not Enough Feathers",
+            noFeathersMsg: "You need {cost} feathers to level up this bird.",
+            speciesLoggedTitle: "Species Logged!",
+            speciesLoggedMsg: "You found a {bird}. Data synchronized.",
+            offlineSightingTitle: "Offline Mode",
+            offlineSightingMsg: "Sighting saved locally. It will show in your sanctuary.",
+            purchaseCompleteTitle: "Purchase Complete",
+            purchaseCompleteMsg: "You acquired an item for {price} feathers.",
+            saleCompleteTitle: "Sale Complete",
+            saleCompleteMsg: "You sold an item for {price} feathers."
+        },
         auth: {
             login: "Login",
             register: "Join",
@@ -387,11 +508,23 @@ export const translations = {
                 agoDays: "{n} days ago"
             },
             chooseAvatar: "Choose your Avatar",
+            uploadPhoto: "Upload Photo",
             settings: "App Settings",
             theme: "Visual Theme",
             lightMode: "Light Mode",
             darkMode: "Dark Mode",
-            language: "Interface Language"
+            language: "Interface Language",
+            roles: {
+                leader: "Leader",
+                veteran: "Veteran",
+                member: "Member"
+            },
+            ranks: {
+                testRank: "Test Ornithologist",
+                isolatedRank: "Isolated Ornithologist",
+                noviceRank: "Novice Ornithologist",
+                rookieRank: "Rookie"
+            }
         },
         common: {
             language: "Language",
@@ -423,18 +556,28 @@ export const translations = {
             items: {
                 i1: "Melody Seeds",
                 i2: "Wind Feather",
-                i3: "Shine Berry",
+                i3: "Glow Berry",
                 i4: "Energy Mix",
                 i5: "HD Binoculars",
                 i6: "Habitat Guide",
+                s1: "Special Pack",
                 "Melody Seeds": "Melody Seeds",
                 "Wind Feather": "Wind Feather",
-                "Shine Berry": "Shine Berry",
+                "Glow Berry": "Glow Berry",
                 "Energy Mix": "Energy Mix"
             },
             inventory: {
                 quantity: "You have",
                 empty: "Your backpack is empty"
+            },
+            notifications: {
+                title: "Notifications",
+                markRead: "Mark all as read",
+                empty: "All quiet in the forest",
+                justNow: "Just now",
+                agoMin: "{n} min ago",
+                agoHours: "{n} hours ago",
+                agoDays: "{n} days ago"
             }
         },
         sanctuary: {
@@ -644,6 +787,11 @@ export const translations = {
             itemDesc1: "+15% to Song in the Arena.",
             itemDesc2: "+15% to Flight in the Arena.",
             itemDesc3: "+15% to Plumage in the Arena.",
+            types: {
+                cardPack: "Card Pack",
+                consumable: "Consumable",
+                equipment: "Equipment"
+            },
             passBenefits: [
                 { text: 'Wait time between scans reduced by 50%', icon: 'timer' },
                 { text: 'Increased probability of sighting rare or legendary birds', icon: 'visibility' },

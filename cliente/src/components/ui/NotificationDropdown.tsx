@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { Notification } from '../../types';
+import { translations } from '../../i18n/translations';
 
 interface Props {
     isOpen: boolean;
@@ -27,8 +28,51 @@ const getNotificationColor = (type: Notification['type']) => {
     }
 };
 
+const translateCachedText = (text: string, currentLang: 'es' | 'en'): string => {
+    if (!text) return text;
+    const sourceLang = currentLang === 'en' ? 'es' : 'en';
+    const sourceDict = translations[sourceLang].appNotifications;
+    const targetDict = translations[currentLang].appNotifications;
+
+    // 1. Exact match for static strings
+    for (const [key, value] of Object.entries(sourceDict)) {
+        if (typeof value === 'string' && !value.includes('{') && value === text) {
+            return targetDict[key as keyof typeof targetDict] as string;
+        }
+    }
+
+    // 2. Regex match for parameterized strings
+    for (const [key, value] of Object.entries(sourceDict)) {
+        if (typeof value === 'string' && value.includes('{')) {
+            // Escape special regex chars, then replace \{param\} with (.*?)
+            const regexStr = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\\\{[a-zA-Z0-9_]+\\\}/g, '(.*?)');
+            const match = text.match(new RegExp(`^${regexStr}$`));
+
+            if (match) {
+                const params = match.slice(1);
+                let targetStr = targetDict[key as keyof typeof targetDict] as string;
+                // Extract param keys from target string to replace them in order
+                const targetMatchKeys = (targetDict[key as keyof typeof targetDict] as string).match(/\{[a-zA-Z0-9_]+\}/g) || [];
+                // Actually, the order of params in source and target might differ? 
+                // Usually they are in the same order. For simplicity, just replace them sequentially.
+                let paramIndex = 0;
+                // A safer way if order differs: extract param NAMES from source.
+                const sourceMatchKeys = value.match(/\{[a-zA-Z0-9_]+\}/g) || [];
+                sourceMatchKeys.forEach((srcKey, i) => {
+                    // Replace the corresponding key in targetStr with params[i]
+                    targetStr = targetStr.replace(srcKey, params[i] || '');
+                });
+                return targetStr;
+            }
+        }
+    }
+
+    return text;
+};
+
 const NotificationDropdown: React.FC<Props> = ({ isOpen, onClose }) => {
-    const { notifications, markNotificationAsRead, markAllNotificationsAsRead } = useAppStore();
+    const { notifications, markNotificationAsRead, markAllNotificationsAsRead, language } = useAppStore();
+    const t = translations[language].common.notifications;
 
     if (!isOpen) return null;
 
@@ -40,7 +84,7 @@ const NotificationDropdown: React.FC<Props> = ({ isOpen, onClose }) => {
             <div className="absolute right-0 top-16 w-80 md:w-96 max-w-[calc(100vw-1rem)] max-h-[80vh] overflow-y-auto bg-white/80 dark:bg-slate-900/80 backdrop-blur-3xl border border-white/20 dark:border-slate-800 rounded-3xl shadow-2xl z-50 animate-fade-in-up origin-top-right flex flex-col">
                 <div className="p-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md sticky top-0 z-10">
                     <h3 className="font-black text-lg text-sage-800 dark:text-sage-100 flex items-center gap-2">
-                        Notificaciones
+                        {t.title}
                         {unreadCount > 0 && (
                             <span className="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full">
                                 {unreadCount}
@@ -53,7 +97,7 @@ const NotificationDropdown: React.FC<Props> = ({ isOpen, onClose }) => {
                             className="text-xs font-bold text-primary hover:text-primary-dark transition-colors flex items-center gap-1"
                         >
                             <span className="material-symbols-outlined text-[14px]">done_all</span>
-                            Marcar leídas
+                            {t.markRead}
                         </button>
                     )}
                 </div>
@@ -64,7 +108,7 @@ const NotificationDropdown: React.FC<Props> = ({ isOpen, onClose }) => {
                             <span className="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-700">
                                 notifications_paused
                             </span>
-                            <p className="text-sm font-bold text-slate-400">Todo tranquilo en el bosque</p>
+                            <p className="text-sm font-bold text-slate-400">{t.empty}</p>
                         </div>
                     ) : (
                         <div className="flex flex-col gap-1">
@@ -84,15 +128,22 @@ const NotificationDropdown: React.FC<Props> = ({ isOpen, onClose }) => {
                                     <div className="flex-1 min-w-0">
                                         <div className="flex justify-between items-start mb-1">
                                             <p className={`text-sm tracking-tight truncate ${!notif.isRead ? 'font-black text-sage-800 dark:text-sage-100' : 'font-bold text-slate-600 dark:text-slate-400'}`}>
-                                                {notif.title}
+                                                {translateCachedText(notif.title, language as 'es' | 'en')}
                                             </p>
                                             {!notif.isRead && <span className="size-2 bg-red-500 rounded-full shrink-0 animate-pulse mt-1" />}
                                         </div>
                                         <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-                                            {notif.message}
+                                            {translateCachedText(notif.message, language as 'es' | 'en')}
                                         </p>
                                         <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-2">
-                                            Hace {Math.max(0, Math.floor((Date.now() - notif.timestamp) / 60000))} min
+                                            {Math.max(0, Math.floor((Date.now() - notif.timestamp) / 60000)) >= 60
+                                                ? (Math.floor(Math.max(0, Math.floor((Date.now() - notif.timestamp) / 60000)) / 60) >= 24
+                                                    ? t.agoDays.replace('{n}', Math.floor((Math.max(0, Math.floor((Date.now() - notif.timestamp) / 60000)) / 60) / 24).toString())
+                                                    : t.agoHours.replace('{n}', Math.floor(Math.max(0, Math.floor((Date.now() - notif.timestamp) / 60000)) / 60).toString()))
+                                                : (Math.max(0, Math.floor((Date.now() - notif.timestamp) / 60000)) === 0
+                                                    ? t.justNow
+                                                    : t.agoMin.replace('{n}', Math.max(0, Math.floor((Date.now() - notif.timestamp) / 60000)).toString()))
+                                            }
                                         </p>
                                     </div>
                                     {!notif.isRead && (

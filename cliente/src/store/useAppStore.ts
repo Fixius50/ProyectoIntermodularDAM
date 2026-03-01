@@ -5,6 +5,7 @@ import { api } from '../services/api';
 import { fetchWeather } from '../services/weather';
 import { getCurrentTimeData } from '../services/time';
 import { fetchBirdImage, fetchBirdAudio } from '../services/birdMediaApi';
+import { translations } from '../i18n/translations';
 import {
     AppState,
     User,
@@ -191,7 +192,7 @@ export const BIRD_CATALOG: CatalogBird[] = [
     },
     {
         id: 'pinto-4',
-        name: 'Mochuelo Común',
+        name: 'mochuelo',
         scientificName: 'Athene noctua',
         fact: 'Habita en las zonas olivareras de las afueras de Pinto.',
         level: 1,
@@ -237,7 +238,7 @@ export const BIRD_CATALOG: CatalogBird[] = [
     },
     {
         id: 'pinto-6',
-        name: 'Mirlo Común',
+        name: 'mirlo',
         scientificName: 'Turdus merula',
         fact: 'Canto melodioso y color negro azabache, un vecino inseparable de Pinto.',
         level: 1,
@@ -263,7 +264,7 @@ export const BIRD_CATALOG: CatalogBird[] = [
 const NPC_OPPONENT_BIRDS: Bird[] = [
     {
         id: 'o1',
-        name: 'Petirrojo Europeo',
+        name: 'petirrojo',
         level: 5,
         xp: 0,
         maxXp: 500,
@@ -375,9 +376,9 @@ export const useAppStore = create<CombinedState>()(
                         missionTarget: 50,
                         missionTimeLeft: 'Termina en 2d',
                         memberList: [
-                            { id: 'm1', name: 'Laura_Orni', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Laura_Orni', role: 'Líder', contributions: 12 },
-                            { id: 'm2', name: 'Pablo_Nat', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Pablo_Nat', role: 'Veterano', contributions: 8 },
-                            { id: 'm3', name: 'Carlos_Bird', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Carlos_Bird', role: 'Miembro', contributions: 5 }
+                            { id: 'm1', name: 'Laura_Orni', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Laura_Orni', role: 'leader', contributions: 12 },
+                            { id: 'm2', name: 'Pablo_Nat', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Pablo_Nat', role: 'veteran', contributions: 8 },
+                            { id: 'm3', name: 'Carlos_Bird', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Carlos_Bird', role: 'member', contributions: 5 }
                         ]
                     },
                     {
@@ -390,8 +391,8 @@ export const useAppStore = create<CombinedState>()(
                         missionTarget: 20,
                         missionTimeLeft: 'Termina en 5d',
                         memberList: [
-                            { id: 'm4', name: 'NightOwl99', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=NightOwl99', role: 'Líder', contributions: 4 },
-                            { id: 'm5', name: 'LunaWatcher', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=LunaWatcher', role: 'Miembro', contributions: 1 }
+                            { id: 'm4', name: 'NightOwl99', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=NightOwl99', role: 'leader', contributions: 4 },
+                            { id: 'm5', name: 'LunaWatcher', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=LunaWatcher', role: 'member', contributions: 1 }
                         ]
                     }
                 ],
@@ -478,7 +479,7 @@ export const useAppStore = create<CombinedState>()(
                         const userObj: User = {
                             id: player.id,
                             name: player.username,
-                            rank: 'Ornitólogo de Pruebas',
+                            rank: 'testRank',
                             level: player.level || 50,
                             xp: player.xp || 4500,
                             maxXp: player.maxXp || 5000,
@@ -490,7 +491,8 @@ export const useAppStore = create<CombinedState>()(
                         };
 
                         set({ currentUser: userObj, currentScreen: 'home' });
-                        get().addNotification({ type: 'system', title: 'Modo Test', message: 'Session backend reanudada con éxito.' });
+                        const t = translations[get().language].appNotifications;
+                        get().addNotification({ type: 'system', title: t.testModeTitle, message: t.testModeMsg1 });
                         get().syncPlayerBirds();
                         get().syncInventory();
 
@@ -503,7 +505,7 @@ export const useAppStore = create<CombinedState>()(
                             const userObj: User = {
                                 id: player.id,
                                 name: player.username,
-                                rank: 'Ornitólogo de Pruebas',
+                                rank: 'testRank',
                                 level: 50,
                                 xp: 4500,
                                 maxXp: 5000,
@@ -513,19 +515,21 @@ export const useAppStore = create<CombinedState>()(
                             };
 
                             set({ currentUser: userObj, currentScreen: 'home' });
-                            get().addNotification({ type: 'system', title: 'Modo Test', message: 'Usuario TestExplorer registrado y conectado en el backend.' });
+                            const t = translations[get().language].appNotifications;
+                            get().addNotification({ type: 'system', title: t.testModeTitle, message: t.testModeMsg2 });
                             get().syncPlayerBirds();
                             get().syncInventory();
 
                         } catch (regErr) {
                             console.error('Test Login Failed entirely:', regErr);
-                            get().addNotification({ type: 'system', title: 'Modo Offline', message: 'Backend no disponible. Accediendo con datos locales (mock).' });
+                            const t = translations[get().language].appNotifications;
+                            get().addNotification({ type: 'system', title: t.offlineModeTitle, message: t.offlineModeMsg });
 
                             // Fallback total a la version mock anterior si el backend esta apagado
                             const dummyUser: User = {
                                 id: 'test-user-offline',
                                 name: 'TestExplorer_Offline',
-                                rank: 'Ornitólogo Aislado',
+                                rank: 'isolatedRank',
                                 level: 50,
                                 xp: 4500,
                                 maxXp: 5000,
@@ -546,7 +550,7 @@ export const useAppStore = create<CombinedState>()(
                         const userObj: User = {
                             id: player.id,
                             name: player.username,
-                            rank: 'Ornitólogo Novel',
+                            rank: 'noviceRank',
                             level: player.level || 1,
                             xp: player.xp || 0,
                             maxXp: player.maxXp || 100,
@@ -563,10 +567,11 @@ export const useAppStore = create<CombinedState>()(
 
                         // --- Tailscale User Connection Block ---
                         // Tras el login exitoso, reiniciamos Tailscale con las credenciales del usuario
+                        const t = translations[get().language].appNotifications;
                         get().addNotification({
                             type: 'system',
-                            title: 'Túnel Personalizado',
-                            message: 'Configurando tu enlace privado personal...'
+                            title: t.sessionRestoredTitle,
+                            message: t.sessionRestoredMsg.replace('{name}', userObj.name)
                         });
 
                         try {
@@ -608,7 +613,7 @@ export const useAppStore = create<CombinedState>()(
                         const userObj: User = {
                             id: player.id,
                             name: player.username,
-                            rank: 'Novato',
+                            rank: 'rookieRank',
                             level: 1,
                             xp: 0,
                             maxXp: 100,
@@ -971,10 +976,11 @@ export const useAppStore = create<CombinedState>()(
 
                     const cost = 10;
                     if (currentUser.feathers < cost) {
-                        addNotification({
+                        const t = translations[get().language].appNotifications;
+                        get().addNotification({
                             type: 'system',
-                            title: 'Sin Plumas',
-                            message: `Necesitas ${cost} plumas para subir de nivel a esta ave.`,
+                            title: t.noFeathersTitle,
+                            message: t.noFeathersMsg.replace('{cost}', cost.toString()),
                         });
                         return;
                     }
@@ -995,8 +1001,8 @@ export const useAppStore = create<CombinedState>()(
                     });
 
                     set({
-                        playerBirds: updatedBirds,
-                        currentUser: { ...currentUser, feathers: currentUser.feathers - cost }
+                        currentUser: { ...currentUser, feathers: currentUser.feathers - cost },
+                        playerBirds: updatedBirds
                     });
 
                     addNotification({
@@ -1070,10 +1076,11 @@ export const useAppStore = create<CombinedState>()(
 
                         addActivity(`Capturaste un ${catalogBird.name} en la Expedición`, 'add_circle');
 
+                        const t = translations[get().language].appNotifications;
                         addNotification({
                             type: 'achievement',
-                            title: '¡Especie Registrada!',
-                            message: `Has encontrado un ${catalogBird.name}. Datos sincronizados.`
+                            title: t.speciesLoggedTitle,
+                            message: t.speciesLoggedMsg.replace('{bird}', catalogBird.name)
                         });
                     } catch (err) {
                         console.error('Error recording sighting, keeping optimistic local update:', err);
@@ -1089,10 +1096,11 @@ export const useAppStore = create<CombinedState>()(
                             notes: media?.notes
                         });
 
+                        const t = translations[get().language].appNotifications;
                         addNotification({
                             type: 'system',
-                            title: 'Modo Offline',
-                            message: 'Avistamiento guardado localmente. Se verá en tu santuario.'
+                            title: t.offlineSightingTitle,
+                            message: t.offlineSightingMsg
                         });
                     }
                 },
@@ -1103,10 +1111,11 @@ export const useAppStore = create<CombinedState>()(
                         set((s) => ({
                             currentUser: s.currentUser ? { ...s.currentUser, feathers: s.currentUser.feathers - price } : null
                         }));
+                        const t = translations[state.language].appNotifications;
                         state.addNotification({
                             type: 'system',
-                            title: 'Compra Realizada',
-                            message: `Has adquirido un objeto por ${price} plumas.`
+                            title: t.purchaseCompleteTitle,
+                            message: t.purchaseCompleteMsg.replace('{price}', price.toString())
                         });
                         return true;
                     }
@@ -1127,10 +1136,11 @@ export const useAppStore = create<CombinedState>()(
                             inventory: newInv,
                             currentUser: s.currentUser ? { ...s.currentUser, feathers: s.currentUser.feathers + price } : null
                         }));
+                        const t = translations[state.language].appNotifications;
                         state.addNotification({
                             type: 'system',
-                            title: 'Venta Realizada',
-                            message: `Has vendido un objeto por ${price} plumas.`,
+                            title: t.saleCompleteTitle,
+                            message: t.saleCompleteMsg.replace('{price}', price.toString())
                         });
                     }
                 },

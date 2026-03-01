@@ -13,7 +13,7 @@ const LaExpedicion: React.FC = () => {
         weather, time, setWeather, setTime,
         addNotification, setCurrentScreen,
         playerBirds, addBirdToSantuario, birds,
-        language
+        language, inventory, consumeItem
     } = useAppStore();
 
     const t = translations[language].expedition;
@@ -187,6 +187,20 @@ const LaExpedicion: React.FC = () => {
         }, 2000);
     };
 
+    const useBinoculars = () => {
+        const item = inventory.find((i: any) => (i.id === 'i5' || i.id === 'd2') && i.count > 0);
+        if (item) {
+            consumeItem(item.id);
+            setCooldown(0);
+            localStorage.setItem('last_scan_time', '0');
+            addNotification({
+                type: 'system',
+                title: language === 'en' ? 'HD Binoculars used!' : '¡Prismáticos usados!',
+                message: language === 'en' ? 'You used HD Binoculars to skip the wait.' : 'Has usado los prismáticos para buscar sin esperar.'
+            });
+        }
+    };
+
     const capturedCount = useMemo(() => {
         const getSpeciesId = (id: string) => {
             const parts = id.split('-');
@@ -294,7 +308,7 @@ const LaExpedicion: React.FC = () => {
                     </div>
 
                     {/* Botón de Escaneo */}
-                    <div className="absolute bottom-10 w-full px-10 flex justify-center z-[500]">
+                    <div className="absolute bottom-10 w-full px-10 flex flex-col items-center justify-center gap-4 z-[500]">
                         <button
                             onClick={handleScan}
                             disabled={isScanning || cooldown > 0}
@@ -307,6 +321,19 @@ const LaExpedicion: React.FC = () => {
                                 {isScanning ? t.searching : (cooldown > 0 ? `${cooldown}S` : t.scanButton)}
                             </span>
                         </button>
+
+                        {/* Use HD Binoculars to skip CD */}
+                        {cooldown > 0 && !isScanning && inventory.some((i: any) => (i.id === 'i5' || i.id === 'd2') && i.count > 0) && (
+                            <button
+                                onClick={useBinoculars}
+                                className="bg-amber-400 hover:bg-amber-300 text-amber-950 px-6 py-3 rounded-2xl font-black shadow-xl shadow-amber-500/20 transition-all active:scale-95 flex items-center gap-3 animate-fade-in"
+                            >
+                                <span className="material-symbols-outlined text-lg">wb_sunny</span>
+                                <span className="text-xs uppercase tracking-widest leading-none">
+                                    {(translations[language] as any).common?.items?.i5 || 'Usar Prismáticos HD (-1)'}
+                                </span>
+                            </button>
+                        )}
                     </div>
 
                     {isScanning && (

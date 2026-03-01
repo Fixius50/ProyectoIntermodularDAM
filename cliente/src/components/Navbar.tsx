@@ -112,7 +112,13 @@ const Navbar: React.FC = () => {
                     >
                         <div className="text-right hidden sm:block">
                             <p className="text-xs font-black text-sage-800 dark:text-white leading-none">{currentUser?.name || t.guest}</p>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter mt-1">{currentUser?.rank || t.unknown}</p>
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter mt-1">
+                                {currentUser?.rank ? (
+                                    Object.entries(translations.es.profile.ranks).find(([_, value]) => value === currentUser.rank)
+                                        ? Object.entries(translations.es.profile.ranks).find(([_, value]) => value === currentUser.rank)?.[0] && tp.ranks[Object.entries(translations.es.profile.ranks).find(([_, value]) => value === currentUser.rank)?.[0] as keyof typeof tp.ranks]
+                                        : (tp.ranks[currentUser.rank as keyof typeof tp.ranks] || currentUser.rank)
+                                ) : t.unknown}
+                            </p>
                         </div>
                         <div
                             className="h-9 w-9 md:h-10 md:w-10 rounded-full bg-cover bg-center border-2 border-white dark:border-sage-800 shadow-sm transition-transform group-hover:scale-110"

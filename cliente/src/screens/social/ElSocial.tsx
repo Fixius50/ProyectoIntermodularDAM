@@ -128,7 +128,7 @@ const ElSocial: React.FC = () => {
                                                             </div>
                                                             <div className="text-left">
                                                                 <p className="font-bold text-sm leading-none group-hover/member:text-primary transition-colors">{member.name}</p>
-                                                                <p className="text-[9px] uppercase font-black tracking-widest text-slate-400 mt-1">{member.role}</p>
+                                                                <p className="text-[9px] uppercase font-black tracking-widest text-slate-400 mt-1">{translations[language].profile.roles[member.role as keyof typeof translations.es.profile.roles] || member.role}</p>
                                                             </div>
                                                         </div>
                                                         <div className="text-right flex items-center gap-1 bg-white/50 dark:bg-slate-900 px-2 py-1 rounded-lg">
@@ -414,7 +414,7 @@ const ElSocial: React.FC = () => {
 
             {/* Chat Modal Redesign */}
             {isChatOpen && userGuild && (
-                <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in text-slate-900">
+                <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in text-slate-900 dark:text-white">
                     <div className="bg-[#fcfaf0] dark:bg-slate-950 rounded-[3rem] shadow-2xl w-full max-w-lg h-[650px] flex flex-col overflow-hidden animate-scale-in border-8 border-white dark:border-slate-800 relative">
                         {/* Decorative paper texture or line */}
                         <div className="absolute top-0 right-14 bottom-0 w-px bg-amber-900/5 hidden sm:block"></div>
