@@ -14,6 +14,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
     private final PlayerRepository playerRepository;
@@ -22,10 +23,15 @@ public class AuthService {
 
     /** Registra un nuevo jugador y devuelve el JWT + perfil. */
     public Mono<Map<String, Object>> register(String username, String password) {
+        log.debug("[AuthService] Intento de registro para: {}", username);
         return playerRepository.findByUsername(username)
-                .flatMap(existing -> Mono.<Map<String, Object>>error(
-                        new IllegalArgumentException("El nombre de usuario ya existe.")))
+                .flatMap(existing -> {
+                    log.warn("[AuthService] Error: El usuario {} ya existe.", username);
+                    return Mono.<Map<String, Object>>error(
+                            new IllegalArgumentException("El nombre de usuario ya existe."));
+                })
                 .switchIfEmpty(Mono.defer(() -> {
+                    log.info("[AuthService] Usuario {} no existe. Procediendo a crear perfil...", username);
                     Player newPlayer = Player.builder()
                             .username(username)
                             .passwordHash(passwordEncoder.encode(password))
@@ -35,23 +41,31 @@ public class AuthService {
                             .createdAt(OffsetDateTime.now())
                             .build();
                     return playerRepository.save(newPlayer)
+                            .doOnSuccess(p -> log.info("[AuthService] Jugador guardado con éxito. ID: {}", p.getId()))
                             .map(saved -> buildTokenResponse(saved));
                 }));
     }
 
     /** Autentica al jugador y devuelve el JWT + perfil. */
     public Mono<Map<String, Object>> login(String username, String password) {
+        log.debug("[AuthService] Intento de login para: {}", username);
         return playerRepository.findByUsername(username)
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("Usuario o contraseña incorrectos.")))
+                .switchIfEmpty(Mono.defer(() -> {
+                    log.warn("[AuthService] Login fallido: Usuario {} no encontrado.", username);
+                    return Mono.error(new IllegalArgumentException("Usuario o contraseña incorrectos."));
+                }))
                 .flatMap(player -> {
                     if (!passwordEncoder.matches(password, player.getPasswordHash())) {
+                        log.warn("[AuthService] Login fallido: Contraseña incorrecta para {}.", username);
                         return Mono.error(new IllegalArgumentException("Usuario o contraseña incorrectos."));
                     }
+                    log.info("[AuthService] Login exitoso para {}.", username);
                     return Mono.just(buildTokenResponse(player));
                 });
     }
 
     private Map<String, Object> buildTokenResponse(Player player) {
+        log.debug("[AuthService] Generando token y respuesta para: {}", player.getUsername());
         String token = jwtUtil.generateToken(player.getUsername());
         return Map.of(
                 "token", token,

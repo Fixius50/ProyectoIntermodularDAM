@@ -33,11 +33,10 @@ public class SecurityConfig {
                 .securityContextRepository(securityContextRepository)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers(HttpMethod.OPTIONS).permitAll()
+                        .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .pathMatchers("/api/auth/**").permitAll() // Endpoints publicos de logeo/registro
-                        // Por el momento permitiremos endpoints de pruebas sin credencial para
-                        // agilizar.
                         .pathMatchers("/api/public/**").permitAll()
+                        .pathMatchers("/favicon.ico").permitAll()
                         .pathMatchers("/rsocket/**").permitAll() // Para el handshake inicial rsocket
                         .anyExchange().authenticated() // El resto debera estar autenticado
                 )

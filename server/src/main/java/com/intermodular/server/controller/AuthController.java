@@ -12,6 +12,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     private final AuthService authService;
@@ -20,6 +21,7 @@ public class AuthController {
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<Map<String, Object>> register(@RequestBody Map<String, String> body) {
+        log.info("[API] Intento de registro recibido para usuario: {}", body.get("username"));
         return authService.register(body.get("username"), body.get("password"))
                 .onErrorResume(e -> {
                     return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
