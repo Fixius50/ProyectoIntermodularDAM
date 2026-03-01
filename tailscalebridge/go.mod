@@ -2,10 +2,7 @@ module com.avis/tailscalebridge
 
 go 1.25.5
 
-require (
-	github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5
-	tailscale.com v1.94.2
-)
+require tailscale.com v1.94.2
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect

@@ -44,33 +44,24 @@ public class NetworkModule {
     @Provides
     @Singleton
     public OkHttpClient provideOkHttpClient(@ApplicationContext Context context) {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message -> android.util.Log.d("AvisNetwork", message));
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        // Configure SOCKS5 Proxy for Tailscale (localhost:1055)
-        java.net.Proxy proxy = new java.net.Proxy(java.net.Proxy.Type.SOCKS, 
-                new java.net.InetSocketAddress("127.0.0.1", 1055));
-
         return new OkHttpClient.Builder()
-                .proxy(proxy)
                 .addInterceptor(logging)
                 .addInterceptor(chain -> {
                     Request original = chain.request();
+                    Request.Builder builder = original.newBuilder();
 
-                    // Fetch token from SharedPreferences
+                    // 1. Persistencia de JWT (Interceptor de Seguridad)
                     String token = context.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)
                             .getString(TOKEN_KEY, null);
 
                     if (token != null && !token.isEmpty()) {
-                        // Add Authorization header
-                        Request request = original.newBuilder()
-                                .header("Authorization", "Bearer " + token)
-                                .method(original.method(), original.body())
-                                .build();
-                        return chain.proceed(request);
+                        builder.header("Authorization", "Bearer " + token);
                     }
 
-                    return chain.proceed(original);
+                    return chain.proceed(builder.build());
                 })
                 .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
                 .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)

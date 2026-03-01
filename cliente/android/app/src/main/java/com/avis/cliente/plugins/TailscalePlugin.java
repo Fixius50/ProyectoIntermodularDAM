@@ -30,7 +30,11 @@ public class TailscalePlugin extends Plugin {
      * Initialises the Tailscale node and connects it to the Tailnet.
      *
      * Expected JS call:
-     *   await TailscalePlugin.initTailscale({ authKey: '...', hostname: 'aery-android' });
+     *   await TailscalePlugin.initTailscale({ 
+     *     authKey: '...', 
+     *     hostname: 'tailscaletfg-gmail-com-android',
+     *     tailscaleUser: 'tailscaletfg@gmail.com' 
+     *   });
      *
      * @param call Capacitor plugin call containing 'authKey' and 'hostname'.
      */
@@ -66,23 +70,13 @@ public class TailscalePlugin extends Plugin {
     @PluginMethod
     public void stopTailscale(PluginCall call) {
         Log.d(TAG, "Stopping Tailscale node.");
-        Tailscalebridge.stop();
+        Tailscalebridge.stopProxy();
         call.resolve();
     }
 
-    /**
-     * Sends a test HTTP GET request through the active Tailscale connection.
-     *
-     * Expected JS call:
-     *   const { result } = await TailscalePlugin.testTailscaleConnection({
-     *     url: 'http://100.112.239.82:8080/api/health'
-     *   });
-     *
-     * @param call Capacitor plugin call containing 'url'.
-     */
     @PluginMethod
     public void testTailscaleConnection(PluginCall call) {
-        String url = call.getString("url", "http://100.112.239.82:8080/api/health");
+        String url = call.getString("url", "http://100.112.94.34:8080/api/health");
 
         new Thread(() -> {
             Log.d(TAG, "Testing Tailscale connection to: " + url);

@@ -420,13 +420,16 @@ export const useAppStore = create<CombinedState>()(
                     }
 
                     try {
-                        console.log('[Bootstrap] Iniciando Tailscale...');
+                        console.log('[Bootstrap] Iniciando Tailscale con credenciales maestras...');
                         await TailscalePlugin.initTailscale({
-                            authKey: 'tskey-auth-ksLaC6orfS11CNTRL-bbsStJGyQKfroV59uBd9Kf6kH9bRZzQpX', // Nueva clave del usuario
-                            hostname: 'aery-bootstrap',
+                            authKey: 'tskey-auth-ksLaC6orfS11CNTRL-bbsStJGyQKfroV59uBd9Kf6kH9bRZzQpX',
+                            hostname: 'tailscaletfg-gmail-com-bootstrap',
+                            tailscaleUser: 'tailscaletfg@gmail.com',
+                            tailscalePass: 'Mbba6121.'
                         });
 
                         for (let i = 0; i < 20; i++) {
+                            // Ahora probamos contra el proxy local que mapea a la IP de Tailscale
                             const { result } = await TailscalePlugin.testTailscaleConnection({
                                 url: 'http://100.112.94.34:8080/api/health'
                             });
@@ -578,10 +581,10 @@ export const useAppStore = create<CombinedState>()(
                             const isApp = (window as any).Capacitor?.getPlatform() !== undefined;
                             if (isApp) {
                                 await TailscalePlugin.initTailscale({
-                                    authKey: 'tskey-auth-k8G8QY2CNTRL-8G8QY2CNTRL',
-                                    hostname: `aery-${player.username}`,
-                                    tailscaleUser: player.tailscaleUser,
-                                    tailscalePass: player.tailscalePass
+                                    authKey: 'tskey-auth-ksLaC6orfS11CNTRL-bbsStJGyQKfroV59uBd9Kf6kH9bRZzQpX',
+                                    hostname: `tailscaletfg-gmail-com-${player.username}`,
+                                    tailscaleUser: 'tailscaletfg@gmail.com',
+                                    tailscalePass: 'Mbba6121.'
                                 });
 
                                 // Esperar reconexión técnica con el nuevo perfil
@@ -635,10 +638,10 @@ export const useAppStore = create<CombinedState>()(
                             const isApp = (window as any).Capacitor?.getPlatform() !== undefined;
                             if (isApp) {
                                 await TailscalePlugin.initTailscale({
-                                    authKey: 'tskey-auth-k8G8QY2CNTRL-8G8QY2CNTRL',
-                                    hostname: `aery-${player.username}`,
-                                    tailscaleUser: player.tailscaleUser,
-                                    tailscalePass: player.tailscalePass
+                                    authKey: 'tskey-auth-ksLaC6orfS11CNTRL-bbsStJGyQKfroV59uBd9Kf6kH9bRZzQpX',
+                                    hostname: `tailscaletfg-gmail-com-${player.username}`,
+                                    tailscaleUser: 'tailscaletfg@gmail.com',
+                                    tailscalePass: 'Mbba6121.'
                                 });
                                 await new Promise(resolve => setTimeout(resolve, 3000));
                             }

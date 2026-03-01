@@ -25,8 +25,8 @@ const config: CapacitorConfig = {
     androidScheme: 'http',
     allowNavigation: [
       "100.112.94.34",
-      "100.112.239.82",
       "127.0.0.1",
+      "10.0.2.2",
       "localhost"
     ],
     cleartext: true
