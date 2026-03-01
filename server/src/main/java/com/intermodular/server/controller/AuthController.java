@@ -4,6 +4,7 @@ import com.intermodular.server.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -20,12 +21,19 @@ public class AuthController {
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<Map<String, Object>> register(@RequestBody Map<String, String> body) {
         return authService.register(body.get("username"), body.get("password"))
-                .onErrorMap(IllegalArgumentException.class, e -> new IllegalArgumentException(e.getMessage()));
+                .onErrorResume(e -> {
+                    return Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                            "BACKEND_ERR: " + e.getMessage(), e));
+                });
     }
 
     /** POST /api/auth/login body: { "username":"...", "password":"..." } */
     @PostMapping("/login")
     public Mono<Map<String, Object>> login(@RequestBody Map<String, String> body) {
-        return authService.login(body.get("username"), body.get("password"));
+        return authService.login(body.get("username"), body.get("password"))
+                .onErrorResume(e -> {
+                    return Mono.error(
+                            new ResponseStatusException(HttpStatus.UNAUTHORIZED, "BACKEND_ERR: " + e.getMessage(), e));
+                });
     }
 }

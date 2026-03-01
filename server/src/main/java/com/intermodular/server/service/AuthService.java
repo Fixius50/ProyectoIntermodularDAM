@@ -27,7 +27,6 @@ public class AuthService {
                         new IllegalArgumentException("El nombre de usuario ya existe.")))
                 .switchIfEmpty(Mono.defer(() -> {
                     Player newPlayer = Player.builder()
-                            .id(UUID.randomUUID())
                             .username(username)
                             .passwordHash(passwordEncoder.encode(password))
                             .level(1)

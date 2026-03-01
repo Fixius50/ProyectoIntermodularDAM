@@ -15,4 +15,20 @@ public class HealthController {
     public Mono<Map<String, String>> health() {
         return Mono.just(Map.of("status", "UP", "version", "1.0.0"));
     }
+
+    @GetMapping("/tailscale")
+    public Mono<Map<String, String>> tailscaleStatus() {
+        return Mono.fromCallable(() -> {
+            try {
+                Process p = new ProcessBuilder("tailscale", "ip", "-4").start();
+                try (java.io.BufferedReader r = new java.io.BufferedReader(
+                        new java.io.InputStreamReader(p.getInputStream()))) {
+                    String ip = r.readLine();
+                    return Map.of("active", "true", "ip", ip != null ? ip : "unknown");
+                }
+            } catch (Exception e) {
+                return Map.of("active", "false", "error", e.getMessage());
+            }
+        });
+    }
 }
