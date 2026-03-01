@@ -8,7 +8,7 @@ spring:
 
   # Configuracion de Supabase (PostgreSQL) usando R2DBC reactivo
   r2dbc:
-    url: r2dbc:postgresql://db.shmutxsmjokamnxrkufe.supabase.co:5432/postgres
+    url: r2dbc:postgresql://db.shmutxsmjokamnxrkufe.supabase.co:6543/postgres
     username: postgres
     password: AleAdriRober
     pool:
