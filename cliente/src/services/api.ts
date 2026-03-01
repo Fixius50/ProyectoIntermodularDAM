@@ -25,7 +25,7 @@ async function getBaseUrl(): Promise<string> {
             const { value: isTailscaleInstalled } = await AppLauncher.canOpenUrl({ url: 'com.tailscale.ipn' });
             if (isTailscaleInstalled) {
                 console.log('[API] App de Tailscale detectada en Android. Usando IP directa de Lubuntu.');
-                cachedBaseUrl = `http://${TAILSCALE_IP}:${PORT}/`;
+                cachedBaseUrl = `http://${TAILSCALE_IP}:${PORT}`;
                 return cachedBaseUrl;
             }
         } catch (e) {
@@ -44,7 +44,7 @@ async function getBaseUrl(): Promise<string> {
         });
         clearTimeout(timeoutId);
         console.log('[API] Comunicación con Lubuntu (Tailscale) confirmada.');
-        cachedBaseUrl = `http://${TAILSCALE_IP}:${PORT}/`;
+        cachedBaseUrl = `http://${TAILSCALE_IP}:${PORT}`;
         return cachedBaseUrl;
     } catch (e) {
         console.log('[API] Tailscale IP no responde. Es posible que el servidor en Lubuntu no esté corriendo o el firewall bloquee el puerto 8080.');
@@ -54,14 +54,14 @@ async function getBaseUrl(): Promise<string> {
     if (isWebLocal || isApp) {
         const fallbackHost = isApp ? '10.0.2.2' : window.location.hostname;
         console.log(`[API] Usando Fallback de desarrollo (${fallbackHost}).`);
-        cachedBaseUrl = `http://${fallbackHost}:${PORT}/`;
+        cachedBaseUrl = `http://${fallbackHost}:${PORT}`;
         return cachedBaseUrl;
     }
 
     // 4. Default por defecto si nada de lo anterior funciona
     const defaultHost = isApp ? '10.0.2.2' : TAILSCALE_IP;
     console.log(`[API] Usando Default Host: ${defaultHost}`);
-    cachedBaseUrl = `http://${defaultHost}:${PORT}/`;
+    cachedBaseUrl = `http://${defaultHost}:${PORT}`;
     return cachedBaseUrl;
 }
 
@@ -78,7 +78,8 @@ export const api = {
         headers.append('Content-Type', 'application/json');
         Object.entries(authHeader).forEach(([key, value]) => headers.append(key, value));
 
-        const response = await fetch(`${baseUrl}${endpoint}`, {
+        const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+        const response = await fetch(`${baseUrl}${cleanEndpoint}`, {
             method: 'POST',
             headers,
             body: JSON.stringify(data)
@@ -96,7 +97,8 @@ export const api = {
         const headers = new Headers();
         Object.entries(authHeader).forEach(([key, value]) => headers.append(key, value));
 
-        const response = await fetch(`${baseUrl}${endpoint}`, {
+        const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+        const response = await fetch(`${baseUrl}${cleanEndpoint}`, {
             headers
         });
         if (!response.ok) throw new Error(await response.text());
@@ -110,7 +112,8 @@ export const api = {
         headers.append('Content-Type', 'application/json');
         Object.entries(authHeader).forEach(([key, value]) => headers.append(key, value));
 
-        const response = await fetch(`${baseUrl}${endpoint}`, {
+        const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+        const response = await fetch(`${baseUrl}${cleanEndpoint}`, {
             method: 'PUT',
             headers,
             body: JSON.stringify(data)
