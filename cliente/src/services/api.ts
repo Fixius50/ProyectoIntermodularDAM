@@ -78,7 +78,11 @@ export const api = {
         headers.append('Content-Type', 'application/json');
         Object.entries(authHeader).forEach(([key, value]) => headers.append(key, value));
 
-        const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+        let cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+        if (!cleanEndpoint.startsWith('/api')) {
+            cleanEndpoint = `/api${cleanEndpoint}`;
+        }
+
         const response = await fetch(`${baseUrl}${cleanEndpoint}`, {
             method: 'POST',
             headers,
@@ -97,7 +101,11 @@ export const api = {
         const headers = new Headers();
         Object.entries(authHeader).forEach(([key, value]) => headers.append(key, value));
 
-        const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+        let cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+        if (!cleanEndpoint.startsWith('/api')) {
+            cleanEndpoint = `/api${cleanEndpoint}`;
+        }
+
         const response = await fetch(`${baseUrl}${cleanEndpoint}`, {
             headers
         });
@@ -112,7 +120,11 @@ export const api = {
         headers.append('Content-Type', 'application/json');
         Object.entries(authHeader).forEach(([key, value]) => headers.append(key, value));
 
-        const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+        let cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+        if (!cleanEndpoint.startsWith('/api')) {
+            cleanEndpoint = `/api${cleanEndpoint}`;
+        }
+
         const response = await fetch(`${baseUrl}${cleanEndpoint}`, {
             method: 'PUT',
             headers,

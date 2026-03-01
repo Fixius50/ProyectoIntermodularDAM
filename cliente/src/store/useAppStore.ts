@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import AvisCore, { TailscalePlugin } from '../services/avisCore';
+import { AppLauncher } from '@capacitor/app-launcher';
 import { api } from '../services/api';
 import { fetchWeather } from '../services/weather';
 import { getCurrentTimeData } from '../services/time';
@@ -502,7 +503,7 @@ export const useAppStore = create<CombinedState>()(
                     } catch (err) {
                         // If login fails, try to register the test user
                         try {
-                            const { token, player } = await api.post('/auth/register', { username, password });
+                            const { token, player } = await api.post('/api/auth/register', { username, password });
                             await AvisCore.storeSecureToken({ token });
 
                             const userObj: User = {
@@ -547,7 +548,7 @@ export const useAppStore = create<CombinedState>()(
 
                 login: async (username: string, pass: string) => {
                     try {
-                        const { token, player } = await api.post('/auth/login', { username, password: pass });
+                        const { token, player } = await api.post('/api/auth/login', { username, password: pass });
                         await AvisCore.storeSecureToken({ token });
 
                         const userObj: User = {
@@ -578,17 +579,20 @@ export const useAppStore = create<CombinedState>()(
                         });
 
                         try {
-                            const isApp = (window as any).Capacitor?.getPlatform() !== undefined;
+                            const isApp = (window as any).Capacitor?.getPlatform() !== 'web';
                             if (isApp) {
-                                await TailscalePlugin.initTailscale({
-                                    authKey: 'tskey-auth-ksLaC6orfS11CNTRL-bbsStJGyQKfroV59uBd9Kf6kH9bRZzQpX',
-                                    hostname: `tailscaletfg-gmail-com-${player.username}`,
-                                    tailscaleUser: 'tailscaletfg@gmail.com',
-                                    tailscalePass: 'Mbba6121.'
-                                });
+                                const { value: isTs } = await AppLauncher.canOpenUrl({ url: 'com.tailscale.ipn' });
+                                if (!isTs) {
+                                    await TailscalePlugin.initTailscale({
+                                        authKey: 'tskey-auth-ksLaC6orfS11CNTRL-bbsStJGyQKfroV59uBd9Kf6kH9bRZzQpX',
+                                        hostname: `tailscaletfg-gmail-com-${player.username}`,
+                                        tailscaleUser: 'tailscaletfg@gmail.com',
+                                        tailscalePass: 'Mbba6121.'
+                                    });
 
-                                // Esperar reconexión técnica con el nuevo perfil
-                                await new Promise(resolve => setTimeout(resolve, 2000));
+                                    // Esperar reconexión técnica con el nuevo perfil
+                                    await new Promise(resolve => setTimeout(resolve, 2000));
+                                }
                             }
                         } catch (tsErr) {
                             console.error('Tailscale User Init Error:', tsErr);
@@ -610,7 +614,7 @@ export const useAppStore = create<CombinedState>()(
                 register: async (name: string, email: string, pass: string) => {
                     try {
                         // Nota: El backend espera username y password. Usamos name como username.
-                        const { token, player } = await api.post('/auth/register', { username: name, password: pass });
+                        const { token, player } = await api.post('/api/auth/register', { username: name, password: pass });
                         await AvisCore.storeSecureToken({ token });
 
                         const userObj: User = {
@@ -635,15 +639,23 @@ export const useAppStore = create<CombinedState>()(
                         });
 
                         try {
-                            const isApp = (window as any).Capacitor?.getPlatform() !== undefined;
+                            const isApp = (window as any).Capacitor?.getPlatform() !== 'web';
                             if (isApp) {
-                                await TailscalePlugin.initTailscale({
-                                    authKey: 'tskey-auth-ksLaC6orfS11CNTRL-bbsStJGyQKfroV59uBd9Kf6kH9bRZzQpX',
-                                    hostname: `tailscaletfg-gmail-com-${player.username}`,
-                                    tailscaleUser: 'tailscaletfg@gmail.com',
-                                    tailscalePass: 'Mbba6121.'
-                                });
-                                await new Promise(resolve => setTimeout(resolve, 3000));
+                                // Solo iniciamos el tsuet interno si NO detectamos la app oficial de Tailscale
+                                const { value: isTailscaleInstalled } = await AppLauncher.canOpenUrl({ url: 'com.tailscale.ipn' });
+
+                                if (!isTailscaleInstalled) {
+                                    console.log('[Bootstrap] App oficial no detectada. Iniciando túnel interno...');
+                                    await TailscalePlugin.initTailscale({
+                                        authKey: 'tskey-auth-ksLaC6orfS11CNTRL-bbsStJGyQKfroV59uBd9Kf6kH9bRZzQpX',
+                                        hostname: `tailscaletfg-gmail-com-${player.username}`,
+                                        tailscaleUser: 'tailscaletfg@gmail.com',
+                                        tailscalePass: 'Mbba6121.'
+                                    });
+                                    await new Promise(resolve => setTimeout(resolve, 3000));
+                                } else {
+                                    console.log('[Bootstrap] Usando túnel de la app oficial de Tailscale.');
+                                }
                             }
                         } catch (tsErr) {
                             console.error('Tailscale Init Error (Register):', tsErr);
