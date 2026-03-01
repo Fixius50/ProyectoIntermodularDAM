@@ -83,7 +83,10 @@ export const api = {
             cleanEndpoint = `/api${cleanEndpoint}`;
         }
 
-        const response = await fetch(`${baseUrl}${cleanEndpoint}`, {
+        const fullUrl = `${baseUrl}${cleanEndpoint}`;
+        console.log(`[API] Realizando POST a: ${fullUrl}`);
+
+        const response = await fetch(fullUrl, {
             method: 'POST',
             headers,
             body: JSON.stringify(data)

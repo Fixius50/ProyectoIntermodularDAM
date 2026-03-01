@@ -20,11 +20,12 @@ public class AppConfig implements WebFluxConfigurer {
      */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**")
+        registry.addMapping("/**")
                 .allowedOriginPatterns("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(false)
+                .exposedHeaders("Authorization", "x-auth-token")
+                .allowCredentials(true)
                 .maxAge(3600);
     }
 }
