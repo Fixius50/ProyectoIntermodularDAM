@@ -34,12 +34,14 @@ public class AuthService {
                 .switchIfEmpty(Mono.defer(() -> {
                     log.info("[AuthService] Usuario {} no existe. Procediendo a crear perfil...", username);
                     Player newPlayer = Player.builder()
+                            .id(UUID.randomUUID()) // <-- Generamos el ID nosotros
                             .username(username)
                             .passwordHash(passwordEncoder.encode(password))
                             .level(1)
                             .experience(0)
                             .feathers(10)
                             .createdAt(OffsetDateTime.now())
+                            .isNewRecord(true) // <-- Le decimos explícitamente a Spring que es NUEVO (INSERT)
                             .build();
                     return playerRepository.save(newPlayer)
                             .doOnSuccess(p -> log.info("[AuthService] Jugador guardado con éxito. ID: {}", p.getId()))
