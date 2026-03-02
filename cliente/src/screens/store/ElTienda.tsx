@@ -116,23 +116,14 @@ const ElTienda: React.FC = () => {
         <div className="flex flex-col flex-1 relative font-display">
             <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 md:px-12 z-10 py-4 md:py-8 pb-8">
 
-                <header className="flex flex-col gap-3 py-6 md:py-12 animate-fade-in">
-                    <div className="flex items-center justify-between">
-                        <div className="flex flex-col gap-3">
-                            <div className="flex items-center gap-2 px-3 py-1 bg-amber-500/10 rounded-full w-fit">
-                                <span className="material-symbols-outlined text-sm text-amber-500">shopping_cart</span>
-                                <span className="text-[10px] font-black uppercase tracking-widest text-amber-500">{t.supplies}</span>
-                            </div>
-                            <h2 className="text-2xl md:text-4xl lg:text-5xl font-black leading-tight dark:text-white">{t.title}</h2>
+                <header className="flex justify-end py-6 md:py-8 animate-fade-in">
+                    <div className="glass-card px-6 py-3 rounded-2xl border-primary/20 flex items-center gap-4 bg-white/50 dark:bg-slate-900/50 shadow-md">
+                        <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary shadow-inner">
+                            <span className="material-symbols-outlined text-2xl">monetization_on</span>
                         </div>
-                        <div className="glass-card px-6 py-3 border-primary/20 flex items-center gap-4 bg-white/50 dark:bg-slate-900/50 shadow-md">
-                            <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary shadow-inner">
-                                <span className="material-symbols-outlined text-2xl">monetization_on</span>
-                            </div>
-                            <div>
-                                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 leading-none mb-1">{t.balance}</p>
-                                <p className="text-2xl font-black leading-none text-primary">{feathers} <span className="text-[10px] text-slate-500">{t.currency}</span></p>
-                            </div>
+                        <div>
+                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 leading-none mb-1">{t.balance}</p>
+                            <p className="text-2xl font-black leading-none text-primary">{feathers} <span className="text-[10px] text-slate-500">{t.currency}</span></p>
                         </div>
                     </div>
                 </header>
@@ -283,11 +274,11 @@ const ElTienda: React.FC = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className="flex flex-wrap justify-center gap-6 animate-scale-in max-w-5xl mx-auto">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 animate-scale-in w-full max-w-5xl mx-auto px-4 overflow-y-auto max-h-[75vh] custom-scrollbar py-4">
                             {packResults.map((bird: Bird, idx: number) => {
                                 const translatedName = commonT.birds[bird.name as keyof typeof commonT.birds] || bird.name;
                                 return (
-                                    <div key={idx} className="w-64 bg-slate-50 dark:bg-slate-900 rounded-[2rem] overflow-hidden shadow-2xl border border-white dark:border-slate-800 transform hover:scale-105 transition-transform delay-100 flex flex-col" style={{ animationDelay: `${idx * 200}ms` }}>
+                                    <div key={idx} className="w-full bg-slate-50 dark:bg-slate-900 rounded-[2rem] overflow-hidden shadow-2xl border border-white dark:border-slate-800 transform hover:scale-105 transition-transform delay-100 flex flex-col" style={{ animationDelay: `${idx * 200}ms` }}>
                                         <div className="h-48 bg-cover bg-center relative" style={{ backgroundImage: `url('${bird.image}')` }}>
                                             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
                                             <div className="absolute bottom-3 left-3">

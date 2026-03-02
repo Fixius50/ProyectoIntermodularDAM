@@ -46,3 +46,10 @@
 - [x] APIs externas (Nuthatch, Unsplash/Pexels).
 - [x] Módulo Social (Bandadas, Marketplace con Redis y Redisson).
 - [x] Documentación de endpoints (Swagger/OpenAPI).
+
+### Fase Extra: Pulido UI/UX (02/03) [COMPLETO]
+- [x] Resoluciones de layout (Expedition map absolute fill).
+- [x] Responsive layout en Grids y Cards (Tienda).
+- [x] Renombrado asimétrico de pestañas de Perfil (Bitácora unificada).
+- [x] Integración de Cámara en Muro Social vía `@capacitor/camera` y web fallback.
+- [x] Consolidación de Documentación (unificados logs de errores y configs sueltas).

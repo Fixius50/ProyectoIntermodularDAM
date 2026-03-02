@@ -464,3 +464,16 @@ En desarrollo local funciona con datos mock del Zustand store.
  **Resultado:** Conectividad robusta verificada. El tráfico API fluye cifrado por la VPN de forma transparente para el frontend.
  
  ---
+
+## Mejoras de UI/UX y Plugin Capacitor Camera (02/03/2026)
+
+**Contexto:** Se llevó a cabo una serie de refinamientos visuales y de usabilidad solicitados a nivel de interfaz y características nativas.
+
+**Cambios Implementados:**
+- **Expedición (Mapa Invisible):** Se corrigió un bug por el cual `LaExpedicion` se colapsaba. Se aplicó `min-h-[100dvh]` en el contenedor global `<main>` de la App y `relative overflow-hidden` en el mapa, devolviéndolo a pantalla completa con overlays absolutos por encima.
+- **Tienda (Layout Responsivo):** Se eliminó el título global redundante. Se refactorizó la visualización de sobres de cartas mediante un grid `grid-cols-1 sm:grid-cols-2 md:grid-cols-3` adaptativo, previniendo recortes en pantallas pequeñas.
+- **Perfil (Nombres de Pestañas):** Para evitar desbordamientos, los nombres largos del multi-switch ("Compañero Favorito", "Logros / Emblemas") se simplificaron a "Compañero" y "Bitácora" respectivamente (quedando todo bajo Bitácora).
+- **Notificaciones y Navegación:** El Bottom Nav (Arena) se equiparó a nivel de estilo sin contenedor padre. El título de las notificaciones perdió el contador molesto del header interno.
+- **Muro Social (Capacitor Camera):** Se integró exitosamente `@capacitor/camera` para la subida de fotos en las publicaciones.
+  - Implementado `handleAttachPhoto` con gestión de permisos de Cámara y Fotos en plataformas nativas Android/iOS.
+  - En versión web, el plugin realiza un graceful degradado (abre el selector de archivos del sistema).

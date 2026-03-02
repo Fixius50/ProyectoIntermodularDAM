@@ -264,13 +264,12 @@ const LaExpedicion: React.FC = () => {
             </div>
 
             {/* HUD Centralizado */}
-            <main className="relative z-10 flex-1 flex flex-col pointer-events-none">
-
+            <main className="absolute inset-0 z-10 pointer-events-none flex flex-col">
                 {/* Top Overlay: Widgets alineados como la captura */}
-                <div className="absolute top-[3vh] left-[4vw] right-[4vw] flex justify-between items-start pointer-events-auto z-[450]">
+                <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-auto z-[450]">
 
                     {/* Clima Widget Pill (Exactamente como la captura) */}
-                    <div className="bg-white dark:bg-zinc-950 pl-3 pr-5 py-2.5 rounded-full shadow-lg flex items-center gap-3 border border-slate-100 dark:border-zinc-800">
+                    <div className="bg-white/90 backdrop-blur-md dark:bg-zinc-950/90 pl-3 pr-5 py-2.5 rounded-full shadow-lg flex items-center gap-3 border border-slate-100 dark:border-zinc-800">
                         <span className="w-3.5 h-3.5 rounded-full bg-[#82B380] shadow-inner mb-0.5"></span>
                         <div className="flex flex-col">
                             <span className="text-[14px] font-black uppercase tracking-[0.2em] text-slate-900 dark:text-zinc-100 leading-none mb-1">
@@ -285,14 +284,14 @@ const LaExpedicion: React.FC = () => {
                     {/* Botón Bitácora Cuadrado (Exactamente como la captura) */}
                     <button
                         onClick={() => setIsJournalOpen(true)}
-                        className="bg-white dark:bg-zinc-950 w-14 h-14 rounded-[1.25rem] shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all outline outline-1 outline-slate-100 dark:outline-zinc-800"
+                        className="bg-white/90 backdrop-blur-md dark:bg-zinc-950/90 w-14 h-14 rounded-[1.25rem] shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all outline outline-1 outline-slate-100 dark:outline-zinc-800"
                     >
                         <span className="material-symbols-outlined text-[#bc8f65] dark:text-[#a68a73] text-[28px] font-light">book_4</span>
                     </button>
                 </div>
 
                 {/* Scanner Button - Abajo del topo centrado con bottom VH */}
-                <div className="absolute bottom-[12vh] left-1/2 -translate-x-1/2 w-max pointer-events-auto z-[450] flex flex-col items-center">
+                <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-max pointer-events-auto z-[450] flex flex-col items-center">
                     <button
                         onClick={handleScan}
                         disabled={isScanning || cooldown > 0}

@@ -68,3 +68,34 @@ Si se realizan cambios en el código Go, se debe regenerar el archivo `.aar`:
 cd tailscalebridge
 .\build_aar.ps1
 ```
+
+# Configuración de Red y Credenciales de Tailscale - AVIS
+
+## 🌐 Direccionamiento IP y Puertos
+
+| Entorno | Dirección IP | Puerto | Descripción |
+| :--- | :--- | :--- | :--- |
+| **Producción (Tailscale)** | `100.112.94.34` | `8080` | IP directa asignada en la Tailnet del TFG. |
+| **Emulador Android** | `10.0.2.2` | `8080` | Redirección automática al host local del PC. |
+| **Puente Local (Go)** | `127.0.0.1` | `1055` | Puerto del Proxy Inverso interno (cuando no hay app oficial). |
+| **Web Local** | `localhost` | `8080` | Entorno de desarrollo en navegador. |
+
+> [!IMPORTANT]
+> Todas las peticiones a la API deben usar el puerto **8080** cuando se dirigen al backend.
+
+## 🔑 Credenciales Maestras (Fijas)
+- **Usuario de Tailscale**: `tailscaletfg@gmail.com`
+- **Contraseña de Tailscale**: `Mbba6121.`
+- **AuthKey (Bootstrap)**: `tskey-auth-ksLaC6orfS11CNTRL-bbsStJGyQKfroV59uBd9Kf6kH9bRZzQpX`
+
+# 🧪 Guía para Testers de Android - AVIS
+
+## 1. Instalación de Tailscale
+1. Descarga e instala la aplicación **Tailscale** desde la Google Play Store.
+2. Inicia sesión con la Cuenta Maestra de Testeo (`tailscaletfg@gmail.com` / `Mbba6121.`).
+3. Pon el estado en **"Active"** o **"Connected"**.
+4. Verifica que ves el dispositivo: `lubuntu-virtualbox` (IP: `100.112.94.34`).
+
+## 2. Ejecución de la App Avis
+1. Instala el `.apk` de AVIS.
+2. Al abrir la app, si la red está bien configurada, podrás registrarte o iniciar sesión.

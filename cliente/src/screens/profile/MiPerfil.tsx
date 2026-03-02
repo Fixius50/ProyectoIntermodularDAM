@@ -132,8 +132,8 @@ const MiPerfil: React.FC = () => {
                 <div className="flex bg-slate-200/50 dark:bg-slate-800/50 p-1.5 rounded-2xl mb-8 mx-auto w-full max-w-2xl overflow-x-auto custom-scrollbar shadow-sm">
                     {[
                         { id: 'settings', label: t.settings },
-                        { id: 'companion', label: t.favCompanion },
-                        { id: 'achievements', label: `${t.progress} / ${t.badges}` },
+                        { id: 'companion', label: 'Compañero' },
+                        { id: 'achievements', label: 'Bitácora' },
                         { id: 'history', label: t.history }
                     ].map(tab => (
                         <button

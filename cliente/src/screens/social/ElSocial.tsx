@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useAppStore, BIRD_CATALOG } from '../../store/useAppStore';
 import GlassPanel from '../../components/ui/GlassPanel';
 import { translations } from '../../i18n/translations';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Capacitor } from '@capacitor/core';
 
 const ElSocial: React.FC = () => {
     const {
@@ -22,6 +24,7 @@ const ElSocial: React.FC = () => {
     const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
     const [commentText, setCommentText] = useState('');
     const [activeTab, setActiveTab] = useState<'guild' | 'wall'>('wall');
+    const [attachedImage, setAttachedImage] = useState<string | null>(null);
 
     const userGuild = currentUser?.guildId ? availableGuilds.find(g => g.id === currentUser.guildId) : null;
     const currentChat = userGuild ? (guildChats[userGuild.id] || []) : [];
@@ -32,16 +35,52 @@ const ElSocial: React.FC = () => {
         addPost({
             text: newPostText,
             birdId: selectedBirdId || undefined,
-            location: 'Pinto, Madrid',
+            location: 'Santuario',
+            imageUrl: attachedImage || undefined
         });
 
         setNewPostText('');
         setSelectedBirdId(null);
+        setAttachedImage(null);
         addNotification({
             type: 'system',
             title: t.publishedTitle,
             message: t.publishedMsg
         });
+    };
+
+    const handleAttachPhoto = async () => {
+        try {
+            if (Capacitor.isNativePlatform()) {
+                const checkPermissions = await Camera.checkPermissions();
+                if (checkPermissions.camera !== 'granted' || checkPermissions.photos !== 'granted') {
+                    const req = await Camera.requestPermissions();
+                    if (req.camera !== 'granted' && req.photos !== 'granted') {
+                        addNotification({ type: 'system', title: 'Permiso Denegado', message: 'Se necesitan permisos de cámara o galería.' });
+                        return;
+                    }
+                }
+            }
+
+            const image = await Camera.getPhoto({
+                quality: 90,
+                allowEditing: false,
+                resultType: CameraResultType.DataUrl,
+                source: CameraSource.Prompt,
+                promptLabelHeader: 'Selecciona una foto',
+                promptLabelPhoto: 'Galería',
+                promptLabelPicture: 'Hacer Foto',
+                promptLabelCancel: 'Cancelar'
+            });
+
+            if (image && image.dataUrl) {
+                setAttachedImage(image.dataUrl);
+                addNotification({ type: 'system', title: 'Imagen adjunta', message: 'La imagen ha sido adjuntada al avistamiento.' });
+            }
+        } catch (error) {
+            console.error('Error attaching photo:', error);
+            // Si el usuario cancela, no hacemos nada
+        }
     };
 
     const handleSendMessage = () => {
@@ -241,13 +280,20 @@ const ElSocial: React.FC = () => {
                                     />
 
                                     <div className="flex flex-wrap items-center justify-between mt-5 gap-4">
-                                        <div className="flex gap-2">
+                                        <div className="flex gap-2 relative">
                                             <button
-                                                onClick={() => { }} // Open photo upload
-                                                className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all dark:text-slate-300"
+                                                onClick={handleAttachPhoto}
+                                                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all ${attachedImage ? 'bg-primary text-slate-900 border-2 border-slate-900 shadow-md transform scale-105' : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'}`}
                                             >
-                                                <span className="material-symbols-outlined text-base">photo_camera</span> {t.attachPhoto}
+                                                <span className="material-symbols-outlined text-base">photo_camera</span>
+                                                {attachedImage ? 'Foto Adjunta' : t.attachPhoto}
                                             </button>
+
+                                            {attachedImage && (
+                                                <button onClick={() => setAttachedImage(null)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full size-5 flex flex-col items-center justify-center p-0 drop-shadow-md hover:scale-110 active:scale-90 transition-transform">
+                                                    <span className="material-symbols-outlined text-[10px]">close</span>
+                                                </button>
+                                            )}
 
                                             <div className="absolute bottom-full left-0 mb-2 w-64 max-w-[calc(100vw-3rem)] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 p-2 hidden group-hover:block z-[9999] animate-scale-in">
                                                 <div className="grid grid-cols-1 gap-1 max-h-60 overflow-y-auto custom-scrollbar">

@@ -35,14 +35,14 @@ const BottomNav: React.FC = () => {
                 );
             })}
 
-            <div className="flex-1 flex flex-col items-center justify-center cursor-pointer" onClick={() => setCurrentScreen('arena')}>
-                <button
-                    aria-label={t.nav.arena}
-                    className={`flex flex-col items-center justify-center transition-all ${currentScreen === 'arena' ? 'text-primary' : 'text-slate-500'}`}
-                >
-                    <span className={`material-symbols-outlined text-2xl ${currentScreen === 'arena' ? 'fill-1' : ''}`}>swords</span>
-                </button>
-            </div>
+            <button
+                key="arena"
+                onClick={() => setCurrentScreen('arena')}
+                aria-label={t.nav.arena}
+                className={`flex-1 flex flex-col items-center justify-center transition-all ${currentScreen === 'arena' ? 'text-primary' : 'text-slate-500'}`}
+            >
+                <span className={`material-symbols-outlined text-2xl ${currentScreen === 'arena' ? 'fill-1' : ''}`}>swords</span>
+            </button>
 
             {navItems.slice(3).map((item) => {
                 const isActive = item.id === currentScreen;
