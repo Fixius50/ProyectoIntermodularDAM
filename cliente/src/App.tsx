@@ -33,14 +33,19 @@ function App() {
     };
 
     setupApp();
+  }, [currentUser, isTailscaleReady, initApp, updateTime, updateWeather, hydrateBirdMedia]);
 
-    // Sincronizar tema con el DOM (para darkMode: 'class')
+  // Sincronizar tema con el DOM (para darkMode: 'class')
+  useEffect(() => {
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
+  }, [theme]);
 
+  // Controladores de tiempo (background timers)
+  useEffect(() => {
     let tInterval: number;
     let wInterval: number;
 
@@ -53,7 +58,7 @@ function App() {
       if (tInterval) clearInterval(tInterval);
       if (wInterval) clearInterval(wInterval);
     };
-  }, [currentUser, theme, updateTime, updateWeather, hydrateBirdMedia]);
+  }, [currentUser, updateTime, updateWeather]);
 
   if (!currentUser) {
     return <Login />;

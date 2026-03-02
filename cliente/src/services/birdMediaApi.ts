@@ -5,7 +5,7 @@
  */
 
 /** In-session cache to prevent repeated API calls for the same species. */
-const mediaCache: Record<string, { imageUrl?: string; audioUrl?: string }> = {};
+const mediaCache: Record<string, { imageUrl?: string; audioUrl?: string; fetchedImage?: boolean; fetchedAudio?: boolean }> = {};
 
 const HEADERS = { 'User-Agent': 'AvisApp/1.0 (contact: dev@avis.local)' };
 
@@ -17,7 +17,10 @@ const HEADERS = { 'User-Agent': 'AvisApp/1.0 (contact: dev@avis.local)' };
  */
 export const fetchBirdImage = async (scientificName: string): Promise<string | undefined> => {
     if (!scientificName) return undefined;
-    if (mediaCache[scientificName]?.imageUrl) return mediaCache[scientificName].imageUrl;
+
+    const cache = mediaCache[scientificName] || {};
+    if (cache.imageUrl) return cache.imageUrl;
+    if (cache.fetchedImage) return undefined; // Already tried and failed
 
     try {
         const url =
@@ -35,13 +38,16 @@ export const fetchBirdImage = async (scientificName: string): Promise<string | u
             const pageId = Object.keys(pages)[0];
             const imageUrl = pages[pageId]?.thumbnail?.source;
             if (imageUrl) {
-                mediaCache[scientificName] = { ...mediaCache[scientificName], imageUrl };
+                mediaCache[scientificName] = { ...mediaCache[scientificName], imageUrl, fetchedImage: true };
                 return imageUrl;
             }
         }
     } catch (error) {
         console.warn(`Could not fetch image for ${scientificName} from Wikipedia:`, error);
     }
+
+    // Mark as fetched so we don't try again
+    mediaCache[scientificName] = { ...mediaCache[scientificName], fetchedImage: true };
     return undefined;
 };
 
@@ -53,7 +59,10 @@ export const fetchBirdImage = async (scientificName: string): Promise<string | u
  */
 export const fetchBirdAudio = async (scientificName: string): Promise<string | undefined> => {
     if (!scientificName) return undefined;
-    if (mediaCache[scientificName]?.audioUrl) return mediaCache[scientificName].audioUrl;
+
+    const cache = mediaCache[scientificName] || {};
+    if (cache.audioUrl) return cache.audioUrl;
+    if (cache.fetchedAudio) return undefined; // Already tried and failed
 
     try {
         const searchQuery = encodeURIComponent(`${scientificName} filetype:audio`);
@@ -72,12 +81,15 @@ export const fetchBirdAudio = async (scientificName: string): Promise<string | u
             const pageId = Object.keys(pages)[0];
             const audioUrl = pages[pageId]?.imageinfo?.[0]?.url;
             if (audioUrl) {
-                mediaCache[scientificName] = { ...mediaCache[scientificName], audioUrl };
+                mediaCache[scientificName] = { ...mediaCache[scientificName], audioUrl, fetchedAudio: true };
                 return audioUrl;
             }
         }
     } catch (error) {
         console.warn(`Could not fetch audio for ${scientificName} from Wikimedia Commons:`, error);
     }
+
+    // Mark as fetched so we don't try again
+    mediaCache[scientificName] = { ...mediaCache[scientificName], fetchedAudio: true };
     return undefined;
 };
