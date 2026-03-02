@@ -21,6 +21,10 @@ La aplicación debe sentirse como un **diario de naturalista mágico**.
 - **Títulos:** Merriweather o Lora (Serif)
 - **Cuerpo / Botones:** Nunito o Quicksand (Sans-Serif)
 
+### Rediseño de Navegación Global (Header y Footer)
+- **Header:** El nombre que sale de la página se mueve al header, en el centro, aprovechando ese hueco.
+- **Footer:** Se quedan solo los símbolos. El símbolo del centro no sale fuera del footer (se mantiene integrado).
+
 ### Estética
 - **Glassmorphism:** paneles semitransparentes con `backdrop-filter: blur()`
 - **Bordes:** siempre redondeados (`border-radius: 20px`), sin esquinas afiladas
@@ -44,12 +48,16 @@ La aplicación consta actualmente de 7 pantallas principales, cada una con un fl
 - **Gestión de Aves:** Un carrusel dinámico ("Aves en el Santuario") con los ejemplares capturados. Permite filtrar por "Favoritos" o "Baja Stamina". Cada ave muestra su salud, y atributos (Canto, Plumaje, Vuelo).
 - **Consejo de Naturalista:** Panel dinámico inferior que da un consejo adaptado al clima del día.
 
-### 3. La Expedición (Exploración Local)
-- **Mapa Interactivo:** Integración nativa táctil con Leaflet centrada en Pinto (Madrid) y sus parques. Cambia de tema (Claro/Oscuro) automáticamente.
-- **Escáner GPS:** El usuario escanea el área buscando aves. Tiene un cooldown de seguridad de 60 segundos.
-- **Condiciones Climatológicas:** El escaneo cruza la Fase del Día (Mañana/Tarde/Noche) y el Clima (Lluvia, Sol) con los requisitos biológicos de las aves para determinar cuáles aparecen.
-- **Modal de Estudio (Captura):** Si aparece un ave, se muestra foto, descripción científica y "Nota curiosa". El usuario pulsa "Registrar en Mi Diario" para añadirla al Santuario y recibir Plumas y XP.
-- **Bitácora de Campo (Panel Derecho):** Un resumen visual estilo diario de las especies descubiertas hasta el momento.
+### 3. La Expedición (Rediseño)
+- **Mapa Inmersivo:** Pantalla entera como mapa desplazable. Sin bordes ni estar dentro de un cuadro.
+- **Layout:** Se quedan en su sitio el header y el footer de la navegación.
+- **Elementos HUD:**
+  - **Arriba a la Izquierda:** Elemento que indique el lugar, tiempo y clima (sin indicar el GPS).
+  - **Arriba a la Derecha:** Elemento que al darle saca la bitácora sobre el mapa (no abre una pestaña nueva) e indique por número antes de darle lo que tiene dentro.
+  - **Abajo y Centrado:** Escáner del entorno, pero solo el símbolo. Al darle, hace su función y despliega un diálogo fantasma y breve que pone **"Escaneando entorno..."**.
+- **Mecánicas de Juego:**
+  - El escaneo cruza la Fase del Día (Mañana/Tarde/Noche) y el Clima (Lluvia, Sol) con los requisitos biológicos de las aves para determinar cuáles aparecen.
+  - **Modal de Estudio (Captura):** Si aparece un ave, se muestra foto, descripción científica y "Nota curiosa". El usuario pulsa "Registrar en Mi Diario" para añadirla al Santuario y recibir Plumas y XP.
 
 ### 4. El Certamen (Sistema de Batalla 1v1)
 - **Fase de Selección:** El jugador elige a su Campeón desde su Santuario. (Restricción: Las aves con menos de 20 de Stamina no pueden competir).

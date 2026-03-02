@@ -57,31 +57,11 @@ const Navbar: React.FC = () => {
                 </h1>
             </div>
 
-            {/* Center: Navigation (Desktop Only) / Current Page Title (Mobile Only) */}
-            <div className="flex-1 flex justify-center items-center px-4 overflow-hidden">
-                <nav className="hidden md:flex flex-1 justify-center items-center gap-4 lg:gap-8">
-                    {navItems.map(item => {
-                        const isActive = item.id === currentScreen;
-                        return (
-                            <a
-                                key={item.id}
-                                className={`cursor-pointer text-sm flex items-center gap-2 transition-all ${isActive
-                                    ? 'text-primary font-bold border-b-2 border-primary pb-0.5'
-                                    : 'text-slate-600 dark:text-slate-300 font-medium hover:text-primary'
-                                    }`}
-                                onClick={() => setCurrentScreen(item.id)}
-                            >
-                                <span className="material-symbols-outlined text-[20px]">{item.icon === 'swords' ? 'swords' : item.icon}</span>
-                                {item.label}
-                            </a>
-                        );
-                    })}
-                </nav>
-                <div className="md:hidden flex items-center justify-center w-full">
-                    <h2 className="text-sm font-black uppercase tracking-widest text-slate-800 dark:text-slate-200">
-                        {navItems.find(i => i.id === currentScreen)?.label || (currentScreen === 'profile' ? tp.title : '')}
-                    </h2>
-                </div>
+            {/* Center: Page Title / Navigation */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <h2 className="text-sm md:text-lg font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white pointer-events-auto">
+                    {navItems.find(item => item.id === currentScreen)?.label || ""}
+                </h2>
             </div>
 
             {/* Right side: Profile & Notifications */}
