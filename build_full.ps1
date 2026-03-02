@@ -75,41 +75,75 @@ if (-not $SkipFrontend) {
     Write-Host "  [SkipFrontend] Skipping npm build." -ForegroundColor Yellow
 }
 
-# ── STEP 2: Capacitor sync ───────────────────────────────────────────────────
-Write-Header "STEP 2 - Capacitor sync -> Android"
-Push-Location $CLIENTE
-try {
-    npx cap sync android
-    if ($LASTEXITCODE -ne 0) { Write-Fail "cap sync failed (exit $LASTEXITCODE)" }
-    Write-OK "Capacitor synced"
-} finally { Pop-Location }
-
-# ── STEP 3: Gradle APK & AAB ─────────────────────────────────────────────────
-Write-Header "STEP 3 - Gradle build ($Mode)"
-if (-not (Test-Path $GRADLEW)) { Write-Fail "gradlew.bat not found: $GRADLEW" }
-Push-Location $ANDROID
-try {
-    # Construimos tanto el APK como el AAB para máxima flexibilidad
-    $task_apk = if ($Mode -eq "release") { "assembleRelease" } else { "assembleDebug" }
-    $task_aab = if ($Mode -eq "release") { "bundleRelease" } else { "bundleDebug" }
-    
-    Write-Host "  Building APK..." -ForegroundColor Gray
-    & $GRADLEW $task_apk
-    if ($LASTEXITCODE -ne 0) { Write-Fail "Gradle $task_apk failed (exit $LASTEXITCODE)" }
-    Write-Host "  Building AAB..." -ForegroundColor Gray
-    & $GRADLEW $task_aab
-    if ($LASTEXITCODE -ne 0) { Write-Fail "Gradle $task_aab failed (exit $LASTEXITCODE)" }
-} finally { Pop-Location }
-
-if (-not (Test-Path $APK_PATH)) { Write-Fail "APK not found at: $APK_PATH" }
-if (-not (Test-Path $AAB_PATH)) { Write-Fail "AAB not found at: $AAB_PATH" }
-
-$sizeMB_apk = [math]::Round((Get-Item $APK_PATH).Length / 1MB, 1)
-$sizeMB_aab = [math]::Round((Get-Item $AAB_PATH).Length / 1MB, 1)
-
-Write-Header "Done"
-Write-OK "APK ready: $APK_PATH ($sizeMB_apk MB)"
-Write-OK "AAB ready: $AAB_PATH ($sizeMB_aab MB)"
 Write-Host ""
-Write-Host "  Install via Android Studio: Run button (device connected)" -ForegroundColor Yellow
-Write-Host "  Build completed!" -ForegroundColor Green
+Write-Host "===========================================================" -ForegroundColor Cyan
+Write-Host "¿Qué partes de Android deseas compilar?" -ForegroundColor White
+Write-Host "[1] Todo (Capacitor Sync + Gradle APK/AAB) [Por defecto]" -ForegroundColor Gray
+Write-Host "[2] Solo Gradle (Saltar Capacitor Sync)" -ForegroundColor Gray
+Write-Host "[3] Nada (Solo compilar Web/Frontend)" -ForegroundColor Gray
+$respAndroid = Read-Host "Elige una opción (1 / 2 / 3) [Por defecto: 1]"
+
+$SkipCapacitor = $false
+$SkipAndroid = $false
+
+switch ($respAndroid) {
+    "2" {
+        $SkipCapacitor = $true
+    }
+    "3" {
+        $SkipCapacitor = $true
+        $SkipAndroid = $true
+    }
+    default {
+        # Opción 1 o cualquier otra tecla asume compilar todo
+    }
+}
+
+if (-not $SkipAndroid) {
+    if (-not $SkipCapacitor) {
+        # ── STEP 2: Capacitor sync ───────────────────────────────────────────────────
+        Write-Header "STEP 2 - Capacitor sync -> Android"
+        Push-Location $CLIENTE
+        try {
+            npx cap sync android
+            if ($LASTEXITCODE -ne 0) { Write-Fail "cap sync failed (exit $LASTEXITCODE)" }
+            Write-OK "Capacitor synced"
+        } finally { Pop-Location }
+    } else {
+        Write-Host "  [Skip] Omitiendo sincronización de Capacitor..." -ForegroundColor Yellow
+    }
+
+    # ── STEP 3: Gradle APK & AAB ─────────────────────────────────────────────────
+    Write-Header "STEP 3 - Gradle build ($Mode)"
+    if (-not (Test-Path $GRADLEW)) { Write-Fail "gradlew.bat not found: $GRADLEW" }
+    Push-Location $ANDROID
+    try {
+        # Construimos tanto el APK como el AAB para máxima flexibilidad
+        $task_apk = if ($Mode -eq "release") { "assembleRelease" } else { "assembleDebug" }
+        $task_aab = if ($Mode -eq "release") { "bundleRelease" } else { "bundleDebug" }
+        
+        Write-Host "  Building APK..." -ForegroundColor Gray
+        & $GRADLEW $task_apk
+        if ($LASTEXITCODE -ne 0) { Write-Fail "Gradle $task_apk failed (exit $LASTEXITCODE)" }
+        Write-Host "  Building AAB..." -ForegroundColor Gray
+        & $GRADLEW $task_aab
+        if ($LASTEXITCODE -ne 0) { Write-Fail "Gradle $task_aab failed (exit $LASTEXITCODE)" }
+    } finally { Pop-Location }
+
+    if (-not (Test-Path $APK_PATH)) { Write-Fail "APK not found at: $APK_PATH" }
+    if (-not (Test-Path $AAB_PATH)) { Write-Fail "AAB not found at: $AAB_PATH" }
+
+    $sizeMB_apk = [math]::Round((Get-Item $APK_PATH).Length / 1MB, 1)
+    $sizeMB_aab = [math]::Round((Get-Item $AAB_PATH).Length / 1MB, 1)
+
+    Write-Header "Done"
+    Write-OK "APK ready: $APK_PATH ($sizeMB_apk MB)"
+    Write-OK "AAB ready: $AAB_PATH ($sizeMB_aab MB)"
+    Write-Host ""
+    Write-Host "  Install via Android Studio: Run button (device connected)" -ForegroundColor Yellow
+    Write-Host "  Build completed!" -ForegroundColor Green
+} else {
+    Write-Header "Done"
+    Write-Host "  [Skip] Omitida la compilación de Capacitor y Android." -ForegroundColor Yellow
+    Write-Host "  Build frontend/backend completed!" -ForegroundColor Green
+}
