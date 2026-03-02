@@ -70,21 +70,41 @@ Write-Host "  Backend  -> http://localhost:8080"       -ForegroundColor Cyan
 Write-Host "  Frontend -> http://localhost:5173"       -ForegroundColor Green
 Write-Host "  Swagger  -> http://localhost:8080/swagger-ui.html" -ForegroundColor DarkCyan
 Write-Host "  =======================================" -ForegroundColor DarkGray
-Write-Host "  Pulsa ENTER para APAGAR los servidores." -ForegroundColor Red
+Write-Host "  Mostrando LOGS en tiempo real. Pulsa [Q] para DETENER los servidores." -ForegroundColor Red
 Write-Host ""
-Pause
+
+# ── Bucle de Logs ────────────────────────────────────────────────────────────
+$running = $true
+while ($running) {
+    if ([console]::KeyAvailable) {
+        $key = [console]::ReadKey($true)
+        if ($key.Key -eq 'Q') { $running = $false }
+    }
+    
+    # Recibir logs del Backend
+    $backendOut = Receive-Job -Job $BackendJob -Keep
+    if ($backendOut) {
+        $backendOut | ForEach-Object { Write-Host "[BACKEND] $_" -ForegroundColor Gray }
+    }
+    
+    # Recibir logs del Frontend
+    $frontendOut = Receive-Job -Job $FrontendJob -Keep
+    if ($frontendOut) {
+        $frontendOut | ForEach-Object { Write-Host "[FRONTEND] $_" -ForegroundColor DarkGray }
+    }
+    
+    Start-Sleep -Milliseconds 500
+}
 
 # ── Apagar servicios ─────────────────────────────────────────────────────────
+Write-Host ""
 Write-Host "  Apagando servicios..." -ForegroundColor Yellow
 
 # Detener los Jobs y sus procesos hijos
-if ($FrontendJob) {
-    Stop-Job $FrontendJob
-    Remove-Job $FrontendJob
-}
-if ($BackendJob) {
-    Stop-Job $BackendJob
-    Remove-Job $BackendJob
-}
+Stop-Job -Name "Frontend-Avis" -ErrorAction SilentlyContinue
+Remove-Job -Name "Frontend-Avis" -ErrorAction SilentlyContinue
+
+Stop-Job -Name "Backend-Avis" -ErrorAction SilentlyContinue
+Remove-Job -Name "Backend-Avis" -ErrorAction SilentlyContinue
 
 Write-Host "  Servicios apagados." -ForegroundColor Green
