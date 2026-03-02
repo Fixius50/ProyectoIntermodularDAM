@@ -1,4 +1,4 @@
-# 08 Guía Técnica del Servidor (Backend) — AVIS
+# 07 Guía Técnica del Servidor (Backend) — AVIS
 
 Esta documentación está destinada al responsable del servidor para asegurar la paridad entre el cliente móvil y la lógica de negocio central.
 

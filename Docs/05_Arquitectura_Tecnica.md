@@ -1,4 +1,4 @@
-# 06 Arquitectura Técnica Completa — AVIS
+# 05 Arquitectura Técnica Completa — AVIS
 
 > **Actualizado:** 2026-02-27. Refleja fielmente el estado actual del código.
 

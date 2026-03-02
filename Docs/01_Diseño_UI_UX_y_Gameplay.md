@@ -1,4 +1,4 @@
-# 02 Diseño UI/UX y Mecánicas de Juego
+# 01 Diseño UI/UX y Mecánicas de Juego
 
 **El Cuaderno de Campo Vivo** — Referencia unificada de diseño visual, flujo de pantallas y reglas de jugabilidad.
 

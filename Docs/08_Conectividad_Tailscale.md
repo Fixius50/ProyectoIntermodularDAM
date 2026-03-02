@@ -1,4 +1,4 @@
-# 09 Conectividad Tailscale (Go Bridge)
+# 08 Conectividad Tailscale (Go Bridge)
 
 Este documento describe la arquitectura de red utilizada para conectar la aplicación Android con el servidor Backend remoto (Lubuntu) de forma segura a través de una red privada virtual (VPN).
 
