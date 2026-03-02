@@ -139,7 +139,7 @@ const MiPerfil: React.FC = () => {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
-                            className={`flex-1 min-w-[100px] py-3 md:py-2.5 text-[9px] md:text-[10px] font-black uppercase tracking-widest rounded-xl transition-all whitespace-nowrap px-2 ${activeTab === tab.id ? 'bg-white dark:bg-slate-700 shadow-md text-primary' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'}`}
+                            className={`flex-1 min-w-[80px] py-2 md:py-2.5 text-[9px] md:text-[10px] font-black uppercase tracking-widest rounded-xl transition-all whitespace-normal break-words leading-[1.1] px-1.5 ${activeTab === tab.id ? 'bg-white dark:bg-slate-700 shadow-md text-primary' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'}`}
                         >
                             {tab.label}
                         </button>

@@ -480,7 +480,7 @@ export const useAppStore = create<CombinedState>()(
 
                     try {
                         // Try to log in first
-                        const { token, player } = await api.post('/auth/login', { username, password }, true);
+                        const { token, player } = await api.post('/auth/login', { username, password });
                         await AvisCore.storeSecureToken({ token });
 
                         const userObj: User = {
@@ -506,7 +506,7 @@ export const useAppStore = create<CombinedState>()(
                     } catch (err) {
                         // If login fails, try to register the test user
                         try {
-                            const { token, player } = await api.post('/api/auth/register', { username, password }, true);
+                            const { token, player } = await api.post('/auth/register', { username, password });
                             await AvisCore.storeSecureToken({ token });
 
                             const userObj: User = {
