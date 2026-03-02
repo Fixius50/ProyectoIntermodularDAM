@@ -25,32 +25,24 @@ const BottomNav: React.FC = () => {
                     <button
                         key={item.id}
                         onClick={() => setCurrentScreen(item.id)}
-                        className={`flex-1 flex flex-col items-center gap-1 transition-all ${isActive ? 'text-primary' : 'text-slate-500'}`}
+                        className={`flex-1 flex flex-col items-center justify-center p-2 transition-all ${isActive ? 'text-primary' : 'text-slate-500'}`}
                     >
-                        <span className={`material-symbols-outlined ${isActive ? 'fill-1' : ''}`}>
+                        <span className={`material-symbols-outlined text-[28px] ${isActive ? 'fill-1' : ''}`}>
                             {item.icon}
-                        </span>
-                        <span className="text-[10px] font-bold uppercase tracking-tighter truncate w-full text-center">
-                            {item.label}
                         </span>
                     </button>
                 );
             })}
 
-            <div className="flex-1 flex flex-col items-center justify-end relative cursor-pointer" onClick={() => setCurrentScreen('arena')}>
-                <div className="absolute bottom-5">
-                    <div className="relative">
-                        <div className="absolute -inset-1 bg-primary/30 blur-md rounded-full animate-pulse"></div>
-                        <button
-                            className={`relative w-12 h-12 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform ${currentScreen === 'arena' ? 'bg-primary text-slate-900 shadow-primary/40' : 'bg-slate-800 text-primary shadow-black/20'}`}
-                        >
-                            <span className="material-symbols-outlined text-[28px]">swords</span>
-                        </button>
-                    </div>
+            <div className="flex-1 flex flex-col items-center justify-center p-2 cursor-pointer" onClick={() => setCurrentScreen('arena')}>
+                <div className="relative">
+                    <div className="absolute -inset-1 bg-primary/30 blur-md rounded-full animate-pulse"></div>
+                    <button
+                        className={`relative w-12 h-12 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform ${currentScreen === 'arena' ? 'bg-primary text-slate-900 shadow-primary/40' : 'bg-slate-800 text-primary shadow-black/20'}`}
+                    >
+                        <span className="material-symbols-outlined text-[28px]">swords</span>
+                    </button>
                 </div>
-                <span className={`text-[10px] font-bold uppercase tracking-tighter truncate w-full text-center mt-[1.75rem] ${currentScreen === 'arena' ? 'text-primary' : 'text-slate-500'}`}>
-                    {t.nav.arena}
-                </span>
             </div>
 
             {navItems.slice(3).map((item) => {
@@ -59,13 +51,10 @@ const BottomNav: React.FC = () => {
                     <button
                         key={item.id}
                         onClick={() => setCurrentScreen(item.id)}
-                        className={`flex-1 flex flex-col items-center gap-1 transition-all ${isActive ? 'text-primary' : 'text-slate-500'}`}
+                        className={`flex-1 flex flex-col items-center justify-center p-2 transition-all ${isActive ? 'text-primary' : 'text-slate-500'}`}
                     >
-                        <span className={`material-symbols-outlined ${isActive ? 'fill-1' : ''}`}>
+                        <span className={`material-symbols-outlined text-[28px] ${isActive ? 'fill-1' : ''}`}>
                             {item.icon}
-                        </span>
-                        <span className="text-[10px] font-bold uppercase tracking-tighter truncate w-full text-center">
-                            {item.label}
                         </span>
                     </button>
                 );
