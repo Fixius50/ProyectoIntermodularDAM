@@ -18,12 +18,12 @@ spring:
   # Configuracion de Redis Reactivo (Rendimiento extremo)
   data:
     redis:
-      host: localhost
+      host: 100.112.94.34
       port: 6379
 
   # Configuracion de RabbitMQ (Matchmaking en colas)
   rabbitmq:
-    host: localhost
+    host: 100.112.94.34
     port: 5672
     username: guest
     password: guest

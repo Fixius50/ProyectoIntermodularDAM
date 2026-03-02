@@ -1,59 +1,47 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-  AVIS Unified Dev Startup Script.
+  AVIS Unified Dev Startup Script (STRICT RELATIVE PATHS).
   Builds the frontend, starts Spring Boot backend + Vite dev server.
 
 .DESCRIPTION
-  - Backend (Spring Boot) corre en http://localhost:8080
+  - Backend (Spring Boot) corre en http://localhost:8080 (Conexión remota a Redis/RabbitMQ via Tailscale)
   - Frontend (Vite dev server) corre en http://localhost:5173
-  Pulsa ENTER para apagar ambos procesos.
+  Pulsa 'Q' para apagar ambos procesos.
 
 .NOTES
   Author: Roberto Monedero Alonso
 #>
 
-$ScriptDir = $PSScriptRoot
-if (-not $ScriptDir) { $ScriptDir = Get-Location }
-Set-Location $ScriptDir
+# Forzar ejecución en el directorio del script
+Set-Location $PSScriptRoot
 
-# Rutas ABSOLUTAS para la lógica interna
-$BACKEND_ABS  = $ScriptDir
-$FRONTEND_ABS = Join-Path $ScriptDir "cliente"
-$MVNW_ABS     = Join-Path $ScriptDir "mvnw.cmd"
-
-# Rutas RELATIVAS solo para visualización
-$BACKEND_REL  = "."
-$FRONTEND_REL = ".\cliente"
-$MVNW_REL     = ".\mvnw.cmd"
+# Definición de rutas DINÁMICAS (portables, no hardcodeadas)
+$ROOT_DIR = $PSScriptRoot
+$FRONTEND_DIR = Join-Path $ROOT_DIR "cliente"
+$MVNW = Join-Path $ROOT_DIR "mvnw.cmd"
 
 Write-Host ""
-Write-Host "  AVIS Dev Startup" -ForegroundColor Magenta
+Write-Host "  AVIS Dev Startup (Portable Mode)" -ForegroundColor Magenta
 Write-Host "  ====================================" -ForegroundColor DarkGray
-Write-Host "  Backend  : [Proyecto Raíz]" -ForegroundColor Gray
-Write-Host "  Frontend : $FRONTEND_REL" -ForegroundColor Gray
-Write-Host "  Maven    : $MVNW_REL" -ForegroundColor Gray
+Write-Host "  Directorio Raíz : $ROOT_DIR" -ForegroundColor Gray
+Write-Host "  Frontend        : $FRONTEND_DIR" -ForegroundColor Gray
 Write-Host ""
 
-# Validaciones rapidas
-if (-not (Test-Path $MVNW_ABS))         { Write-Error "mvnw.cmd no encontrado en: $MVNW_ABS"; exit 1 }
-if (-not (Test-Path $FRONTEND_ABS)) { Write-Error "Carpeta cliente/ no encontrada en: $FRONTEND_ABS"; exit 1 }
+# Validaciones
+if (-not (Test-Path $MVNW))         { Write-Error "mvnw.cmd no encontrado en: $MVNW"; exit 1 }
+if (-not (Test-Path $FRONTEND_DIR)) { Write-Error "Carpeta cliente/ no encontrada en: $FRONTEND_DIR"; exit 1 }
 
-# ── Limpiar Backend ──────────────────────────────────────────────────────────
-Write-Host "  [1/4] Limpiando Backend (mvn clean)..." -ForegroundColor Cyan
-& "$MVNW_ABS" clean
-if ($LASTEXITCODE -ne 0) { Write-Error "mvn clean fallo"; exit 1 }
-
-# ── Limpiar Procesos Node Antiguos ───────────────────────────────────────────
-Write-Host "  [1.5/4] Limpiando procesos Node/Vite antiguos..." -ForegroundColor Yellow
+# ── Limpiar procesos antiguos ───────────────────────────────────────────────
+Write-Host "  [1/4] Limpiando procesos Node/Vite antiguos..." -ForegroundColor Yellow
 Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
 
 # ── Build Frontend ───────────────────────────────────────────────────────────
 Write-Host "  [2/4] Instalando dependencias frontend (npm install)..." -ForegroundColor Green
-Push-Location $FRONTEND_ABS
+Push-Location $FRONTEND_DIR
 try {
     npm.cmd install --legacy-peer-deps
-    if ($LASTEXITCODE -ne 0) { Write-Error "npm install fallo"; exit 1 }
+    if ($LASTEXITCODE -ne 0) { Write-Error "npm install fallo en $FRONTEND_DIR"; exit 1 }
 } finally { Pop-Location }
 
 # ── Arrancar Backend ─────────────────────────────────────────────────────────
@@ -62,7 +50,7 @@ $BackendJob = Start-Job -Name "Backend-Avis" -ScriptBlock {
     param($dir, $mvnw)
     Set-Location $dir
     & "$mvnw" spring-boot:run
-} -ArgumentList $BACKEND_ABS, $MVNW_ABS
+} -ArgumentList $ROOT_DIR, $MVNW
 
 Write-Host "  Esperando que el Backend arranque (15s)..." -ForegroundColor Yellow
 Start-Sleep -Seconds 15
@@ -73,15 +61,15 @@ $FrontendJob = Start-Job -Name "Frontend-Avis" -ScriptBlock {
     param($dir)
     Set-Location $dir
     npm.cmd run dev
-} -ArgumentList $FRONTEND_ABS
+} -ArgumentList $FRONTEND_DIR
 
 Write-Host ""
 Write-Host "  =======================================" -ForegroundColor DarkGray
 Write-Host "  Backend  -> http://localhost:8080"       -ForegroundColor Cyan
 Write-Host "  Frontend -> http://localhost:5173"       -ForegroundColor Green
-Write-Host "  Swagger  -> http://localhost:8080/swagger-ui.html" -ForegroundColor DarkCyan
+Write-Host "  INFRA    -> 100.112.94.34 (Tailscale)"   -ForegroundColor Magenta
 Write-Host "  =======================================" -ForegroundColor DarkGray
-Write-Host "  Mostrando LOGS en tiempo real. Pulsa [Q] para DETENER los servidores." -ForegroundColor Red
+Write-Host "  Mostrando LOGS. Pulsa [Q] para DETENER." -ForegroundColor Red
 Write-Host ""
 
 # ── Bucle de Logs ────────────────────────────────────────────────────────────
@@ -92,30 +80,19 @@ while ($running) {
         if ($key.Key -eq 'Q') { $running = $false }
     }
     
-    # Recibir logs del Backend
     $backendOut = Receive-Job -Job $BackendJob -Keep
-    if ($backendOut) {
-        $backendOut | ForEach-Object { Write-Host "[BACKEND] $_" -ForegroundColor Gray }
-    }
+    if ($backendOut) { $backendOut | ForEach-Object { Write-Host "[BACKEND] $_" -ForegroundColor Gray } }
     
-    # Recibir logs del Frontend
     $frontendOut = Receive-Job -Job $FrontendJob -Keep
-    if ($frontendOut) {
-        $frontendOut | ForEach-Object { Write-Host "[FRONTEND] $_" -ForegroundColor DarkGray }
-    }
+    if ($frontendOut) { $frontendOut | ForEach-Object { Write-Host "[FRONTEND] $_" -ForegroundColor DarkGray } }
     
     Start-Sleep -Milliseconds 500
 }
 
 # ── Apagar servicios ─────────────────────────────────────────────────────────
-Write-Host ""
-Write-Host "  Apagando servicios..." -ForegroundColor Yellow
-
-# Detener los Jobs y sus procesos hijos
+Write-Host "`n  Apagando servicios..." -ForegroundColor Yellow
 Stop-Job -Name "Frontend-Avis" -ErrorAction SilentlyContinue
 Remove-Job -Name "Frontend-Avis" -ErrorAction SilentlyContinue
-
 Stop-Job -Name "Backend-Avis" -ErrorAction SilentlyContinue
 Remove-Job -Name "Backend-Avis" -ErrorAction SilentlyContinue
-
 Write-Host "  Servicios apagados." -ForegroundColor Green

@@ -52,14 +52,13 @@ Write-Host "  Android  : $ANDROID"
 
 # ── STEP 0: Build Tailscale Bridge (Go) ──────────────────────────────────────
 Write-Header "STEP 0 - Building Tailscale Bridge (Go)"
-Push-Location $ROOT
+$BRIDGE_DIR = Join-Path $ROOT "tailscalebridge"
+Push-Location $BRIDGE_DIR
 try {
-    cd tailscalebridge
-    powershell .\build_aar.ps1
+    & powershell.exe ".\build_aar.ps1"
     if ($LASTEXITCODE -ne 0) { Write-Fail "build_aar.ps1 failed (exit $LASTEXITCODE)" }
     Write-OK "Tailscale Bridge (.aar) built"
 } finally { 
-    cd $ROOT
     Pop-Location 
 }
 
