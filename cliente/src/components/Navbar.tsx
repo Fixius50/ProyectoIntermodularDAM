@@ -44,24 +44,24 @@ const Navbar: React.FC = () => {
             style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 0.5rem)' }}
             className="sticky top-0 z-[1000] px-4 pb-3 md:px-6 md:py-4 lg:px-12 flex items-center justify-between glass-card md:glass-panel md:mx-4 md:rounded-xl shadow-sm border-x-0 md:border-x border-t-0"
         >
-            {/* Left side: Logo */}
+            {/* Left side: Back or Menu (Opcional, de momento lo dejamos como logo pequeño o vacío si no hace falta) */}
             <div
-                className="flex items-center gap-2 md:gap-3 cursor-pointer z-10 shrink-0"
+                className="flex items-center gap-2 md:gap-3 cursor-pointer z-10 shrink-0 w-12"
                 onClick={() => setCurrentScreen('home')}
             >
-                <div className="size-8 md:size-10 flex items-center justify-center bg-white rounded-full shadow-inner overflow-hidden border border-slate-200 p-[2px]">
-                    <img src="/assets/avis-logo.png" alt="Avis Logo" className="w-full h-full object-contain mix-blend-multiply" />
-                </div>
-                <h1 className="text-xl md:text-2xl font-black tracking-tighter text-slate-900 dark:text-slate-100 flex items-baseline">
-                    Aery<span className="text-primary text-3xl leading-none">.</span>
-                </h1>
+                {/* Puedes poner un icono de menú o dejarlo vacío para mantener el balance */}
             </div>
 
-            {/* Center: Page Title / Navigation */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <h2 className="text-sm md:text-lg font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white pointer-events-auto">
-                    {navItems.find(item => item.id === currentScreen)?.label || ""}
-                </h2>
+            {/* Center: Page Title */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <h1 className="text-sm md:text-lg font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white pointer-events-auto">
+                    {navItems.find(item => item.id === currentScreen)?.label || "AVIS"}
+                </h1>
+                {currentScreen === 'home' && (
+                    <div className="text-[10px] text-primary font-bold tracking-widest uppercase mt-0.5">
+                        El Santuario
+                    </div>
+                )}
             </div>
 
             {/* Right side: Profile & Notifications */}

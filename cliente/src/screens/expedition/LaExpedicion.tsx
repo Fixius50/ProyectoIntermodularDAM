@@ -257,95 +257,71 @@ const LaExpedicion: React.FC = () => {
                 </div>
             )}
 
-            <header className="px-6 py-8 flex flex-col md:flex-row md:justify-between items-start gap-4 animate-fade-in">
-                <div className="text-left w-full">
-                    <div className="flex items-center gap-3 mb-3 w-fit">
+            {/* Capa base: Mapa inmersivo a pantalla completa (detrás del HUD y Navbar) */}
+            <div className="absolute inset-0 z-0 bg-slate-200 dark:bg-zinc-900 overflow-hidden">
+                <div ref={mapRef} className="absolute inset-0 w-full h-full" />
+            </div>
+
+            {/* HUD Centralizado */}
+            <main className="relative z-10 flex-1 flex flex-col pointer-events-none p-4 pb-20 md:p-6 lg:p-8">
+
+                {/* Top Left: Clima/Hora Iconizado (Reloj HUD) */}
+                <div className="absolute top-6 left-6 pointer-events-auto">
+                    <div className="bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md rounded-2xl p-3 shadow-xl flex items-center gap-3 border border-white/20 dark:border-zinc-800">
                         <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse shadow-[0_0_12px_rgba(94,232,48,0.8)]"></span>
-                        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 dark:text-zinc-400">
-                            {(translations[language] as any).sanctuary.timePhases[time?.phase || 'Afternoon']} · Pinto
-                        </span>
-                    </div>
-                    <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white leading-tight tracking-tight text-left mb-1">{t.title}</h2>
-                    <p className="text-xs md:text-base font-bold text-slate-400 dark:text-zinc-500 ml-1 uppercase tracking-widest">{weather?.temp || 0}°C · {((translations[language] as any).common.weather || {})[weather?.condition || ''] || weather?.condition}</p>
-                </div>
-            </header>
-
-            <main className="flex-1 flex flex-col lg:flex-row gap-6 p-4 lg:p-10 mb-2 max-w-[1440px] mx-auto w-full overflow-hidden">
-                {/* Contenedor del Mapa */}
-                <div className="flex-grow bg-slate-200 dark:bg-zinc-900 rounded-[3rem] overflow-hidden border-8 border-white dark:border-zinc-800 relative shadow-2xl flex flex-col min-h-[400px] transition-all duration-500">
-
-                    <div ref={mapRef} className="absolute inset-0 z-10" />
-
-                    {/* Superposiciones de UI */}
-
-                    <div className="absolute top-10 right-10 z-[400] pointer-events-none">
-                        <div className="pointer-events-auto flex justify-end">
-                            <div className="p-3 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl border border-slate-100 dark:border-zinc-800 rounded-3xl shadow-2xl flex items-center gap-5 transition-all duration-500">
-                                <div className="flex items-center gap-3 pl-2">
-                                    <span className="material-symbols-outlined text-primary text-2xl animate-pulse">satellite_alt</span>
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white">{t.gpsScanner}</span>
-                                </div>
-                                <div className="w-px h-8 bg-slate-200 dark:bg-zinc-800"></div>
-
-                                {isScanning ? (
-                                    <div className="flex items-center gap-3 text-primary pr-2">
-                                        <span className="material-symbols-outlined animate-spin text-xl">progress_activity</span>
-                                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">{t.scanning}</span>
-                                    </div>
-                                ) : cooldown > 0 ? (
-                                    <div className="flex items-center gap-3 text-rose-500 pr-2">
-                                        <span className="material-symbols-outlined text-xl">timer_10_alt_1</span>
-                                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">{t.wait} {formatTime(cooldown)}</span>
-                                    </div>
-                                ) : (
-                                    <div className="flex items-center gap-3 text-emerald-500 pr-2">
-                                        <span className="material-symbols-outlined text-xl">check_circle</span>
-                                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">{t.ready}</span>
-                                    </div>
-                                )}
-                            </div>
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white leading-none mb-1">
+                                {(translations[language] as any).sanctuary.timePhases[time?.phase || 'Afternoon']}
+                            </span>
+                            <span className="text-[9px] font-bold uppercase text-slate-500 dark:text-zinc-400 leading-none">
+                                {weather?.temp || 0}°C · {((translations[language] as any).common.weather || {})[weather?.condition || ''] || weather?.condition}
+                            </span>
                         </div>
                     </div>
+                </div>
 
-                    {/* Botón de Escaneo */}
-                    <div className="absolute bottom-10 w-full px-10 flex flex-col items-center justify-center gap-4 z-[500]">
+                {/* Relocated Scanner Button - En HUD Inferior (pointer-events-auto para ser cliqueable) */}
+                <div className="absolute bottom-6 inset-x-0 mx-auto w-fit pointer-events-auto">
+                    <button
+                        onClick={handleScan}
+                        disabled={isScanning || cooldown > 0}
+                        className="bg-primary hover:bg-primary/90 text-zinc-900 w-20 h-20 rounded-full font-black shadow-[0_10px_40px_rgba(94,232,48,0.4)] transition-all active:scale-90 flex items-center justify-center disabled:opacity-50 disabled:grayscale group relative"
+                    >
+                        <span className={`material-symbols-outlined text-4xl ${isScanning ? 'animate-spin' : 'group-hover:rotate-12 transition-transform'}`}>
+                            {isScanning ? 'refresh' : (cooldown > 0 ? 'hourglass_top' : 'radar')}
+                        </span>
+
+                        {/* Indicador Toast dinámico flotante */}
+                        {(isScanning || cooldown > 0) && (
+                            <div className="absolute -top-10 whitespace-nowrap bg-zinc-900 text-white text-[10px] font-black tracking-widest px-4 py-2 rounded-xl animate-fade-in-up">
+                                {isScanning ? "ESCANEA Entorno..." : `${cooldown}S`}
+                            </div>
+                        )}
+                    </button>
+
+                    {/* Use HD Binoculars to skip CD */}
+                    {cooldown > 0 && !isScanning && inventory.some((i: any) => (i.id === 'i5' || i.id === 'd2') && i.count > 0) && (
                         <button
-                            onClick={handleScan}
-                            disabled={isScanning || cooldown > 0}
-                            className="w-full md:w-auto bg-primary hover:bg-primary/90 text-zinc-900 px-12 py-6 rounded-3xl font-black shadow-2xl shadow-primary/30 transition-all active:scale-95 flex items-center justify-center gap-4 disabled:opacity-50 group border-b-4 border-black/10"
+                            onClick={useBinoculars}
+                            className="bg-amber-400 hover:bg-amber-300 text-amber-950 px-4 py-2 rounded-xl font-black shadow-lg shadow-amber-500/20 transition-all active:scale-95 flex items-center gap-2 animate-fade-in absolute -right-4 translate-x-full bottom-4"
                         >
-                            <span className={`material-symbols-outlined text-2xl ${isScanning ? 'animate-spin' : 'group-hover:rotate-12 transition-transform'}`}>
-                                {isScanning ? 'refresh' : (cooldown > 0 ? 'hourglass_top' : 'radar')}
-                            </span>
-                            <span className="text-base uppercase tracking-[0.2em] whitespace-nowrap">
-                                {isScanning ? t.searching : (cooldown > 0 ? `${cooldown}S` : t.scanButton)}
+                            <span className="material-symbols-outlined text-base">wb_sunny</span>
+                            <span className="text-[10px] uppercase tracking-widest leading-none">
+                                -1 Prismático
                             </span>
                         </button>
-
-                        {/* Use HD Binoculars to skip CD */}
-                        {cooldown > 0 && !isScanning && inventory.some((i: any) => (i.id === 'i5' || i.id === 'd2') && i.count > 0) && (
-                            <button
-                                onClick={useBinoculars}
-                                className="bg-amber-400 hover:bg-amber-300 text-amber-950 px-6 py-3 rounded-2xl font-black shadow-xl shadow-amber-500/20 transition-all active:scale-95 flex items-center gap-3 animate-fade-in"
-                            >
-                                <span className="material-symbols-outlined text-lg">wb_sunny</span>
-                                <span className="text-xs uppercase tracking-widest leading-none">
-                                    {(translations[language] as any).common?.items?.i5 || 'Usar Prismáticos HD (-1)'}
-                                </span>
-                            </button>
-                        )}
-                    </div>
-
-                    {isScanning && (
-                        <div className="absolute inset-0 z-[450] pointer-events-none bg-primary/5 backdrop-blur-[1px]">
-                            <div className="absolute top-0 left-0 right-0 h-1.5 bg-primary shadow-[0_0_30px_#5ee830] animate-scan-line blur-[1px]"></div>
-                        </div>
                     )}
                 </div>
 
-                {/* Diario Lateral */}
-                <div className="w-full lg:w-[480px] flex flex-col h-full animate-fade-in group/journal">
-                    <div className="bg-[#fcfaf0] dark:bg-zinc-950 rounded-[4rem] shadow-2xl flex-grow flex flex-col border-8 border-white dark:border-zinc-800 overflow-hidden text-left relative transition-all duration-500">
+                {isScanning && (
+                    <div className="absolute inset-0 z-[450] pointer-events-none bg-primary/5 backdrop-blur-[1px]">
+                        <div className="absolute top-0 left-0 right-0 h-1.5 bg-primary shadow-[0_0_30px_#5ee830] animate-scan-line blur-[1px]"></div>
+                    </div>
+                )}
+
+                {/* Diario Lateral - Superpuesto como cajón flotante */}
+                <div className="absolute top-0 right-0 h-full w-full lg:w-[480px] p-4 pb-20 md:p-6 lg:p-8 flex flex-col pointer-events-none group/journal z-[480]">
+                    <div className="bg-[#fcfaf0]/95 dark:bg-zinc-950/95 backdrop-blur-3xl rounded-[4rem] shadow-2xl flex-grow flex flex-col border-8 border-white dark:border-zinc-800 overflow-hidden text-left relative transition-all duration-500 pointer-events-auto">
                         {/* Paper textures / decorative line */}
                         <div className="absolute top-0 right-14 bottom-0 w-px bg-red-400/10 hidden lg:block"></div>
 
@@ -388,7 +364,7 @@ const LaExpedicion: React.FC = () => {
                             )}
                         </div>
 
-                        <div className="p-8 bg-white/40 dark:bg-zinc-900/40 border-t border-amber-900/5 dark:border-zinc-900 transition-colors">
+                        <div className="p-8 bg-white/40 dark:bg-zinc-900/40 border-t border-amber-900/5 dark:border-zinc-900 transition-colors mt-auto">
                             <p className="text-[10px] text-amber-900/30 dark:text-zinc-600 font-black uppercase tracking-[0.2em] mb-2 italic">{t.naturalistNote}</p>
                             <div className="relative">
                                 <span className="material-symbols-outlined absolute -left-1 -top-1 text-[40px] text-amber-900/5 dark:text-zinc-800 pointer-events-none">format_quote</span>
@@ -409,7 +385,7 @@ const LaExpedicion: React.FC = () => {
                 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
                 .animate-float { animation: float 3s ease-in-out infinite; }
             `}</style>
-        </div>
+        </div >
     );
 };
 

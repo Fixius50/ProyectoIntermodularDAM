@@ -26,19 +26,21 @@ const BottomNav: React.FC = () => {
                         key={item.id}
                         onClick={() => setCurrentScreen(item.id)}
                         className={`flex-1 flex flex-col items-center justify-center transition-all ${isActive ? 'text-primary' : 'text-slate-500'}`}
+                        aria-label={item.label}
                     >
-                        <span className={`material-symbols-outlined ${isActive ? 'fill-1' : ''}`}>
+                        <span className={`material-symbols-outlined text-2xl ${isActive ? 'fill-1' : ''}`}>
                             {item.icon}
                         </span>
                     </button>
                 );
             })}
 
-            <div className="flex-1 flex flex-col items-center justify-center relative cursor-pointer" onClick={() => setCurrentScreen('arena')}>
+            <div className="flex-1 flex flex-col items-center justify-center cursor-pointer" onClick={() => setCurrentScreen('arena')}>
                 <button
-                    className={`relative w-12 h-12 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform ${currentScreen === 'arena' ? 'bg-primary text-slate-900 shadow-primary/40' : 'bg-slate-800 text-primary shadow-black/20'}`}
+                    aria-label={t.nav.arena}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center shadow-md active:scale-95 transition-transform ${currentScreen === 'arena' ? 'bg-primary text-slate-900 shadow-primary/40' : 'bg-slate-800 text-primary shadow-black/20'}`}
                 >
-                    <span className="material-symbols-outlined text-[28px]">swords</span>
+                    <span className="material-symbols-outlined text-[26px]">swords</span>
                 </button>
             </div>
 
@@ -49,8 +51,9 @@ const BottomNav: React.FC = () => {
                         key={item.id}
                         onClick={() => setCurrentScreen(item.id)}
                         className={`flex-1 flex flex-col items-center justify-center transition-all ${isActive ? 'text-primary' : 'text-slate-500'}`}
+                        aria-label={item.label}
                     >
-                        <span className={`material-symbols-outlined ${isActive ? 'fill-1' : ''}`}>
+                        <span className={`material-symbols-outlined text-2xl ${isActive ? 'fill-1' : ''}`}>
                             {item.icon}
                         </span>
                     </button>
