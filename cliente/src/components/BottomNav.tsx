@@ -38,9 +38,9 @@ const BottomNav: React.FC = () => {
             <div className="flex-1 flex flex-col items-center justify-center cursor-pointer" onClick={() => setCurrentScreen('arena')}>
                 <button
                     aria-label={t.nav.arena}
-                    className={`w-12 h-12 rounded-full flex items-center justify-center shadow-md active:scale-95 transition-transform ${currentScreen === 'arena' ? 'bg-primary text-slate-900 shadow-primary/40' : 'bg-slate-800 text-primary shadow-black/20'}`}
+                    className={`flex flex-col items-center justify-center transition-all ${currentScreen === 'arena' ? 'text-primary' : 'text-slate-500'}`}
                 >
-                    <span className="material-symbols-outlined text-[26px]">swords</span>
+                    <span className={`material-symbols-outlined text-2xl ${currentScreen === 'arena' ? 'fill-1' : ''}`}>swords</span>
                 </button>
             </div>
 

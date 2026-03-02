@@ -44,12 +44,21 @@ const Navbar: React.FC = () => {
             style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 0.5rem)' }}
             className="sticky top-0 z-[1000] px-4 pb-3 md:px-6 md:py-4 lg:px-12 flex items-center justify-between glass-card md:glass-panel md:mx-4 md:rounded-xl shadow-sm border-x-0 md:border-x border-t-0"
         >
-            {/* Left side: Back or Menu (Opcional, de momento lo dejamos como logo pequeño o vacío si no hace falta) */}
+            {/* Left side: Logo/Home */}
             <div
-                className="flex items-center gap-2 md:gap-3 cursor-pointer z-10 shrink-0 w-12"
+                className="flex items-center gap-2 md:gap-3 cursor-pointer z-10 shrink-0"
                 onClick={() => setCurrentScreen('home')}
             >
-                {/* Puedes poner un icono de menú o dejarlo vacío para mantener el balance */}
+                <div className="size-8 md:size-10 bg-primary/20 dark:bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="material-symbols-outlined text-primary text-xl md:text-2xl transform group-hover:scale-110 transition-transform">
+                        raven
+                    </span>
+                </div>
+                <div className="block">
+                    <h2 className="text-sm md:text-base font-black text-slate-900 dark:text-white leading-none tracking-tight">AVIS</h2>
+                    <p className="text-[10px] text-primary font-bold tracking-widest uppercase">Global</p>
+                </div>
             </div>
 
             {/* Center: Page Title */}
@@ -97,7 +106,7 @@ const Navbar: React.FC = () => {
                             setIsNotifOpen(false);
                         }}
                     >
-                        <div className="text-right hidden sm:block">
+                        <div className="text-right hidden">
                             <p className="text-xs font-black text-sage-800 dark:text-white leading-none">{currentUser?.name || t.guest}</p>
                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter mt-1">
                                 {currentUser?.rank ? (
