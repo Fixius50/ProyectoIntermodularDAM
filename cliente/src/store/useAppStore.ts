@@ -33,6 +33,7 @@ interface AppActions {
     addNotification: (notif: Omit<Notification, 'id' | 'timestamp' | 'isRead'>) => void;
     markNotificationAsRead: (id: string) => void;
     markAllNotificationsAsRead: () => void;
+    clearAllNotifications: () => void;
     setCurrentScreen: (screen: string) => void;
     login: (email: string, pass: string) => Promise<boolean>;
     testLogin: () => void;
@@ -50,6 +51,7 @@ interface AppActions {
 
     // Guild Actions
     joinGuild: (guildId: string) => void;
+    leaveGuild: () => void;
     sendGuildMessage: (guildId: string, text: string) => void;
     contributeToMission: (amount: number) => void;
 
@@ -469,6 +471,7 @@ export const useAppStore = create<CombinedState>()(
                 markAllNotificationsAsRead: () => set((state) => ({
                     notifications: state.notifications.map(n => ({ ...n, isRead: true }))
                 })),
+                clearAllNotifications: () => set({ notifications: [] }),
                 setCurrentScreen: (currentScreen: string) => set({ currentScreen }),
 
                 testLogin: async () => {
@@ -898,6 +901,10 @@ export const useAppStore = create<CombinedState>()(
 
                 joinGuild: (guildId) => set((state) => ({
                     currentUser: state.currentUser ? { ...state.currentUser, guildId } : null
+                })),
+
+                leaveGuild: () => set((state) => ({
+                    currentUser: state.currentUser ? { ...state.currentUser, guildId: undefined } : null
                 })),
 
                 sendGuildMessage: (guildId, text) => set((state) => ({

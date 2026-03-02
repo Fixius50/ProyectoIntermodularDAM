@@ -71,7 +71,7 @@ const translateCachedText = (text: string, currentLang: 'es' | 'en'): string => 
 };
 
 const NotificationDropdown: React.FC<Props> = ({ isOpen, onClose }) => {
-    const { notifications, markNotificationAsRead, markAllNotificationsAsRead, language } = useAppStore();
+    const { notifications, markNotificationAsRead, markAllNotificationsAsRead, clearAllNotifications, language } = useAppStore();
     const t = translations[language].common.notifications;
 
     if (!isOpen) return null;
@@ -81,8 +81,8 @@ const NotificationDropdown: React.FC<Props> = ({ isOpen, onClose }) => {
     return (
         <>
             <div className="fixed inset-0 z-40" onClick={onClose} />
-            <div className="absolute right-0 top-16 w-80 md:w-96 max-w-[calc(100vw-1rem)] max-h-[80vh] overflow-y-auto bg-white/80 dark:bg-slate-900/80 backdrop-blur-3xl border border-white/20 dark:border-slate-800 rounded-3xl shadow-2xl z-50 animate-fade-in-up origin-top-right flex flex-col">
-                <div className="p-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md sticky top-0 z-10">
+            <div className="absolute right-0 top-16 w-80 md:w-96 max-w-[calc(100vw-1rem)] max-h-[80vh] overflow-y-auto bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl shadow-2xl z-50 animate-fade-in-up origin-top-right flex flex-col">
+                <div className="p-4 flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 sticky top-0 z-10">
                     <h3 className="font-black text-lg text-sage-800 dark:text-sage-100 flex items-center gap-2">
                         {t.title}
                         {unreadCount > 0 && (
@@ -91,15 +91,26 @@ const NotificationDropdown: React.FC<Props> = ({ isOpen, onClose }) => {
                             </span>
                         )}
                     </h3>
-                    {unreadCount > 0 && (
-                        <button
-                            onClick={(e) => { e.stopPropagation(); markAllNotificationsAsRead(); }}
-                            className="text-xs font-bold text-primary hover:text-primary-dark transition-colors flex items-center gap-1"
-                        >
-                            <span className="material-symbols-outlined text-[14px]">done_all</span>
-                            {t.markRead}
-                        </button>
-                    )}
+                    <div className="flex gap-3">
+                        {unreadCount > 0 && (
+                            <button
+                                onClick={(e) => { e.stopPropagation(); markAllNotificationsAsRead(); }}
+                                className="text-xs font-bold text-primary hover:text-primary-dark transition-colors flex items-center gap-1"
+                            >
+                                <span className="material-symbols-outlined text-[14px]">done_all</span>
+                                {t.markRead}
+                            </button>
+                        )}
+                        {notifications.length > 0 && (
+                            <button
+                                onClick={(e) => { e.stopPropagation(); clearAllNotifications(); }}
+                                className="text-xs font-bold text-slate-400 hover:text-red-500 transition-colors flex items-center gap-1"
+                            >
+                                <span className="material-symbols-outlined text-[14px]">delete</span>
+                                {(t as any).clearAll || "Limpiar"}
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-2">

@@ -21,6 +21,7 @@ const ElSocial: React.FC = () => {
     const [chatText, setChatText] = useState('');
     const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
     const [commentText, setCommentText] = useState('');
+    const [activeTab, setActiveTab] = useState<'guild' | 'wall'>('wall');
 
     const userGuild = currentUser?.guildId ? availableGuilds.find(g => g.id === currentUser.guildId) : null;
     const currentChat = userGuild ? (guildChats[userGuild.id] || []) : [];
@@ -51,24 +52,28 @@ const ElSocial: React.FC = () => {
 
     return (
         <div className="flex flex-col flex-1 font-display">
-            <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 md:px-12 py-6 md:py-8">
+            <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 md:px-12 py-4 md:py-6">
 
-                {/* Header */}
-                <header className="flex flex-col gap-3 py-4 md:py-10 animate-fade-in text-left mb-4">
-                    <div className="flex items-center gap-2 px-4 py-1.5 bg-primary/10 rounded-full w-fit">
-                        <span className="material-symbols-outlined text-sm text-primary">diversity_3</span>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-primary">{t.community}</span>
-                    </div>
-                    <h2 className="text-xl md:text-4xl lg:text-6xl font-black leading-tight tracking-tight dark:text-white">{t.title}</h2>
-                    <p className="text-slate-500 dark:text-slate-400 font-bold italic text-sm md:text-lg max-w-2xl">
-                        {t.description}
-                    </p>
-                </header>
+                {/* Switch view for mobile/tablet */}
+                <div className="lg:hidden flex bg-slate-200/50 dark:bg-slate-800/50 p-1.5 rounded-2xl mb-6 mx-auto w-full max-w-sm">
+                    <button
+                        onClick={() => setActiveTab('wall')}
+                        className={`flex-1 py-3 text-sm font-black uppercase tracking-widest rounded-xl transition-all ${activeTab === 'wall' ? 'bg-white dark:bg-slate-700 shadow-md text-primary' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'}`}
+                    >
+                        {t.sightingWall}
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('guild')}
+                        className={`flex-1 py-3 text-sm font-black uppercase tracking-widest rounded-xl transition-all ${activeTab === 'guild' ? 'bg-white dark:bg-slate-700 shadow-md text-primary' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'}`}
+                    >
+                        {t.myGuild}
+                    </button>
+                </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
                     {/* Panel de Bandada (IZQUIERDA) */}
-                    <div className="lg:col-span-4 flex flex-col gap-8 animate-slide-up">
+                    <div className={`lg:col-span-4 flex-col gap-8 animate-slide-up ${activeTab === 'guild' ? 'flex' : 'hidden lg:flex'}`}>
                         <div className="flex items-center justify-between px-2">
                             <h3 className="text-xl font-black uppercase tracking-wider dark:text-white">{t.myGuild}</h3>
                             <span className="text-[10px] font-black text-primary bg-primary/10 px-3 py-1 rounded-lg">{t.cooperative}</span>
@@ -150,12 +155,27 @@ const ElSocial: React.FC = () => {
                                     </button>
                                 </div>
 
-                                <button
-                                    onClick={() => setIsChatOpen(true)}
-                                    className="w-full py-5 bg-primary hover:bg-primary-dark text-slate-900 text-xs font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-primary/20 transition-all active:scale-95 flex items-center justify-center gap-3"
-                                >
-                                    <span className="material-symbols-outlined text-lg">forum</span> {t.openChat}
-                                </button>
+                                <div className="flex gap-3 w-full">
+                                    <button
+                                        onClick={() => setIsChatOpen(true)}
+                                        className="flex-1 py-5 bg-primary hover:bg-primary-dark text-slate-900 text-xs font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-primary/20 transition-all active:scale-95 flex items-center justify-center gap-2"
+                                    >
+                                        <span className="material-symbols-outlined text-lg">forum</span> {t.openChat}
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            useAppStore.getState().leaveGuild();
+                                            addNotification({
+                                                type: 'system',
+                                                title: 'Bandada abandonada',
+                                                message: 'Has dejado tu bandada actual.'
+                                            });
+                                        }}
+                                        className="flex-1 py-5 bg-red-500 hover:bg-red-600 text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-red-500/20 transition-all active:scale-95 flex items-center justify-center gap-2"
+                                    >
+                                        <span className="material-symbols-outlined text-lg">logout</span> Abandonar Nido
+                                    </button>
+                                </div>
                             </GlassPanel>
                         ) : (
                             <GlassPanel className="p-10 text-center flex flex-col items-center border-dashed border-2 border-primary/30">
@@ -193,7 +213,7 @@ const ElSocial: React.FC = () => {
                     </div>
 
                     {/* Muro de Avistamientos (DERECHA) */}
-                    <div className="lg:col-span-8 flex flex-col gap-8 animate-slide-up delay-100">
+                    <div className={`lg:col-span-8 flex-col gap-8 animate-slide-up delay-100 ${activeTab === 'wall' ? 'flex' : 'hidden lg:flex'}`}>
                         <div className="flex items-center justify-between px-2">
                             <h3 className="text-xl font-black uppercase tracking-wider dark:text-white">{t.sightingWall}</h3>
                             <div className="flex gap-2">
@@ -398,7 +418,7 @@ const ElSocial: React.FC = () => {
             </main>
 
             {/* Floating Chat Button for Guild */}
-            {userGuild && !isChatOpen && (
+            {userGuild && !isChatOpen && activeTab === 'wall' && (
                 <button
                     onClick={() => setIsChatOpen(true)}
                     className="fixed bottom-28 right-8 z-[50] size-16 bg-primary text-slate-900 rounded-[2rem] shadow-2xl shadow-primary/40 flex items-center justify-center animate-bounce-slow hover:scale-110 active:scale-90 transition-all group"

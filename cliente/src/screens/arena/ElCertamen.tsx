@@ -613,37 +613,6 @@ const ElCertamen: React.FC = () => {
     return (
         <div className="flex flex-col flex-1 font-sans px-4 md:px-12 py-6 md:py-8 bg-cream dark:bg-slate-950 transition-colors duration-500 overflow-y-auto">
             <main className="flex-1 w-full max-w-7xl mx-auto flex flex-col gap-6">
-                {/* Header Section */}
-                <header className="flex flex-col gap-4 py-6 md:py-10 text-center md:text-left border-b border-sage-100 dark:border-slate-900 relative">
-                    <div className="absolute top-0 right-0 opacity-10 pointer-events-none">
-                        <span className="material-symbols-outlined text-9xl">swords</span>
-                    </div>
-
-                    <div className="flex items-center gap-2 px-4 py-1.5 bg-sage-100 dark:bg-sage-800/30 rounded-full w-fit mx-auto md:mx-0 border border-primary/10">
-                        <span className="material-symbols-outlined text-sm text-primary animate-pulse">swords</span>
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{t.competitive}</span>
-                    </div>
-
-                    <h2 className="text-3xl md:text-5xl lg:text-6xl font-display font-black leading-tight text-slate-800 dark:text-white tracking-tight">
-                        {t.title.split(' ')[0]}<span className="text-primary">{t.title.split(' ').slice(1).join(' ')}</span>
-                    </h2>
-
-                    <div className="flex items-center gap-8 justify-center md:justify-start">
-                        <div className="flex items-center gap-2 group">
-                            <span className="material-symbols-outlined text-primary group-hover:rotate-12 transition-transform">{time.icon}</span>
-                            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
-                                {translations[language].sanctuary.timePhases[time.phase as keyof typeof translations.es.sanctuary.timePhases] || time.phase}
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-2 group">
-                            <span className="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">{weather?.condition.includes('Sun') ? 'sunny' : 'cloudy'}</span>
-                            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
-                                {((translations[language] as any).common.weather || {})[weather?.condition || ''] || weather?.condition}
-                            </span>
-                        </div>
-                    </div>
-                </header>
-
                 {/* Main Content Area */}
                 <div className="flex-1 py-4">
                     {phase === 'selection' && renderSelection()}
