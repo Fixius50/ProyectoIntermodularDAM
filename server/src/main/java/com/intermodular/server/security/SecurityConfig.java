@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .pathMatchers("/api/auth/**").permitAll() // Endpoints publicos de logeo/registro
                         .pathMatchers("/api/public/**").permitAll()
+                        .pathMatchers("/api/collection/**").permitAll() // <-- ¡AQUÍ ESTÁ TU NUEVA RUTA PÚBLICA!
                         .pathMatchers("/favicon.ico").permitAll()
                         .pathMatchers("/rsocket/**").permitAll() // Para el handshake inicial rsocket
                         .anyExchange().authenticated() // El resto debera estar autenticado
