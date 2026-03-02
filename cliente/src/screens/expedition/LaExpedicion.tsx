@@ -212,7 +212,7 @@ const LaExpedicion: React.FC = () => {
     }, [playerBirds]);
 
     return (
-        <div className="flex flex-col flex-1 font-display h-full bg-white dark:bg-zinc-950 transition-colors duration-500">
+        <div className="relative overflow-hidden flex flex-col flex-1 font-display h-full bg-white dark:bg-zinc-950 transition-colors duration-500">
             {/* Modal de Estudio */}
             {selectedBirdForStudy && (
                 <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-in">

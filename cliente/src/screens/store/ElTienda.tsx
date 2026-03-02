@@ -324,8 +324,8 @@ const ElTienda: React.FC = () => {
             {/* Expedition Pass Modal */}
             {showPassModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in text-slate-900 dark:text-white">
-                    <div className="bg-[#fcfaf0] dark:bg-slate-900 rounded-[3rem] shadow-2xl w-full max-w-lg overflow-hidden animate-scale-in border-4 border-amber-500 relative flex flex-col">
-                        <div className="h-40 bg-cover bg-center relative" style={{ backgroundImage: 'url("https://images.pexels.com/photos/450441/pexels-photo-450441.jpeg?auto=compress&cs=tinysrgb&w=800")' }}>
+                    <div className="bg-[#fcfaf0] dark:bg-slate-900 rounded-[3rem] shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto custom-scrollbar animate-scale-in border-4 border-amber-500 relative flex flex-col">
+                        <div className="h-40 shrink-0 bg-cover bg-center relative" style={{ backgroundImage: 'url("https://images.pexels.com/photos/450441/pexels-photo-450441.jpeg?auto=compress&cs=tinysrgb&w=800")' }}>
                             <div className="absolute inset-0 bg-gradient-to-t from-[#fcfaf0] dark:from-slate-900 to-transparent"></div>
                             <button onClick={() => setShowPassModal(false)} className="absolute top-4 right-4 p-2 bg-black/30 rounded-full text-white backdrop-blur-md">
                                 <span className="material-symbols-outlined">close</span>

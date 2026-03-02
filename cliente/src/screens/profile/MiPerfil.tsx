@@ -35,6 +35,7 @@ const MiPerfil: React.FC = () => {
 
     const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
     const [isFavBirdModalOpen, setIsFavBirdModalOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState<'settings' | 'companion' | 'achievements' | 'history'>('settings');
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,259 +104,279 @@ const MiPerfil: React.FC = () => {
         <div className="flex flex-col flex-1 font-display bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
             <main className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 md:px-12 py-6 md:py-8">
 
-                <header className="flex flex-col gap-3 py-8 md:py-12 items-center text-center animate-fade-in relative">
-                    <div className="absolute top-0 w-full h-48 bg-gradient-to-b from-primary/20 to-transparent -z-10 rounded-b-[3rem]"></div>
-
-                    <div className="relative group cursor-pointer" onClick={() => setIsAvatarModalOpen(true)}>
-                        <div className="absolute -inset-1 bg-gradient-to-r from-primary to-green-400 rounded-full blur opacity-25 group-hover:opacity-60 transition duration-500 group-hover:duration-200"></div>
+                <header className="flex flex-col gap-2 py-6 items-center text-center animate-fade-in relative z-10">
+                    <div className="relative group cursor-pointer mt-2" onClick={() => setIsAvatarModalOpen(true)}>
                         <img
                             src={currentUser?.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'}
-                            className="relative size-32 md:size-40 rounded-full border-4 border-white dark:border-slate-800 shadow-2xl object-cover bg-white"
+                            className="relative size-24 md:size-28 rounded-full border-4 border-white dark:border-slate-800 shadow-xl object-cover bg-white"
                             alt="Avatar"
                         />
-                        <button className="absolute bottom-1 right-1 size-10 md:size-12 bg-primary text-slate-900 rounded-full flex items-center justify-center shadow-lg border-2 border-white dark:border-slate-800 hover:scale-110 active:scale-95 transition-transform z-10">
-                            <span className="material-symbols-outlined text-xl">edit</span>
+                        <button className="absolute bottom-0 right-0 size-8 bg-primary text-slate-900 rounded-full flex items-center justify-center shadow-md border-2 border-white dark:border-slate-800 hover:scale-110 active:scale-95 transition-transform z-10">
+                            <span className="material-symbols-outlined text-sm">edit</span>
                         </button>
                     </div>
 
-                    <div className="mt-4 flex flex-col items-center">
-                        <h2 className="text-3xl md:text-4xl font-black leading-tight text-slate-900 dark:text-white">{currentUser?.name || t.identity}</h2>
-                        <div className="flex items-center gap-2 mt-2">
-                            <span className="material-symbols-outlined text-amber-500 text-sm">stars</span>
-                            <p className="text-amber-600 dark:text-amber-500 font-black uppercase tracking-widest text-[10px] md:text-xs">
+                    <div className="mt-2 flex flex-col items-center">
+                        <h2 className="text-2xl font-black leading-tight text-slate-900 dark:text-white">{currentUser?.name || t.identity}</h2>
+                        <div className="flex items-center gap-2 mt-1">
+                            <span className="material-symbols-outlined text-amber-500 text-xs">stars</span>
+                            <p className="text-amber-600 dark:text-amber-500 font-black uppercase tracking-widest text-[9px] md:text-[10px]">
                                 {t.ranks[currentUser?.rank as keyof typeof t.ranks] || currentUser?.rank || t.rank} {currentUser?.level || 1}
                             </p>
-                            <span className="material-symbols-outlined text-amber-500 text-sm">stars</span>
-                        </div>
-
-                        <div className="mt-4 px-4 py-2 bg-slate-100 dark:bg-slate-900 rounded-full flex items-center gap-3 border border-slate-200 dark:border-slate-800 shadow-sm">
-                            <span className="material-symbols-outlined text-slate-400 text-sm">monetization_on</span>
-                            <span className="font-black text-sm">{currentUser?.feathers || 0} <span className="text-[10px] text-slate-500 uppercase tracking-widest ml-1">{t.feathers}</span></span>
+                            <span className="material-symbols-outlined text-amber-500 text-xs">stars</span>
                         </div>
                     </div>
                 </header>
 
-                {/* App Settings Section */}
-                <section className="mb-8 animate-slide-up" style={{ animationDelay: '50ms' }}>
-                    <h3 className="text-lg font-black uppercase tracking-widest flex items-center gap-2 mb-4">
-                        <span className="material-symbols-outlined text-primary">settings</span>
-                        {t.settings}
-                    </h3>
-                    <GlassPanel className="p-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Theme Toggle */}
-                            <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
-                                <div className="flex items-center gap-3">
-                                    <div className={`p-2 rounded-xl ${theme === 'light' ? 'bg-amber-100 text-amber-600' : 'bg-indigo-900/30 text-indigo-400'}`}>
-                                        <span className="material-symbols-outlined">{theme === 'light' ? 'light_mode' : 'dark_mode'}</span>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs font-black uppercase tracking-widest">{t.theme}</p>
-                                        <p className="text-[10px] text-slate-500 font-bold">{theme === 'light' ? t.lightMode : t.darkMode}</p>
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => toggleTheme()}
-                                    className={`relative w-12 h-6 rounded-full transition-colors duration-300 focus:outline-none ${theme === 'dark' ? 'bg-primary' : 'bg-slate-300'}`}
-                                >
-                                    <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 ${theme === 'dark' ? 'translate-x-6' : ''}`} />
-                                </button>
-                            </div>
-
-                            {/* Language Selector */}
-                            <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
-                                        <span className="material-symbols-outlined">translate</span>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs font-black uppercase tracking-widest">{t.language}</p>
-                                        <p className="text-[10px] text-slate-500 font-bold">{language === 'es' ? 'Castellano' : 'English'}</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-1 bg-white dark:bg-slate-800 p-1 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                                    <button
-                                        onClick={() => setLanguage('es')}
-                                        className={`px-3 py-1 rounded-lg text-[9px] font-black transition-all ${language === 'es' ? 'bg-primary text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                                    >
-                                        ES
-                                    </button>
-                                    <button
-                                        onClick={() => setLanguage('en')}
-                                        className={`px-3 py-1 rounded-lg text-[9px] font-black transition-all ${language === 'en' ? 'bg-primary text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                                    >
-                                        EN
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </GlassPanel>
-                </section>
-
-                {/* Favorite Bird Section */}
-                <section className="mb-8 animate-slide-up" style={{ animationDelay: '100ms' }}>
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-black uppercase tracking-widest flex items-center gap-2">
-                            <span className="material-symbols-outlined text-rose-500">favorite</span>
-                            {t.favCompanion}
-                        </h3>
-                        {playerBirds.length > 0 && (
-                            <button
-                                onClick={() => setIsFavBirdModalOpen(true)}
-                                className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/70 transition-colors"
-                            >
-                                {t.change}
-                            </button>
-                        )}
-                    </div>
-
-                    {favoriteBird ? (
-                        <div
-                            className="h-40 md:h-48 rounded-[2rem] overflow-hidden relative shadow-lg cursor-pointer group border border-white/20 dark:border-slate-800/50"
-                            onClick={() => setIsFavBirdModalOpen(true)}
+                {/* Switch view */}
+                <div className="flex bg-slate-200/50 dark:bg-slate-800/50 p-1.5 rounded-2xl mb-8 mx-auto w-full max-w-2xl overflow-x-auto custom-scrollbar shadow-sm">
+                    {[
+                        { id: 'settings', label: t.settings },
+                        { id: 'companion', label: t.favCompanion },
+                        { id: 'achievements', label: `${t.progress} / ${t.badges}` },
+                        { id: 'history', label: t.history }
+                    ].map(tab => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id as any)}
+                            className={`flex-1 min-w-[100px] py-3 md:py-2.5 text-[9px] md:text-[10px] font-black uppercase tracking-widest rounded-xl transition-all whitespace-nowrap px-2 ${activeTab === tab.id ? 'bg-white dark:bg-slate-700 shadow-md text-primary' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'}`}
                         >
-                            <div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700" style={{ backgroundImage: `url('${favoriteBird.image}')` }}></div>
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-                            <div className="absolute bottom-0 left-0 w-full p-6 text-white text-left">
-                                <span className="inline-block px-2 py-0.5 bg-rose-500/80 backdrop-blur-md rounded text-[8px] font-black uppercase tracking-widest mb-1 shadow-sm">
-                                    Favorito
-                                </span>
-                                <h4 className="text-2xl font-black truncate">{tc.birds[favoriteBird.name as keyof typeof tc.birds] || favoriteBird.name}</h4>
-                                <p className="text-xs text-white/70 italic">{favoriteBird.scientificName || favoriteBird.type}</p>
-                            </div>
-                        </div>
-                    ) : (
-                        <GlassPanel
-                            className="h-40 md:h-48 flex flex-col items-center justify-center text-center cursor-pointer border-dashed border-2 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors"
-                            onClick={() => playerBirds.length > 0 ? setIsFavBirdModalOpen(true) : null}
-                        >
-                            <div className="size-12 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-500 mb-3">
-                                <span className="material-symbols-outlined text-2xl">pets</span>
-                            </div>
-                            <h4 className="text-base font-black mb-1">{t.noCompanion}</h4>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest px-4">
-                                {playerBirds.length > 0 ? t.noCompanionDesc : t.captureFirst}
-                            </p>
-                        </GlassPanel>
-                    )}
-                </section>
-
-                {/* Key Stats Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 animate-slide-up" style={{ animationDelay: '200ms' }}>
-                    {stats.map((stat, idx) => (
-                        <GlassPanel key={idx} className={`p-5 flex flex-col items-center text-center border-t-4 ${stat.color.replace('text-', 'border-')}`}>
-                            <span className={`material-symbols-outlined text-4xl mb-2 ${stat.color} opacity-80`}>
-                                {stat.icon}
-                            </span>
-                            <p className="text-3xl font-black leading-tight text-slate-800 dark:text-white">{stat.value}</p>
-                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-2">{stat.label}</p>
-                        </GlassPanel>
+                            {tab.label}
+                        </button>
                     ))}
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-slide-up" style={{ animationDelay: '300ms' }}>
-                    {/* Collection Progress */}
-                    <div className="flex flex-col gap-4">
-                        <h3 className="text-lg font-black uppercase tracking-widest flex items-center gap-2">
-                            <span className="material-symbols-outlined text-primary">pie_chart</span>
-                            {t.progress}
+                {/* App Settings Section */}
+                {activeTab === 'settings' && (
+                    <section className="mb-8 animate-fade-in-up">
+                        <h3 className="text-lg font-black uppercase tracking-widest flex items-center gap-2 mb-4">
+                            <span className="material-symbols-outlined text-primary">settings</span>
+                            {t.settings}
                         </h3>
-                        <GlassPanel className="p-6 md:p-8 flex-1">
-                            <div className="space-y-6">
-                                {categories.map((cat: string) => {
-                                    // Count occurrences of this species in user's collection
-                                    const speciesInstances = playerBirds.filter((b: Bird) => b.name === cat);
-                                    const capturedCount = speciesInstances.length;
-                                    const percentage = capturedCount > 0 ? 100 : 0;
-                                    // Translate cat name if it's a key
-                                    const displayName = translations[language].common.birds?.[cat as keyof typeof translations.es.common.birds] || cat;
-
-                                    return (
-                                        <div key={cat}>
-                                            <div className="flex justify-between items-center mb-2">
-                                                <span className="text-sm font-bold capitalize text-slate-700 dark:text-slate-300">{displayName}</span>
-                                                <div className="flex items-baseline gap-1">
-                                                    <span className={`font-black ${capturedCount > 0 ? 'text-primary' : 'text-slate-300'}`}>{capturedCount}</span>
-                                                    <span className="text-[10px] font-bold text-slate-400">/ 1</span>
-                                                </div>
-                                            </div>
-                                            <div className="h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden shadow-inner">
-                                                <div
-                                                    className={`h-full bg-gradient-to-r ${capturedCount > 0 ? 'from-primary to-green-400' : 'from-slate-200 to-slate-200'} transition-all duration-1000 ease-out`}
-                                                    style={{ width: `${percentage}%` }}
-                                                ></div>
-                                            </div>
+                        <GlassPanel className="p-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Theme Toggle */}
+                                <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`p-2 rounded-xl ${theme === 'light' ? 'bg-amber-100 text-amber-600' : 'bg-indigo-900/30 text-indigo-400'}`}>
+                                            <span className="material-symbols-outlined">{theme === 'light' ? 'light_mode' : 'dark_mode'}</span>
                                         </div>
-                                    );
-                                })}
+                                        <div>
+                                            <p className="text-xs font-black uppercase tracking-widest">{t.theme}</p>
+                                            <p className="text-[10px] text-slate-500 font-bold">{theme === 'light' ? t.lightMode : t.darkMode}</p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => toggleTheme()}
+                                        className={`relative w-12 h-6 rounded-full transition-colors duration-300 focus:outline-none ${theme === 'dark' ? 'bg-primary' : 'bg-slate-300'}`}
+                                    >
+                                        <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 ${theme === 'dark' ? 'translate-x-6' : ''}`} />
+                                    </button>
+                                </div>
+
+                                {/* Language Selector */}
+                                <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+                                            <span className="material-symbols-outlined">translate</span>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-black uppercase tracking-widest">{t.language}</p>
+                                            <p className="text-[10px] text-slate-500 font-bold">{language === 'es' ? 'Castellano' : 'English'}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-1 bg-white dark:bg-slate-800 p-1 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                                        <button
+                                            onClick={() => setLanguage('es')}
+                                            className={`px-3 py-1 rounded-lg text-[9px] font-black transition-all ${language === 'es' ? 'bg-primary text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                                        >
+                                            ES
+                                        </button>
+                                        <button
+                                            onClick={() => setLanguage('en')}
+                                            className={`px-3 py-1 rounded-lg text-[9px] font-black transition-all ${language === 'en' ? 'bg-primary text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                                        >
+                                            EN
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </GlassPanel>
-                    </div>
+                    </section>
+                )}
 
-                    {/* Recent Badges */}
-                    <div className="flex flex-col gap-4">
-                        <h3 className="text-lg font-black uppercase tracking-widest flex items-center gap-2">
-                            <span className="material-symbols-outlined text-amber-500">military_tech</span>
-                            {t.badges}
-                        </h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1 content-start">
-                            {badges.map(badge => (
-                                <GlassPanel key={badge.id} className="p-5 flex flex-col md:flex-row items-start md:items-center gap-4 group hover:shadow-md transition-shadow">
-                                    <div className="size-12 md:size-14 shrink-0 rounded-[1rem] bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-500 group-hover:scale-110 group-hover:-rotate-6 transition-all shadow-sm">
-                                        <span className="material-symbols-outlined text-2xl md:text-3xl">{badge.icon}</span>
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="font-black text-sm text-slate-800 dark:text-white leading-tight mb-1">{badge.name}</p>
-                                        <p className="text-[9px] font-bold text-slate-500 leading-snug">{badge.desc}</p>
-                                    </div>
+                {/* Favorite Bird Section */}
+                {activeTab === 'companion' && (
+                    <section className="mb-8 animate-fade-in-up">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-black uppercase tracking-widest flex items-center gap-2">
+                                <span className="material-symbols-outlined text-rose-500">favorite</span>
+                                {t.favCompanion}
+                            </h3>
+                            {playerBirds.length > 0 && (
+                                <button
+                                    onClick={() => setIsFavBirdModalOpen(true)}
+                                    className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/70 transition-colors"
+                                >
+                                    {t.change}
+                                </button>
+                            )}
+                        </div>
+
+                        {favoriteBird ? (
+                            <div
+                                className="h-40 md:h-48 rounded-[2rem] overflow-hidden relative shadow-lg cursor-pointer group border border-white/20 dark:border-slate-800/50"
+                                onClick={() => setIsFavBirdModalOpen(true)}
+                            >
+                                <div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700" style={{ backgroundImage: `url('${favoriteBird.image}')` }}></div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                                <div className="absolute bottom-0 left-0 w-full p-6 text-white text-left">
+                                    <span className="inline-block px-2 py-0.5 bg-rose-500/80 backdrop-blur-md rounded text-[8px] font-black uppercase tracking-widest mb-1 shadow-sm">
+                                        Favorito
+                                    </span>
+                                    <h4 className="text-2xl font-black truncate">{tc.birds[favoriteBird.name as keyof typeof tc.birds] || favoriteBird.name}</h4>
+                                    <p className="text-xs text-white/70 italic">{favoriteBird.scientificName || favoriteBird.type}</p>
+                                </div>
+                            </div>
+                        ) : (
+                            <GlassPanel
+                                className="h-40 md:h-48 flex flex-col items-center justify-center text-center cursor-pointer border-dashed border-2 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors"
+                                onClick={() => playerBirds.length > 0 ? setIsFavBirdModalOpen(true) : null}
+                            >
+                                <div className="size-12 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-500 mb-3">
+                                    <span className="material-symbols-outlined text-2xl">pets</span>
+                                </div>
+                                <h4 className="text-base font-black mb-1">{t.noCompanion}</h4>
+                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest px-4">
+                                    {playerBirds.length > 0 ? t.noCompanionDesc : t.captureFirst}
+                                </p>
+                            </GlassPanel>
+                        )}
+                    </section>
+                )}
+
+                {/* Achievements & Badges Grid */}
+                {activeTab === 'achievements' && (
+                    <div className="animate-fade-in-up">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                            {stats.map((stat, idx) => (
+                                <GlassPanel key={idx} className={`p-5 flex flex-col items-center text-center border-t-4 ${stat.color.replace('text-', 'border-')}`}>
+                                    <span className={`material-symbols-outlined text-4xl mb-2 ${stat.color} opacity-80`}>
+                                        {stat.icon}
+                                    </span>
+                                    <p className="text-3xl font-black leading-tight text-slate-800 dark:text-white">{stat.value}</p>
+                                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-2">{stat.label}</p>
                                 </GlassPanel>
                             ))}
                         </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-slide-up" style={{ animationDelay: '300ms' }}>
+                            {/* Collection Progress */}
+                            <div className="flex flex-col gap-4">
+                                <h3 className="text-lg font-black uppercase tracking-widest flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-primary">pie_chart</span>
+                                    {t.progress}
+                                </h3>
+                                <GlassPanel className="p-6 md:p-8 flex-1">
+                                    <div className="space-y-6">
+                                        {categories.map((cat: string) => {
+                                            // Count occurrences of this species in user's collection
+                                            const speciesInstances = playerBirds.filter((b: Bird) => b.name === cat);
+                                            const capturedCount = speciesInstances.length;
+                                            const percentage = capturedCount > 0 ? 100 : 0;
+                                            // Translate cat name if it's a key
+                                            const displayName = translations[language].common.birds?.[cat as keyof typeof translations.es.common.birds] || cat;
+
+                                            return (
+                                                <div key={cat}>
+                                                    <div className="flex justify-between items-center mb-2">
+                                                        <span className="text-sm font-bold capitalize text-slate-700 dark:text-slate-300">{displayName}</span>
+                                                        <div className="flex items-baseline gap-1">
+                                                            <span className={`font-black ${capturedCount > 0 ? 'text-primary' : 'text-slate-300'}`}>{capturedCount}</span>
+                                                            <span className="text-[10px] font-bold text-slate-400">/ 1</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden shadow-inner">
+                                                        <div
+                                                            className={`h-full bg-gradient-to-r ${capturedCount > 0 ? 'from-primary to-green-400' : 'from-slate-200 to-slate-200'} transition-all duration-1000 ease-out`}
+                                                            style={{ width: `${percentage}%` }}
+                                                        ></div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </GlassPanel>
+                            </div>
+
+                            {/* Recent Badges */}
+                            <div className="flex flex-col gap-4">
+                                <h3 className="text-lg font-black uppercase tracking-widest flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-amber-500">military_tech</span>
+                                    {t.badges}
+                                </h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1 content-start">
+                                    {badges.map(badge => (
+                                        <GlassPanel key={badge.id} className="p-5 flex flex-col md:flex-row items-start md:items-center gap-4 group hover:shadow-md transition-shadow">
+                                            <div className="size-12 md:size-14 shrink-0 rounded-[1rem] bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-500 group-hover:scale-110 group-hover:-rotate-6 transition-all shadow-sm">
+                                                <span className="material-symbols-outlined text-2xl md:text-3xl">{badge.icon}</span>
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="font-black text-sm text-slate-800 dark:text-white leading-tight mb-1">{badge.name}</p>
+                                                <p className="text-[9px] font-bold text-slate-500 leading-snug">{badge.desc}</p>
+                                            </div>
+                                        </GlassPanel>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* Activity History */}
-                <div className="mt-12 mb-12 animate-slide-up" style={{ animationDelay: '400ms' }}>
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-black uppercase tracking-widest flex items-center gap-2">
-                            <span className="material-symbols-outlined text-blue-500">history_toggle_off</span>
-                            {t.history}
-                        </h3>
-                    </div>
+                {activeTab === 'history' && (
+                    <div className="mt-4 mb-12 animate-fade-in-up">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-black uppercase tracking-widest flex items-center gap-2">
+                                <span className="material-symbols-outlined text-blue-500">history_toggle_off</span>
+                                {t.history}
+                            </h3>
+                        </div>
 
-                    <GlassPanel className="p-0 overflow-hidden">
-                        {activityHistory.length === 0 ? (
-                            <div className="p-8 text-center text-slate-500">
-                                <span className="material-symbols-outlined text-4xl mb-2 opacity-50">hourglass_empty</span>
-                                <p className="text-sm font-bold">{t.noActivity}</p>
-                                <p className="text-[10px] uppercase tracking-widest mt-1">{t.goExplore}</p>
-                            </div>
-                        ) : (
-                            <div className="divide-y divide-slate-100 dark:divide-slate-800">
-                                {activityHistory.slice(0, 5).map((act) => (
-                                    <div key={act.id} className="p-5 flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
-                                        <div className="size-10 shrink-0 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-500 shadow-inner">
-                                            <span className="material-symbols-outlined text-sm">{act.icon}</span>
+                        <GlassPanel className="p-0 overflow-hidden">
+                            {activityHistory.length === 0 ? (
+                                <div className="p-8 text-center text-slate-500">
+                                    <span className="material-symbols-outlined text-4xl mb-2 opacity-50">hourglass_empty</span>
+                                    <p className="text-sm font-bold">{t.noActivity}</p>
+                                    <p className="text-[10px] uppercase tracking-widest mt-1">{t.goExplore}</p>
+                                </div>
+                            ) : (
+                                <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                                    {activityHistory.slice(0, 5).map((act) => (
+                                        <div key={act.id} className="p-5 flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
+                                            <div className="size-10 shrink-0 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-500 shadow-inner">
+                                                <span className="material-symbols-outlined text-sm">{act.icon}</span>
+                                            </div>
+                                            <div className="flex-1 text-left">
+                                                <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{act.action}</p>
+                                            </div>
+                                            <div className="text-right shrink-0">
+                                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md">
+                                                    {getRelativeTime(act.time)}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div className="flex-1 text-left">
-                                            <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{act.action}</p>
-                                        </div>
-                                        <div className="text-right shrink-0">
-                                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md">
-                                                {getRelativeTime(act.time)}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
-                                {activityHistory.length > 5 && (
-                                    <button className="w-full py-4 bg-slate-50/50 dark:bg-slate-900/30 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-primary/5 transition-colors text-center">
-                                        {t.viewFullHistory}
-                                    </button>
-                                )}
-                            </div>
-                        )}
-                    </GlassPanel>
-                </div>
+                                    ))}
+                                    {activityHistory.length > 5 && (
+                                        <button className="w-full py-4 bg-slate-50/50 dark:bg-slate-900/30 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-primary/5 transition-colors text-center">
+                                            {t.viewFullHistory}
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+                        </GlassPanel>
+                    </div>
+                )}
             </main>
 
             {/* Avatar Selection Modal */}

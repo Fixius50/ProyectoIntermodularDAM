@@ -199,22 +199,24 @@ const Login: React.FC = () => {
                         </form>
 
                         <div className="mt-8 space-y-4">
-                            <div className="relative flex items-center justify-center">
-                                <div className="absolute inset-0 flex items-center">
-                                    <div className="w-full border-t border-slate-100 dark:border-zinc-800"></div>
-                                </div>
-                                <span className="relative px-4 bg-white dark:bg-zinc-900 text-[9px] font-black text-slate-300 dark:text-zinc-700 uppercase tracking-widest">OR</span>
-                            </div>
-
                             {isLogin && (
-                                <button
-                                    type="button"
-                                    onClick={() => testLogin()}
-                                    className="w-full py-4 bg-slate-50 dark:bg-zinc-950 hover:bg-slate-100 dark:hover:bg-zinc-900 text-slate-500 dark:text-zinc-500 hover:text-primary dark:hover:text-primary border border-slate-200 dark:border-zinc-800 rounded-2xl transition-all text-[10px] font-black uppercase tracking-[0.15em] flex items-center justify-center gap-2 group"
-                                >
-                                    <span className="material-symbols-outlined text-lg group-hover:rotate-12 transition-transform">biotech</span>
-                                    {language === 'es' ? 'Acceso Instantáneo' : 'Instant Access'}
-                                </button>
+                                <>
+                                    <div className="relative flex items-center justify-center">
+                                        <div className="absolute inset-0 flex items-center">
+                                            <div className="w-full border-t border-slate-100 dark:border-zinc-800"></div>
+                                        </div>
+                                        <span className="relative px-4 bg-white dark:bg-zinc-900 text-[9px] font-black text-slate-300 dark:text-zinc-700 uppercase tracking-widest">OR</span>
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => testLogin()}
+                                        className="w-full py-4 bg-slate-50 dark:bg-zinc-950 hover:bg-slate-100 dark:hover:bg-zinc-900 text-slate-500 dark:text-zinc-500 hover:text-primary dark:hover:text-primary border border-slate-200 dark:border-zinc-800 rounded-2xl transition-all text-[10px] font-black uppercase tracking-[0.15em] flex items-center justify-center gap-2 group"
+                                    >
+                                        <span className="material-symbols-outlined text-lg group-hover:rotate-12 transition-transform">biotech</span>
+                                        {language === 'es' ? 'Acceso Instantáneo' : 'Instant Access'}
+                                    </button>
+                                </>
                             )}
 
                             {!isLogin && (

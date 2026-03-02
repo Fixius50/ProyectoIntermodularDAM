@@ -64,7 +64,7 @@ const Navbar: React.FC = () => {
             {/* Center: Page Title */}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                 <h1 className="text-sm md:text-lg font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white pointer-events-auto">
-                    {navItems.find(item => item.id === currentScreen)?.label || "AVIS"}
+                    {currentScreen === 'profile' ? tp.title : (navItems.find(item => item.id === currentScreen)?.label || "AVIS")}
                 </h1>
                 {currentScreen === 'home' && (
                     <div className="text-[10px] text-primary font-bold tracking-widest uppercase mt-0.5">
