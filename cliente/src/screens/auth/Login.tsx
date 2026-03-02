@@ -65,18 +65,6 @@ const Login: React.FC = () => {
                 {/* Header Section */}
                 <header className="text-center mb-4 relative">
                     <div className="absolute -top-12 right-0 flex gap-2 z-20">
-                        <button
-                            onClick={() => setLanguage('es')}
-                            className={`px-3 py-1 rounded-full text-[10px] font-black tracking-wider transition-all border ${language === 'es' ? 'bg-primary/20 text-primary border-primary/50' : 'bg-transparent text-slate-400 dark:text-zinc-500 border-slate-200 dark:border-zinc-800 hover:border-primary/30'}`}
-                        >
-                            ES
-                        </button>
-                        <button
-                            onClick={() => setLanguage('en')}
-                            className={`px-3 py-1 rounded-full text-[10px] font-black tracking-wider transition-all border ${language === 'en' ? 'bg-primary/20 text-primary border-primary/50' : 'bg-transparent text-slate-400 dark:text-zinc-500 border-slate-200 dark:border-zinc-800 hover:border-primary/30'}`}
-                        >
-                            EN
-                        </button>
                     </div>
 
                     <div className="mx-auto flex items-center justify-center w-16 h-16 mb-3 relative rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 shadow-xl shadow-black/5 dark:shadow-primary/5 border border-slate-100 dark:border-zinc-800 transition-all duration-500">
@@ -117,18 +105,41 @@ const Login: React.FC = () => {
                             )}
 
                             {!isLogin && (
-                                <div className="flex flex-col gap-1.5">
-                                    <label className="text-[10px] font-black text-slate-500 dark:text-zinc-500 uppercase tracking-[0.15em] ml-1">{t.nameLabel}</label>
-                                    <div className="relative group">
-                                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-600 text-lg transition-colors group-focus-within:text-primary">person</span>
-                                        <input
-                                            type="text"
-                                            value={name}
-                                            onChange={(e) => setName(e.target.value)}
-                                            placeholder={t.namePlaceholder}
-                                            className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-700 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-semibold"
-                                            required={!isLogin}
-                                        />
+                                <div className="flex gap-3">
+                                    <div className="flex-grow flex flex-col gap-1.5">
+                                        <label className="text-[10px] font-black text-slate-500 dark:text-zinc-500 uppercase tracking-[0.15em] ml-1">{t.nameLabel}</label>
+                                        <div className="relative group">
+                                            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-600 text-lg transition-colors group-focus-within:text-primary">person</span>
+                                            <input
+                                                type="text"
+                                                value={name}
+                                                onChange={(e) => setName(e.target.value)}
+                                                placeholder={t.namePlaceholder}
+                                                className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-700 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-semibold"
+                                                required={!isLogin}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Language selector in Register mode */}
+                                    <div className="flex flex-col gap-1.5">
+                                        <label className="text-[10px] font-black text-slate-500 dark:text-zinc-500 uppercase tracking-[0.15em] text-center">Lang</label>
+                                        <div className="flex bg-slate-100 dark:bg-zinc-800 p-1 rounded-2xl border border-slate-200 dark:border-zinc-700 shadow-inner h-full items-center">
+                                            <button
+                                                type="button"
+                                                onClick={() => setLanguage('es')}
+                                                className={`px-3 py-2 rounded-xl text-[10px] font-black transition-all ${language === 'es' ? 'bg-primary text-white shadow-md' : 'text-slate-400 dark:text-zinc-500'}`}
+                                            >
+                                                ES
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setLanguage('en')}
+                                                className={`px-3 py-2 rounded-xl text-[10px] font-black transition-all ${language === 'en' ? 'bg-primary text-white shadow-md' : 'text-slate-400 dark:text-zinc-500'}`}
+                                            >
+                                                EN
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -195,18 +206,22 @@ const Login: React.FC = () => {
                                 <span className="relative px-4 bg-white dark:bg-zinc-900 text-[9px] font-black text-slate-300 dark:text-zinc-700 uppercase tracking-widest">OR</span>
                             </div>
 
-                            <button
-                                type="button"
-                                onClick={() => testLogin()}
-                                className="w-full py-4 bg-slate-50 dark:bg-zinc-950 hover:bg-slate-100 dark:hover:bg-zinc-900 text-slate-500 dark:text-zinc-500 hover:text-primary dark:hover:text-primary border border-slate-200 dark:border-zinc-800 rounded-2xl transition-all text-[10px] font-black uppercase tracking-[0.15em] flex items-center justify-center gap-2 group"
-                            >
-                                <span className="material-symbols-outlined text-lg group-hover:rotate-12 transition-transform">biotech</span>
-                                {language === 'es' ? 'Acceso Instantáneo' : 'Instant Access'}
-                            </button>
+                            {isLogin && (
+                                <button
+                                    type="button"
+                                    onClick={() => testLogin()}
+                                    className="w-full py-4 bg-slate-50 dark:bg-zinc-950 hover:bg-slate-100 dark:hover:bg-zinc-900 text-slate-500 dark:text-zinc-500 hover:text-primary dark:hover:text-primary border border-slate-200 dark:border-zinc-800 rounded-2xl transition-all text-[10px] font-black uppercase tracking-[0.15em] flex items-center justify-center gap-2 group"
+                                >
+                                    <span className="material-symbols-outlined text-lg group-hover:rotate-12 transition-transform">biotech</span>
+                                    {language === 'es' ? 'Acceso Instantáneo' : 'Instant Access'}
+                                </button>
+                            )}
 
-                            <p className="text-center text-[9px] font-bold uppercase tracking-[0.1em] text-slate-400 dark:text-zinc-600 leading-relaxed max-w-xs mx-auto">
-                                {t.footer}
-                            </p>
+                            {!isLogin && (
+                                <p className="text-center text-[9px] font-bold uppercase tracking-[0.1em] text-slate-400 dark:text-zinc-600 leading-relaxed max-w-xs mx-auto">
+                                    {t.footer}
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>

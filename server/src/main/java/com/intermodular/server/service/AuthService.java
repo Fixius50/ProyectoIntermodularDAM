@@ -4,6 +4,7 @@ import com.intermodular.server.model.Player;
 import com.intermodular.server.repository.PlayerRepository;
 import com.intermodular.server.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;

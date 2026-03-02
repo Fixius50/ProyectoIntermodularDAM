@@ -15,33 +15,44 @@
 
 $ScriptDir = $PSScriptRoot
 if (-not $ScriptDir) { $ScriptDir = Get-Location }
+Set-Location $ScriptDir
 
-$BACKEND_DIR  = $ScriptDir                             # raiz del proyecto (mvnw.cmd esta aqui)
-$FRONTEND_DIR = Join-Path $ScriptDir "Cliente"         # carpeta del frontend React/Vite
-$MVNW         = Join-Path $ScriptDir "mvnw.cmd"
+# Rutas ABSOLUTAS para la lógica interna
+$BACKEND_ABS  = $ScriptDir
+$FRONTEND_ABS = Join-Path $ScriptDir "cliente"
+$MVNW_ABS     = Join-Path $ScriptDir "mvnw.cmd"
+
+# Rutas RELATIVAS solo para visualización
+$BACKEND_REL  = "."
+$FRONTEND_REL = ".\cliente"
+$MVNW_REL     = ".\mvnw.cmd"
 
 Write-Host ""
 Write-Host "  AVIS Dev Startup" -ForegroundColor Magenta
 Write-Host "  ====================================" -ForegroundColor DarkGray
-Write-Host "  Backend  : $BACKEND_DIR" -ForegroundColor Gray
-Write-Host "  Frontend : $FRONTEND_DIR" -ForegroundColor Gray
-Write-Host "  Maven    : $MVNW" -ForegroundColor Gray
+Write-Host "  Backend  : [Proyecto Raíz]" -ForegroundColor Gray
+Write-Host "  Frontend : $FRONTEND_REL" -ForegroundColor Gray
+Write-Host "  Maven    : $MVNW_REL" -ForegroundColor Gray
 Write-Host ""
 
 # Validaciones rapidas
-if (-not (Test-Path $MVNW))         { Write-Error "mvnw.cmd no encontrado en: $MVNW"; exit 1 }
-if (-not (Test-Path $FRONTEND_DIR)) { Write-Error "Carpeta Cliente/ no encontrada en: $FRONTEND_DIR"; exit 1 }
+if (-not (Test-Path $MVNW_ABS))         { Write-Error "mvnw.cmd no encontrado en: $MVNW_ABS"; exit 1 }
+if (-not (Test-Path $FRONTEND_ABS)) { Write-Error "Carpeta cliente/ no encontrada en: $FRONTEND_ABS"; exit 1 }
 
 # ── Limpiar Backend ──────────────────────────────────────────────────────────
 Write-Host "  [1/4] Limpiando Backend (mvn clean)..." -ForegroundColor Cyan
-& "$MVNW" clean
+& "$MVNW_ABS" clean
 if ($LASTEXITCODE -ne 0) { Write-Error "mvn clean fallo"; exit 1 }
+
+# ── Limpiar Procesos Node Antiguos ───────────────────────────────────────────
+Write-Host "  [1.5/4] Limpiando procesos Node/Vite antiguos..." -ForegroundColor Yellow
+Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
 
 # ── Build Frontend ───────────────────────────────────────────────────────────
 Write-Host "  [2/4] Instalando dependencias frontend (npm install)..." -ForegroundColor Green
-Push-Location $FRONTEND_DIR
+Push-Location $FRONTEND_ABS
 try {
-    npm install --legacy-peer-deps
+    npm.cmd install --legacy-peer-deps
     if ($LASTEXITCODE -ne 0) { Write-Error "npm install fallo"; exit 1 }
 } finally { Pop-Location }
 
@@ -51,7 +62,7 @@ $BackendJob = Start-Job -Name "Backend-Avis" -ScriptBlock {
     param($dir, $mvnw)
     Set-Location $dir
     & "$mvnw" spring-boot:run
-} -ArgumentList $BACKEND_DIR, $MVNW
+} -ArgumentList $BACKEND_ABS, $MVNW_ABS
 
 Write-Host "  Esperando que el Backend arranque (15s)..." -ForegroundColor Yellow
 Start-Sleep -Seconds 15
@@ -62,7 +73,7 @@ $FrontendJob = Start-Job -Name "Frontend-Avis" -ScriptBlock {
     param($dir)
     Set-Location $dir
     npm.cmd run dev
-} -ArgumentList $FRONTEND_DIR
+} -ArgumentList $FRONTEND_ABS
 
 Write-Host ""
 Write-Host "  =======================================" -ForegroundColor DarkGray
