@@ -50,16 +50,45 @@ Write-Header "AVIS Build Script - Mode: $Mode"
 Write-Host "  Frontend : $CLIENTE"
 Write-Host "  Android  : $ANDROID"
 
+Write-Host ""
+Write-Host "===========================================================" -ForegroundColor Cyan
+Write-Host "¿Qué partes del proyecto deseas compilar?" -ForegroundColor White
+Write-Host "[1] Todo (Tailscale Bridge + Frontend + Capacitor + Gradle) [Por defecto]" -ForegroundColor Gray
+Write-Host "[2] Solo App (Saltar Tailscale Bridge)" -ForegroundColor Gray
+Write-Host "[3] Solo Frontend (Saltar Bridge, Capacitor y Gradle)" -ForegroundColor Gray
+$respAndroid = Read-Host "Elige una opción (1 / 2 / 3) [Por defecto: 1]"
+
+$SkipBridge = $false
+$SkipAndroid = $false
+
+switch ($respAndroid) {
+    "2" {
+        $SkipBridge = $true
+    }
+    "3" {
+        $SkipBridge = $true
+        $SkipAndroid = $true
+    }
+    default {
+        # Opción 1 o cualquier otra tecla asume compilar todo
+    }
+}
+
 # ── STEP 0: Build Tailscale Bridge (Go) ──────────────────────────────────────
-Write-Header "STEP 0 - Building Tailscale Bridge (Go)"
-$BRIDGE_DIR = Join-Path $ROOT "tailscalebridge"
-Push-Location $BRIDGE_DIR
-try {
-    & powershell.exe ".\build_aar.ps1"
-    if ($LASTEXITCODE -ne 0) { Write-Fail "build_aar.ps1 failed (exit $LASTEXITCODE)" }
-    Write-OK "Tailscale Bridge (.aar) built"
-} finally { 
-    Pop-Location 
+if (-not $SkipBridge) {
+    Write-Header "STEP 0 - Building Tailscale Bridge (Go)"
+    $BRIDGE_DIR = Join-Path $ROOT "tailscalebridge"
+    Push-Location $BRIDGE_DIR
+    try {
+        & powershell.exe ".\build_aar.ps1"
+        if ($LASTEXITCODE -ne 0) { Write-Fail "build_aar.ps1 failed (exit $LASTEXITCODE)" }
+        Write-OK "Tailscale Bridge (.aar) built"
+    } finally { 
+        Pop-Location 
+    }
+} else {
+    Write-Header "STEP 0 - Building Tailscale Bridge (Go)"
+    Write-Host "  [Skip] Omitiendo compilación de Tailscale Bridge..." -ForegroundColor Yellow
 }
 
 # ── STEP 1: npm run build ────────────────────────────────────────────────────
@@ -75,43 +104,15 @@ if (-not $SkipFrontend) {
     Write-Host "  [SkipFrontend] Skipping npm build." -ForegroundColor Yellow
 }
 
-Write-Host ""
-Write-Host "===========================================================" -ForegroundColor Cyan
-Write-Host "¿Qué partes de Android deseas compilar?" -ForegroundColor White
-Write-Host "[1] Todo (Capacitor Sync + Gradle APK/AAB) [Por defecto]" -ForegroundColor Gray
-Write-Host "[2] Solo Gradle (Saltar Capacitor Sync)" -ForegroundColor Gray
-Write-Host "[3] Nada (Solo compilar Web/Frontend)" -ForegroundColor Gray
-$respAndroid = Read-Host "Elige una opción (1 / 2 / 3) [Por defecto: 1]"
-
-$SkipCapacitor = $false
-$SkipAndroid = $false
-
-switch ($respAndroid) {
-    "2" {
-        $SkipCapacitor = $true
-    }
-    "3" {
-        $SkipCapacitor = $true
-        $SkipAndroid = $true
-    }
-    default {
-        # Opción 1 o cualquier otra tecla asume compilar todo
-    }
-}
-
 if (-not $SkipAndroid) {
-    if (-not $SkipCapacitor) {
-        # ── STEP 2: Capacitor sync ───────────────────────────────────────────────────
-        Write-Header "STEP 2 - Capacitor sync -> Android"
-        Push-Location $CLIENTE
-        try {
-            npx cap sync android
-            if ($LASTEXITCODE -ne 0) { Write-Fail "cap sync failed (exit $LASTEXITCODE)" }
-            Write-OK "Capacitor synced"
-        } finally { Pop-Location }
-    } else {
-        Write-Host "  [Skip] Omitiendo sincronización de Capacitor..." -ForegroundColor Yellow
-    }
+    # ── STEP 2: Capacitor sync ───────────────────────────────────────────────────
+    Write-Header "STEP 2 - Capacitor sync -> Android"
+    Push-Location $CLIENTE
+    try {
+        npx cap sync android
+        if ($LASTEXITCODE -ne 0) { Write-Fail "cap sync failed (exit $LASTEXITCODE)" }
+        Write-OK "Capacitor synced"
+    } finally { Pop-Location }
 
     # ── STEP 3: Gradle APK & AAB ─────────────────────────────────────────────────
     Write-Header "STEP 3 - Gradle build ($Mode)"
