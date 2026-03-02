@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -17,13 +19,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("players")
-public class Player implements Serializable {
+public class Player implements Persistable<UUID>, Serializable {
 
     @Id
     private UUID id;
+    
     private String username;
 
-    /** Hashed password (BCrypt). NOT returned to client. */
     @Column("password_hash")
     private String passwordHash;
 
@@ -40,6 +42,18 @@ public class Player implements Serializable {
 
     @Column("created_at")
     private OffsetDateTime createdAt;
+
+    // --- MAGIA PARA R2DBC ---
+    // Obligamos a Spring a hacer INSERT la primera vez
+    @Transient
+    @Builder.Default
+    private boolean isNewRecord = true;
+
+    @Override
+    @Transient
+    public boolean isNew() {
+        return this.isNewRecord || id == null;
+    }
 
     private static final long serialVersionUID = 1L;
 }
