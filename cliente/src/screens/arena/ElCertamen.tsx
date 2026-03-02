@@ -190,90 +190,121 @@ const ElCertamen: React.FC = () => {
     };
 
     const renderSelection = () => (
-        <div className="flex flex-col gap-8 animate-fade-in">
-            <div className="text-center">
-                <h3 className="text-2xl font-black mb-2 dark:text-white">{t.selectChampion}</h3>
-                <p className="text-slate-500 dark:text-slate-400 font-bold italic text-sm">{t.selectChampionDesc} {weather?.condition}</p>
+        <div className="flex flex-col gap-10 animate-fade-in-up">
+            <div className="text-center max-w-2xl mx-auto">
+                <h3 className="text-2xl md:text-3xl font-display font-black mb-3 text-slate-800 dark:text-white">{t.selectChampion}</h3>
+                <p className="text-slate-500 dark:text-slate-400 font-bold italic text-sm leading-relaxed">
+                    {t.selectChampionDesc} <span className="text-primary not-italic">({weather?.condition})</span>
+                </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {playerBirds.length === 0 ? (
-                    <GlassPanel className="col-span-full p-12 text-center border-dashed">
-                        <span className="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-700 mb-4">nest_eco_leaf</span>
-                        <p className="font-bold text-slate-400">{t.noBirds}</p>
-                        <button onClick={() => setCurrentScreen('expedition')} className="mt-4 text-primary font-black uppercase tracking-widest text-xs hover:underline">{t.goExpedition}</button>
+                    <GlassPanel className="col-span-full p-16 text-center border-dashed border-sage-200 dark:border-slate-800 rounded-[3rem]">
+                        <div className="size-20 bg-sage-50 dark:bg-sage-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <span className="material-symbols-outlined text-5xl text-sage-300 dark:text-sage-700">nest_eco_leaf</span>
+                        </div>
+                        <p className="font-bold text-slate-400 dark:text-slate-500 mb-6">{t.noBirds}</p>
+                        <button
+                            onClick={() => setCurrentScreen('expedition')}
+                            className="bg-primary text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95"
+                        >
+                            {t.goExpedition}
+                        </button>
                     </GlassPanel>
                 ) : playerBirds.map(bird => (
-                    <GlassPanel
+                    <div
                         key={bird.id}
-                        className={`group p-0 overflow-hidden cursor-pointer hover:border-primary transition-all hover:scale-[1.02] ${bird.stamina < 20 ? 'grayscale opacity-60' : ''}`}
+                        className={`group relative glass-card rounded-[2.5rem] overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl hover:shadow-primary/10 ${bird.stamina < 20 ? 'grayscale opacity-60 pointer-events-none' : ''}`}
                         onClick={() => handleSelectBird(bird)}
                     >
-                        <div className="h-40 bg-cover bg-center relative" style={{ backgroundImage: `url(${bird.image})` }}>
-                            <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md px-2 py-1 rounded-lg border border-white/20">
-                                <p className="text-[10px] font-black text-white">LVL {bird.level}</p>
+                        <div className="h-48 bg-cover bg-center relative" style={{ backgroundImage: `url(${bird.image})` }}>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                            <div className="absolute top-4 right-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 shadow-lg">
+                                <p className="text-[10px] font-black text-primary">LVL {bird.level}</p>
                             </div>
                             {bird.stamina < 20 && (
-                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                                    <span className="bg-red-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase">{t.exhausted}</span>
+                                <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center">
+                                    <span className="bg-red-500/90 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-tighter">{t.exhausted}</span>
                                 </div>
                             )}
                         </div>
-                        <div className="p-6">
-                            <div className="flex justify-between items-start mb-2">
+
+                        <div className="p-7 relative">
+                            <div className="flex justify-between items-start mb-4">
                                 <div>
-                                    <h4 className="font-black text-lg leading-tight dark:text-white">{commonT.birds[bird.name as keyof typeof commonT.birds] || bird.name}</h4>
-                                    <p className="text-[10px] font-black uppercase text-primary tracking-widest">{bird.type}</p>
+                                    <h4 className="font-display font-black text-xl text-slate-800 dark:text-white leading-tight mb-1">
+                                        {commonT.birds[bird.name as keyof typeof commonT.birds] || bird.name}
+                                    </h4>
+                                    <span className="text-[10px] font-black uppercase text-primary tracking-[0.2em] bg-primary/5 px-2 py-0.5 rounded-lg border border-primary/10">
+                                        {bird.type}
+                                    </span>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-[8px] font-black opacity-40 uppercase">Stamina</p>
-                                    <div className="w-12 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mt-1 overflow-hidden">
+                                    <div className="flex items-center gap-1.5 mb-1.5">
+                                        <span className="material-symbols-outlined text-xs text-slate-400">bolt</span>
+                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Stamina</p>
+                                    </div>
+                                    <div className="w-16 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden shadow-inner">
                                         <div
-                                            className={`h-full transition-all ${bird.stamina > 50 ? 'bg-emerald-500' : bird.stamina > 20 ? 'bg-amber-500' : 'bg-red-500'}`}
+                                            className={`h-full transition-all duration-1000 ${bird.stamina > 50 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : bird.stamina > 20 ? 'bg-amber-500' : 'bg-red-500'}`}
                                             style={{ width: `${(bird.stamina / bird.maxStamina) * 100}%` }}
                                         ></div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-slate-50 dark:border-slate-800">
-                                <div className="text-center">
-                                    <p className="text-[8px] font-black opacity-40 uppercase dark:text-white">{t.statCanto}</p>
-                                    <p className="font-bold dark:text-slate-300">{bird.canto}</p>
+
+                            <div className="grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-sage-50 dark:border-slate-800/50">
+                                <div className="text-center group/stat">
+                                    <p className="text-[9px] font-black text-slate-400 uppercase mb-1">{t.statCanto}</p>
+                                    <p className="font-display font-black text-slate-800 dark:text-slate-200 group-hover/stat:text-primary transition-colors">{bird.canto}</p>
                                 </div>
-                                <div className="text-center">
-                                    <p className="text-[8px] font-black opacity-40 uppercase dark:text-white">{t.statPluma}</p>
-                                    <p className="font-bold dark:text-slate-300">{bird.plumaje}</p>
+                                <div className="text-center group/stat border-x border-sage-50 dark:border-slate-800/50">
+                                    <p className="text-[9px] font-black text-slate-400 uppercase mb-1">{t.statPluma}</p>
+                                    <p className="font-display font-black text-slate-800 dark:text-slate-200 group-hover/stat:text-primary transition-colors">{bird.plumaje}</p>
                                 </div>
-                                <div className="text-center">
-                                    <p className="text-[8px] font-black opacity-40 uppercase dark:text-white">{t.statVuelo}</p>
-                                    <p className="font-bold dark:text-slate-300">{bird.vuelo}</p>
+                                <div className="text-center group/stat">
+                                    <p className="text-[9px] font-black text-slate-400 uppercase mb-1">{t.statVuelo}</p>
+                                    <p className="font-display font-black text-slate-800 dark:text-slate-200 group-hover/stat:text-primary transition-colors">{bird.vuelo}</p>
                                 </div>
                             </div>
                         </div>
-                    </GlassPanel>
+                    </div>
                 ))}
             </div>
         </div>
     );
 
     const renderPreparation = () => (
-        <div className="flex flex-col gap-10 animate-fade-in max-w-4xl mx-auto w-full">
+        <div className="flex flex-col gap-12 animate-fade-in-up max-w-5xl mx-auto w-full">
             <div className="text-center">
-                <h3 className="text-2xl font-black mb-2 dark:text-white">{t.preparation}</h3>
-                <p className="text-slate-500 dark:text-slate-400 font-bold italic text-sm">{t.preparationDesc.replace('{name}', commonT.birds[selectedPlayerBird?.name as keyof typeof commonT.birds] || selectedPlayerBird?.name || '')}</p>
+                <h3 className="text-2xl md:text-4xl font-display font-black mb-3 text-slate-800 dark:text-white">{t.preparation}</h3>
+                <p className="text-slate-500 dark:text-slate-400 font-bold italic text-sm max-w-md mx-auto leading-relaxed">
+                    {t.preparationDesc.replace('{name}', commonT.birds[selectedPlayerBird?.name as keyof typeof commonT.birds] || selectedPlayerBird?.name || '')}
+                </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <GlassPanel className="p-8 flex flex-col items-center">
-                    <img src={selectedPlayerBird?.image} className="size-40 rounded-3xl object-cover mb-4 border-4 border-primary shadow-xl" />
-                    <div className="flex items-center gap-2 mb-1">
-                        <span className="bg-primary/20 text-primary text-[10px] font-black px-2 py-0.5 rounded-lg">LVL {selectedPlayerBird?.level}</span>
-                        <h4 className="text-xl font-black dark:text-white">{commonT.birds[selectedPlayerBird?.name as keyof typeof commonT.birds] || selectedPlayerBird?.name}</h4>
-                    </div>
-                    <p className="text-xs font-black text-primary uppercase tracking-widest">{selectedPlayerBird?.type}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-stretch">
+                <div className="glass-card p-10 rounded-[3rem] flex flex-col items-center border border-primary/5 shadow-2xl relative overflow-hidden group">
+                    <div className="absolute top-0 inset-x-0 h-32 bg-primary/5 dark:bg-primary/20 pointer-events-none group-hover:h-full transition-all duration-700" />
 
-                    <div className="bg-primary/5 p-4 rounded-2xl mt-6 w-full text-center border border-primary/10">
-                        <p className="text-[9px] font-black uppercase text-primary mb-1">{t.specialAbility}</p>
-                        <p className="text-xs font-bold italic dark:text-slate-300">
+                    <div className="relative z-10">
+                        <img src={selectedPlayerBird?.image} className="size-48 md:size-56 rounded-[2.5rem] object-cover mb-8 border-8 border-white dark:border-slate-900 shadow-2xl shadow-primary/20 group-hover:scale-105 transition-transform duration-500" />
+                        <div className="text-center">
+                            <div className="flex items-center justify-center gap-2 mb-2">
+                                <span className="bg-primary text-white text-[10px] font-black px-3 py-1 rounded-xl shadow-lg shadow-primary/30 uppercase">LVL {selectedPlayerBird?.level}</span>
+                                <h4 className="text-2xl font-display font-black text-slate-800 dark:text-white tracking-tight">{commonT.birds[selectedPlayerBird?.name as keyof typeof commonT.birds] || selectedPlayerBird?.name}</h4>
+                            </div>
+                            <span className="text-xs font-black text-primary uppercase tracking-[0.3em]">{selectedPlayerBird?.type}</span>
+                        </div>
+                    </div>
+
+                    <div className="bg-sage-100/50 dark:bg-slate-800/50 backdrop-blur-md p-6 rounded-[2rem] mt-8 w-full text-center border border-white/20 dark:border-slate-700 relative z-10">
+                        <div className="flex items-center justify-center gap-2 mb-2">
+                            <span className="material-symbols-outlined text-primary text-lg">bolt</span>
+                            <p className="text-[10px] font-black uppercase text-primary tracking-widest">{t.specialAbility}</p>
+                        </div>
+                        <p className="text-sm font-bold italic text-slate-600 dark:text-slate-300 leading-relaxed px-4">
                             {selectedPlayerBird?.type === 'Raptor' && t.abilities.raptor}
                             {(selectedPlayerBird?.type === 'Songbird' || selectedPlayerBird?.type === 'Song') && t.abilities.song}
                             {selectedPlayerBird?.type === 'Flight' && t.abilities.flight}
@@ -281,51 +312,79 @@ const ElCertamen: React.FC = () => {
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3 mt-8 pt-8 border-t border-slate-100 dark:border-slate-800 w-full">
-                        <img src={selectedOpponentBird?.image} className="size-16 rounded-2xl object-cover border-2 border-red-500" />
+                    <div className="flex items-center gap-5 mt-10 pt-10 border-t border-sage-100 dark:border-slate-800 w-full relative z-10">
+                        <div className="relative">
+                            <img src={selectedOpponentBird?.image} className="size-20 rounded-2xl object-cover border-4 border-white dark:border-slate-900 shadow-xl" />
+                            <div className="absolute -top-2 -right-2 size-6 bg-red-500 rounded-lg flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-lg">
+                                <span className="material-symbols-outlined text-white text-sm font-black">swords</span>
+                            </div>
+                        </div>
                         <div className="text-left flex-grow">
-                            <p className="text-[9px] font-black uppercase text-slate-400">{t.opponent}</p>
-                            <p className="font-bold leading-none dark:text-white">{commonT.birds[selectedOpponentBird?.name as keyof typeof commonT.birds] || selectedOpponentBird?.name}</p>
-                            <p className="text-[8px] font-black uppercase text-red-500 mt-1">Lvl {selectedOpponentBird?.level} • {selectedOpponentBird?.type}</p>
+                            <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">{t.opponent}</p>
+                            <p className="text-lg font-display font-black text-slate-800 dark:text-white leading-none mb-1">
+                                {commonT.birds[selectedOpponentBird?.name as keyof typeof commonT.birds] || selectedOpponentBird?.name}
+                            </p>
+                            <div className="flex items-center gap-2">
+                                <span className="text-[9px] font-black uppercase text-red-500 bg-red-500/10 px-2 py-0.5 rounded-lg border border-red-500/10 tracking-widest">
+                                    Lvl {selectedOpponentBird?.level} • {selectedOpponentBird?.type}
+                                </span>
+                            </div>
                         </div>
                     </div>
-                </GlassPanel>
+                </div>
 
-                <div className="flex flex-col gap-4">
-                    <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2">{t.consumables}</h5>
-                    <div className="flex-1 space-y-3 overflow-y-auto max-h-[300px] pr-2 custom-scrollbar">
+                <div className="flex flex-col gap-6">
+                    <div className="flex items-center gap-3 px-2">
+                        <span className="material-symbols-outlined text-primary">backpack</span>
+                        <h5 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{t.consumables}</h5>
+                    </div>
+
+                    <div className="flex-1 space-y-4 overflow-y-auto max-h-[420px] pr-2 custom-scrollbar">
                         {consumables.length > 0 ? consumables.map(item => (
                             <button
                                 key={item.id}
                                 onClick={() => setSelectedItem(item.id === selectedItem ? null : item.id)}
-                                className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all group ${selectedItem === item.id ? 'border-primary bg-primary/5' : 'bg-white/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800'}`}
+                                className={`group w-full flex items-center gap-5 p-5 rounded-[2rem] border-2 transition-all duration-300 relative overflow-hidden ${selectedItem === item.id ? 'border-primary bg-primary/5 shadow-xl shadow-primary/10' : 'bg-white/50 dark:bg-slate-900/50 border-white/40 dark:border-slate-800 hover:border-primary/30 hover:bg-white/80 dark:hover:bg-slate-900'}`}
                             >
-                                <span className={`material-symbols-outlined text-2xl ${selectedItem === item.id ? 'text-primary' : 'text-slate-400'}`}>{item.icon}</span>
-                                <div className="text-left flex-grow">
-                                    <p className="font-bold text-sm leading-tight dark:text-white">{commonT.items[item.name as keyof typeof commonT.items] || item.name}</p>
-                                    <p className="text-[9px] font-black uppercase text-slate-400">{commonT.inventory.quantity}: {item.count}</p>
+                                <div className={`size-14 rounded-2xl flex items-center justify-center transition-all ${selectedItem === item.id ? 'bg-primary text-white scale-110 shadow-lg shadow-primary/30' : 'bg-sage-50 dark:bg-slate-800 text-slate-400 group-hover:text-primary group-hover:bg-primary/10'}`}>
+                                    <span className="material-symbols-outlined text-3xl font-light">{item.icon}</span>
                                 </div>
-                                {selectedItem === item.id && <span className="material-symbols-outlined text-primary">check_circle</span>}
+                                <div className="text-left flex-grow relative z-10">
+                                    <p className={`font-display font-black text-base leading-tight mb-1 ${selectedItem === item.id ? 'text-primary' : 'text-slate-800 dark:text-white'}`}>
+                                        {commonT.items[item.name as keyof typeof commonT.items] || item.name}
+                                    </p>
+                                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest flex items-center gap-2">
+                                        <span className="bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-200/50 dark:border-slate-700/50">{commonT.inventory.quantity}: {item.count}</span>
+                                    </p>
+                                </div>
+                                {selectedItem === item.id && (
+                                    <div className="size-8 bg-primary text-white rounded-full flex items-center justify-center shadow-lg animate-scale-up">
+                                        <span className="material-symbols-outlined text-xl">check</span>
+                                    </div>
+                                )}
                             </button>
                         )) : (
-                            <div className="h-full border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col items-center justify-center p-6 text-slate-400 text-center">
-                                <span className="material-symbols-outlined text-4xl mb-2">inventory_2</span>
-                                <p className="text-xs font-bold">{t.noItems}</p>
+                            <div className="h-64 border-4 border-dashed border-sage-100 dark:border-slate-800/50 rounded-[2.5rem] flex flex-col items-center justify-center p-10 text-slate-400 text-center animate-pulse">
+                                <span className="material-symbols-outlined text-6xl mb-4 opacity-20">inventory_2</span>
+                                <p className="text-sm font-bold uppercase tracking-widest">{t.noItems}</p>
                             </div>
                         )}
                     </div>
-                    <div className="flex gap-4 mt-4">
+
+                    <div className="grid grid-cols-2 gap-4 mt-auto pt-6 border-t border-sage-100 dark:border-slate-800">
                         <button
                             onClick={() => setPhase('selection')}
-                            className="flex-1 py-4 font-black uppercase tracking-widest text-[10px] text-slate-400 hover:text-slate-600 transition-colors"
+                            className="py-5 font-black uppercase tracking-widest text-[11px] text-slate-400 hover:text-slate-800 dark:hover:text-white transition-all flex items-center justify-center gap-2 hover:-translate-x-1"
                         >
+                            <span className="material-symbols-outlined text-lg">arrow_back</span>
                             {t.changeBird}
                         </button>
                         <button
                             onClick={handleStartCombat}
-                            className="flex-[2] bg-primary text-slate-900 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+                            className="bg-primary text-white py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 group"
                         >
-                            {t.startDuel}
+                            <span>{t.startDuel}</span>
+                            <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">swords</span>
                         </button>
                     </div>
                 </div>
@@ -552,31 +611,41 @@ const ElCertamen: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col flex-1 font-display px-4 md:px-12 py-6 md:py-8">
-            <main className="flex-1 w-full max-w-7xl mx-auto flex flex-col">
-                <header className="flex flex-col gap-3 py-3 md:py-8 text-center md:text-left border-b border-slate-100 dark:border-slate-800 mb-4">
-                    <div className="flex items-center gap-2 px-3 py-1 bg-red-500/10 rounded-full w-fit mx-auto md:mx-0">
-                        <span className="material-symbols-outlined text-sm text-red-500">swords</span>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-red-500">{t.competitive}</span>
+        <div className="flex flex-col flex-1 font-sans px-4 md:px-12 py-6 md:py-8 bg-cream dark:bg-slate-950 transition-colors duration-500 overflow-y-auto">
+            <main className="flex-1 w-full max-w-7xl mx-auto flex flex-col gap-6">
+                {/* Header Section */}
+                <header className="flex flex-col gap-4 py-6 md:py-10 text-center md:text-left border-b border-sage-100 dark:border-slate-900 relative">
+                    <div className="absolute top-0 right-0 opacity-10 pointer-events-none">
+                        <span className="material-symbols-outlined text-9xl">swords</span>
                     </div>
-                    <h2 className="text-xl md:text-4xl lg:text-5xl font-black leading-tight dark:text-white">{t.title}</h2>
-                    <div className="flex items-center gap-6 justify-center md:justify-start">
-                        <div className="flex items-center gap-2">
-                            <span className="material-symbols-outlined text-primary">{time.icon}</span>
-                            <span className="text-[10px] font-black uppercase opacity-40">
+
+                    <div className="flex items-center gap-2 px-4 py-1.5 bg-sage-100 dark:bg-sage-800/30 rounded-full w-fit mx-auto md:mx-0 border border-primary/10">
+                        <span className="material-symbols-outlined text-sm text-primary animate-pulse">swords</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{t.competitive}</span>
+                    </div>
+
+                    <h2 className="text-3xl md:text-5xl lg:text-6xl font-display font-black leading-tight text-slate-800 dark:text-white tracking-tight">
+                        {t.title.split(' ')[0]}<span className="text-primary">{t.title.split(' ').slice(1).join(' ')}</span>
+                    </h2>
+
+                    <div className="flex items-center gap-8 justify-center md:justify-start">
+                        <div className="flex items-center gap-2 group">
+                            <span className="material-symbols-outlined text-primary group-hover:rotate-12 transition-transform">{time.icon}</span>
+                            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                                 {translations[language].sanctuary.timePhases[time.phase as keyof typeof translations.es.sanctuary.timePhases] || time.phase}
                             </span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <span className="material-symbols-outlined text-blue-500">{weather?.condition.includes('Sun') ? 'sunny' : 'cloudy'}</span>
-                            <span className="text-[10px] font-black uppercase opacity-40">
+                        <div className="flex items-center gap-2 group">
+                            <span className="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">{weather?.condition.includes('Sun') ? 'sunny' : 'cloudy'}</span>
+                            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                                 {((translations[language] as any).common.weather || {})[weather?.condition || ''] || weather?.condition}
                             </span>
                         </div>
                     </div>
                 </header>
 
-                <div className="flex-1">
+                {/* Main Content Area */}
+                <div className="flex-1 py-4">
                     {phase === 'selection' && renderSelection()}
                     {phase === 'preparation' && renderPreparation()}
                     {phase === 'combat' && renderCombat()}
