@@ -3,6 +3,7 @@ import { useAppStore } from '../../store/useAppStore';
 import GlassPanel from '../../components/ui/GlassPanel';
 import { Bird } from '../../types';
 import { translations } from '../../i18n/translations';
+import { fetchBirdImage } from '../../services/birdMediaApi';
 
 type BattlePhase = 'selection' | 'preparation' | 'combat' | 'rewards';
 
@@ -38,22 +39,33 @@ const ElCertamen: React.FC = () => {
         [inventory]);
 
     // Opponent generation
-    const generateOpponent = () => {
+    const generateOpponent = (playerLevel: number = 1) => {
         const opponents = [
-            { id: 'o1', name: t.opponents.o1, level: 3, type: 'Songbird', hp: 90, maxHp: 90, canto: 70, plumaje: 40, vuelo: 50, image: 'https://images.pexels.com/photos/59523/pexels-photo-59523.jpeg?auto=compress&cs=tinysrgb&w=400' },
-            { id: 'o2', name: t.opponents.o2, level: 5, type: 'Raptor', hp: 110, maxHp: 110, canto: 30, plumaje: 60, vuelo: 90, image: 'https://images.pexels.com/photos/14840742/pexels-photo-14840742.jpeg?auto=compress&cs=tinysrgb&w=400' },
-            { id: 'o3', name: t.opponents.o3, level: 4, type: 'Flight', hp: 100, maxHp: 100, canto: 20, plumaje: 50, vuelo: 80, image: 'https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg?auto=compress&cs=tinysrgb&w=400' }
+            { id: 'o1', name: t.opponents.o1, level: playerLevel, type: 'Songbird', hp: 90, maxHp: 90, canto: 60 + (playerLevel * 5), plumaje: 30 + (playerLevel * 3), vuelo: 40 + (playerLevel * 4), scientificName: 'Erithacus rubecula' },
+            { id: 'o2', name: t.opponents.o2, level: playerLevel + 1, type: 'Raptor', hp: 110, maxHp: 110, canto: 20 + (playerLevel * 3), plumaje: 50 + (playerLevel * 5), vuelo: 80 + (playerLevel * 6), scientificName: 'Falco tinnunculus' },
+            { id: 'o3', name: t.opponents.o3, level: playerLevel, type: 'Flight', hp: 100, maxHp: 100, canto: 10 + (playerLevel * 2), plumaje: 40 + (playerLevel * 4), vuelo: 70 + (playerLevel * 7), scientificName: 'Columba livia' }
         ];
         return opponents[Math.floor(Math.random() * opponents.length)] as Bird;
     };
 
-    const handleSelectBird = (bird: Bird) => {
+    const handleSelectBird = async (bird: Bird) => {
         if (bird.stamina < 20) {
             alert(t.exhaustedAlert);
             return;
         }
         setSelectedPlayerBird(bird);
-        setSelectedOpponentBird(generateOpponent());
+
+        const opponent = generateOpponent(bird.level);
+        setSelectedOpponentBird(opponent);
+
+        // Fetch real image from API
+        if (opponent.scientificName) {
+            const img = await fetchBirdImage(opponent.scientificName);
+            if (img) {
+                setSelectedOpponentBird(prev => prev ? { ...prev, image: img } : null);
+            }
+        }
+
         setPhase('preparation');
     };
 
@@ -167,6 +179,10 @@ const ElCertamen: React.FC = () => {
                 setPhase('rewards');
             } else {
                 setCurrentRound(prev => prev + 1);
+                // Real-time stamina reduction
+                if (selectedPlayerBird) {
+                    updateStamina(selectedPlayerBird.id, -4);
+                }
             }
             setIsAnimating(false);
             setLastResult(null);
@@ -193,6 +209,9 @@ const ElCertamen: React.FC = () => {
                         onClick={() => handleSelectBird(bird)}
                     >
                         <div className="h-40 bg-cover bg-center relative" style={{ backgroundImage: `url(${bird.image})` }}>
+                            <div className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md px-2 py-1 rounded-lg border border-white/20">
+                                <p className="text-[10px] font-black text-white">LVL {bird.level}</p>
+                            </div>
                             {bird.stamina < 20 && (
                                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                                     <span className="bg-red-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase">{t.exhausted}</span>
@@ -246,8 +265,11 @@ const ElCertamen: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <GlassPanel className="p-8 flex flex-col items-center">
                     <img src={selectedPlayerBird?.image} className="size-40 rounded-3xl object-cover mb-4 border-4 border-primary shadow-xl" />
-                    <h4 className="text-xl font-black dark:text-white">{commonT.birds[selectedPlayerBird?.name as keyof typeof commonT.birds] || selectedPlayerBird?.name}</h4>
-                    <p className="text-xs font-black text-primary uppercase tracking-widest">{t.statPluma}: {selectedPlayerBird?.type}</p>
+                    <div className="flex items-center gap-2 mb-1">
+                        <span className="bg-primary/20 text-primary text-[10px] font-black px-2 py-0.5 rounded-lg">LVL {selectedPlayerBird?.level}</span>
+                        <h4 className="text-xl font-black dark:text-white">{commonT.birds[selectedPlayerBird?.name as keyof typeof commonT.birds] || selectedPlayerBird?.name}</h4>
+                    </div>
+                    <p className="text-xs font-black text-primary uppercase tracking-widest">{selectedPlayerBird?.type}</p>
 
                     <div className="bg-primary/5 p-4 rounded-2xl mt-6 w-full text-center border border-primary/10">
                         <p className="text-[9px] font-black uppercase text-primary mb-1">{t.specialAbility}</p>
@@ -318,12 +340,20 @@ const ElCertamen: React.FC = () => {
                     <img src={selectedPlayerBird?.image} className="size-12 rounded-xl object-cover border-2 border-primary" />
                     <div>
                         <div className="flex items-center gap-2">
-                            <p className="text-[8px] font-black uppercase text-primary">Tú</p>
+                            <p className="text-[8px] font-black uppercase text-primary">Tú (LVL {selectedPlayerBird?.level})</p>
                             {comboCount > 1 && <span className="bg-primary text-slate-900 text-[8px] font-black px-1.5 py-0.5 rounded-full animate-bounce">COMBO X{comboCount}</span>}
                         </div>
                         <p className="font-bold text-sm leading-tight dark:text-white">{commonT.birds[selectedPlayerBird?.name as keyof typeof commonT.birds] || selectedPlayerBird?.name}</p>
-                        <div className="flex gap-1 mt-1">
-                            {[1, 2, 3, 4, 5].map(i => <div key={i} className={`size-2 rounded-full ${i <= playerRounds ? 'bg-primary shadow-[0_0_8px_var(--primary)]' : 'bg-white/10'}`}></div>)}
+                        <div className="flex flex-col gap-1 mt-1">
+                            <div className="flex gap-1">
+                                {[1, 2, 3, 4, 5].map(i => <div key={i} className={`size-2 rounded-full ${i <= playerRounds ? 'bg-primary shadow-[0_0_8px_var(--primary)]' : 'bg-white/10'}`}></div>)}
+                            </div>
+                            <div className="w-20 h-1 bg-white/10 rounded-full mt-1 overflow-hidden">
+                                <div
+                                    className="h-full bg-red-400 transition-all duration-500"
+                                    style={{ width: `${selectedPlayerBird ? (selectedPlayerBird.stamina / selectedPlayerBird.maxStamina) * 100 : 0}%` }}
+                                ></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -506,7 +536,9 @@ const ElCertamen: React.FC = () => {
                         onClick={() => {
                             if (selectedPlayerBird) {
                                 completeBattle(rewardPlumas, rewardXP, selectedPlayerBird.id);
-                                updateStamina(selectedPlayerBird.id, -20);
+                                // Final stamina adjustment if needed, but we already deducted per round.
+                                // We'll deduct the remaining 4 to reach 20 total if the rounds complete.
+                                updateStamina(selectedPlayerBird.id, -4);
                             }
                             setCurrentScreen('home');
                         }}
