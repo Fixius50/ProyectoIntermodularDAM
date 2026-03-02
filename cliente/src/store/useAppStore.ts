@@ -477,7 +477,7 @@ export const useAppStore = create<CombinedState>()(
 
                     try {
                         // Try to log in first
-                        const { token, player } = await api.post('/auth/login', { username, password });
+                        const { token, player } = await api.post('/auth/login', { username, password }, true);
                         await AvisCore.storeSecureToken({ token });
 
                         const userObj: User = {
@@ -503,7 +503,7 @@ export const useAppStore = create<CombinedState>()(
                     } catch (err) {
                         // If login fails, try to register the test user
                         try {
-                            const { token, player } = await api.post('/api/auth/register', { username, password });
+                            const { token, player } = await api.post('/api/auth/register', { username, password }, true);
                             await AvisCore.storeSecureToken({ token });
 
                             const userObj: User = {
@@ -810,8 +810,10 @@ export const useAppStore = create<CombinedState>()(
                         return { newList, changed };
                     };
 
-                    const resPlayer = await hydrateList(playerBirds);
-                    const resGlobal = await hydrateList(catalogBirds);
+                    const [resPlayer, resGlobal] = await Promise.all([
+                        hydrateList(playerBirds),
+                        hydrateList(catalogBirds)
+                    ]);
 
                     if (resPlayer.changed || resGlobal.changed) {
                         set({

@@ -47,24 +47,22 @@ try {
 
 # ── Arrancar Backend ─────────────────────────────────────────────────────────
 Write-Host "  [3/4] Arrancando Backend Spring Boot..." -ForegroundColor Cyan
-$BackendProcess = Start-Process `
-    -FilePath    "$MVNW" `
-    -ArgumentList "spring-boot:run" `
-    -WorkingDirectory $BACKEND_DIR `
-    -WindowStyle Normal `
-    -PassThru
+$BackendJob = Start-Job -Name "Backend-Avis" -ScriptBlock {
+    param($dir, $mvnw)
+    Set-Location $dir
+    & "$mvnw" spring-boot:run
+} -ArgumentList $BACKEND_DIR, $MVNW
 
 Write-Host "  Esperando que el Backend arranque (15s)..." -ForegroundColor Yellow
 Start-Sleep -Seconds 15
 
 # ── Arrancar Frontend Dev Server ─────────────────────────────────────────────
 Write-Host "  [4/4] Arrancando Frontend (Vite dev server)..." -ForegroundColor Green
-$FrontendProcess = Start-Process `
-    -FilePath    "npm.cmd" `
-    -ArgumentList "run", "dev" `
-    -WorkingDirectory $FRONTEND_DIR `
-    -WindowStyle Normal `
-    -PassThru
+$FrontendJob = Start-Job -Name "Frontend-Avis" -ScriptBlock {
+    param($dir)
+    Set-Location $dir
+    npm.cmd run dev
+} -ArgumentList $FRONTEND_DIR
 
 Write-Host ""
 Write-Host "  =======================================" -ForegroundColor DarkGray
@@ -78,10 +76,15 @@ Pause
 
 # ── Apagar servicios ─────────────────────────────────────────────────────────
 Write-Host "  Apagando servicios..." -ForegroundColor Yellow
-if ($FrontendProcess -and -not $FrontendProcess.HasExited) {
-    taskkill /PID $FrontendProcess.Id /T /F 2>$null
+
+# Detener los Jobs y sus procesos hijos
+if ($FrontendJob) {
+    Stop-Job $FrontendJob
+    Remove-Job $FrontendJob
 }
-if ($BackendProcess -and -not $BackendProcess.HasExited) {
-    taskkill /PID $BackendProcess.Id /T /F 2>$null
+if ($BackendJob) {
+    Stop-Job $BackendJob
+    Remove-Job $BackendJob
 }
+
 Write-Host "  Servicios apagados." -ForegroundColor Green

@@ -11,58 +11,76 @@ let cachedBaseUrl: string | null = null;
  * Determina la URL base de la API detectando si Tailscale está disponible.
  * Prioriza Tailscale (100.x.x.x) si detecta la app en Android o si la IP responde en PC.
  */
-async function getBaseUrl(): Promise<string> {
+async function getBaseUrl(forceLocal: boolean = false): Promise<string> {
     if (cachedBaseUrl) return cachedBaseUrl;
 
     const isApp = (window as any).Capacitor?.getPlatform() !== 'web';
-    const isWebLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-
-    console.log(`[API] Detectando entorno... (isApp: ${isApp}, isWebLocal: ${isWebLocal})`);
+    console.log(`[API] Detectando entorno... (isApp: ${isApp}, forceLocal: ${forceLocal})`);
 
     // 1. Detección en Android (App oficial de Tailscale)
     if (isApp) {
         try {
             const { value: isTailscaleInstalled } = await AppLauncher.canOpenUrl({ url: 'com.tailscale.ipn' });
             if (isTailscaleInstalled) {
-                console.log('[API] App de Tailscale detectada en Android. Usando IP directa de Lubuntu.');
+                console.log('[API] App de Tailscale detectada en Android. Usando IP directa.');
                 cachedBaseUrl = `http://${TAILSCALE_IP}:${PORT}`;
                 return cachedBaseUrl;
             }
         } catch (e) {
-            console.warn('[API] Error detectando App de Tailscale en Android.');
+            console.warn('[API] Error detectando App de Tailscale.');
         }
     }
 
-    // 2. Health-check a la IP de Tailscale (PC o Android con puente activo)
-    console.log(`[API] Verificando conectividad con Tailscale IP: ${TAILSCALE_IP}...`);
-    try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 2500); // Aumentado a 2.5s para mayor tolerancia
-        const response = await fetch(`http://${TAILSCALE_IP}:${PORT}${HEALTH_ENDPOINT}`, {
-            signal: controller.signal,
-            mode: 'no-cors'
-        });
-        clearTimeout(timeoutId);
-        console.log('[API] Comunicación con Lubuntu (Tailscale) confirmada.');
-        cachedBaseUrl = `http://${TAILSCALE_IP}:${PORT}`;
-        return cachedBaseUrl;
-    } catch (e) {
-        console.log('[API] Tailscale IP no responde. Es posible que el servidor en Lubuntu no esté corriendo o el firewall bloquee el puerto 8080.');
+    const localHost = isApp ? '10.0.2.2' : 'localhost';
+    const localUrl = `http://${localHost}:${PORT}`;
+    const remoteUrl = `http://${TAILSCALE_IP}:${PORT}`;
+
+    // 2. Conectividad Inteligente
+    if (forceLocal) {
+        console.log(`[API] Verificando conectividad paralela (Modo Test)...`);
+        const checkUrl = async (url: string, timeout: number): Promise<string> => {
+            const controller = new AbortController();
+            const t = setTimeout(() => controller.abort(), timeout);
+            try {
+                await fetch(`${url}${HEALTH_ENDPOINT}`, { signal: controller.signal, mode: 'no-cors' });
+                clearTimeout(t);
+                return url;
+            } catch (e) {
+                clearTimeout(t);
+                throw e;
+            }
+        };
+
+        try {
+            const results = await Promise.allSettled([
+                checkUrl(localUrl, 500),
+                checkUrl(remoteUrl, 1000)
+            ]);
+            const firstSuccess = results.find(r => r.status === 'fulfilled') as PromiseFulfilledResult<string> | undefined;
+            if (firstSuccess) {
+                cachedBaseUrl = firstSuccess.value;
+                return cachedBaseUrl;
+            }
+        } catch (e) {
+            console.log('[API] Fallo en detección paralela.');
+        }
+    } else {
+        console.log(`[API] Intentando conexión remota (Tailscale)...`);
+        try {
+            const controller = new AbortController();
+            const t = setTimeout(() => controller.abort(), 1500);
+            await fetch(`${remoteUrl}${HEALTH_ENDPOINT}`, { signal: controller.signal, mode: 'no-cors' });
+            clearTimeout(t);
+            cachedBaseUrl = remoteUrl;
+            return cachedBaseUrl;
+        } catch (e) {
+            console.log('[API] Conexión remota no disponible.');
+        }
     }
 
-    // 3. Fallback a Localhost / Host de Emulador
-    if (isWebLocal || isApp) {
-        const fallbackHost = isApp ? '10.0.2.2' : window.location.hostname;
-        console.log(`[API] Usando Fallback de desarrollo (${fallbackHost}).`);
-        cachedBaseUrl = `http://${fallbackHost}:${PORT}`;
-        return cachedBaseUrl;
-    }
-
-    // 4. Default por defecto si nada de lo anterior funciona
-    const defaultHost = isApp ? '10.0.2.2' : TAILSCALE_IP;
-    console.log(`[API] Usando Default Host: ${defaultHost}`);
-    cachedBaseUrl = `http://${defaultHost}:${PORT}`;
-    return cachedBaseUrl;
+    // 3. Fallback final
+    cachedBaseUrl = localUrl;
+    return localUrl;
 }
 
 async function getAuthHeader(): Promise<Record<string, string>> {
@@ -71,8 +89,8 @@ async function getAuthHeader(): Promise<Record<string, string>> {
 }
 
 export const api = {
-    async post(endpoint: string, data: any) {
-        const baseUrl = await getBaseUrl();
+    async post(endpoint: string, data: any, forceLocal: boolean = false) {
+        const baseUrl = await getBaseUrl(forceLocal);
         const authHeader = await getAuthHeader();
         const headers = new Headers();
         headers.append('Content-Type', 'application/json');
@@ -98,8 +116,8 @@ export const api = {
         return response.json();
     },
 
-    async get(endpoint: string) {
-        const baseUrl = await getBaseUrl();
+    async get(endpoint: string, forceLocal: boolean = false) {
+        const baseUrl = await getBaseUrl(forceLocal);
         const authHeader = await getAuthHeader();
         const headers = new Headers();
         Object.entries(authHeader).forEach(([key, value]) => headers.append(key, value));
@@ -116,8 +134,8 @@ export const api = {
         return response.json();
     },
 
-    async put(endpoint: string, data: any) {
-        const baseUrl = await getBaseUrl();
+    async put(endpoint: string, data: any, forceLocal: boolean = false) {
+        const baseUrl = await getBaseUrl(forceLocal);
         const authHeader = await getAuthHeader();
         const headers = new Headers();
         headers.append('Content-Type', 'application/json');
