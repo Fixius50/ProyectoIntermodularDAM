@@ -17,7 +17,7 @@ const BottomNav: React.FC = () => {
     return (
         <nav
             style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 0.75rem)' }}
-            className="fixed bottom-0 left-0 right-0 z-50 md:hidden glass-card border-t-0 rounded-t-2xl px-1 sm:px-2 pt-3 flex justify-between items-center h-16"
+            className="fixed bottom-0 left-0 right-0 z-50 glass-card border-t-0 rounded-t-2xl px-1 sm:px-2 pt-3 flex justify-between items-center h-16"
         >
             {navItems.slice(0, 2).map((item) => {
                 const isActive = item.id === currentScreen;

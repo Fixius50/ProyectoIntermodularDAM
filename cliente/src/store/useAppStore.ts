@@ -839,23 +839,27 @@ export const useAppStore = create<CombinedState>()(
 
                 addPost: async (post) => {
                     try {
-                        const newPost = await api.post('/posts', {
+                        const newPostFromServer = await api.post('/posts', {
                             text: post.text,
                             imageUrl: post.imageUrl,
                             location: post.location,
-                            birdId: post.birdId
+                            birdId: post.birdId,
+                            userName: get().currentUser?.name || 'Explorador',
+                            userAvatar: get().currentUser?.avatar || '',
+                            userId: get().currentUser?.id
                         });
 
                         const fullPost: SocialPost = {
                             ...post,
-                            id: newPost.id,
+                            id: newPostFromServer.id,
                             userId: get().currentUser?.id || 'u1',
                             userName: get().currentUser?.name || 'Explorador',
                             userAvatar: get().currentUser?.avatar || '',
                             time: 'Ahora mismo',
                             likes: 0,
                             reactions: { '🐦': 0, '🪶': 0, '📷': 0 },
-                            comments: 0
+                            comments: 0,
+                            commentList: []
                         };
 
                         set((state) => ({ posts: [fullPost, ...state.posts] }));
@@ -875,29 +879,35 @@ export const useAppStore = create<CombinedState>()(
                     })
                 })),
 
-                addComment: (postId: string, text: string) => set((state) => {
-                    const currentUser = get().currentUser;
-                    return {
-                        posts: state.posts.map(p => {
-                            if (p.id === postId) {
-                                const newComment = {
-                                    id: Math.random().toString(36).substring(2, 9),
-                                    userId: currentUser?.id || 'anon',
-                                    userName: currentUser?.name || 'Anónimo',
-                                    avatar: currentUser?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${Math.random()}`,
-                                    text: text,
-                                    timestamp: Date.now()
-                                };
-                                return {
-                                    ...p,
-                                    comments: p.comments + 1,
-                                    commentList: [...(p.commentList || []), newComment]
-                                };
-                            }
-                            return p;
-                        })
-                    };
-                }),
+                addComment: async (postId: string, text: string) => {
+                    try {
+                        const currentUser = get().currentUser;
+                        const newCommentFromServer = await api.post(`/posts/${postId}/comment`, {
+                            userId: currentUser?.id,
+                            userName: currentUser?.name || 'Anónimo',
+                            avatar: currentUser?.avatar || '',
+                            text: text
+                        });
+
+                        set((state) => ({
+                            posts: state.posts.map(p => {
+                                if (p.id === postId) {
+                                    return {
+                                        ...p,
+                                        comments: p.comments + 1,
+                                        commentList: [...(p.commentList || []), {
+                                            ...newCommentFromServer,
+                                            timestamp: Date.now()
+                                        }]
+                                    };
+                                }
+                                return p;
+                            })
+                        }));
+                    } catch (err) {
+                        console.error('Error adding comment:', err);
+                    }
+                },
 
                 joinGuild: (guildId) => set((state) => ({
                     currentUser: state.currentUser ? { ...state.currentUser, guildId } : null

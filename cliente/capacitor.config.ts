@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.avis.cliente',
-  appName: 'AVIS',
+  appName: 'Aery',
   webDir: 'dist',
   plugins: {
     SplashScreen: {
