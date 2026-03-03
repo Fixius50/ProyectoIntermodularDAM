@@ -103,8 +103,16 @@ spring:
 
 ## 4. Error de RabbitMQ/Redis
 
-**Síntoma:** Errores de "Connection failure" al inicio del servidor.
-**Causa:** Los servicios de RabbitMQ o Redis no están corriendo.
+**Síntoma 1 (En Tiempo de Ejecución):** Errores de "Connection failure" al inicio del servidor.
+**Causa:** Los servicios de RabbitMQ o Redis no están corriendo en el host local.
 **Solución:**
 -   `sudo systemctl start rabbitmq-server`
 -   `sudo systemctl start redis-server`
+
+**Síntoma 2 (En Compilación / Maven Build):** Error fatal al compilar: `package org.springframework.boot.autoconfigure.amqp does not exist`. 
+**Causa:** El archivo `ServerApplication.java` tenía declarada una regla de exclusión estricta (`exclude = { RabbitAutoConfiguration.class }`) para deshabilitar temporalmente RabbitMQ. Cuando Maven actualiza el proyecto y la dependencia física `spring-rabbit` o `spring-amqp` no está activa en el `pom.xml`, el compilador falla porque no encuentra dicha clase para excluirla.
+**Solución:**
+- Acudir a `server/src/main/java/com/intermodular/server/ServerApplication.java`.
+- Localizar la cabecera: `@SpringBootApplication(exclude = { org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration.class })`
+- Eliminar la propiedad `exclude` dejándolo únicamente como `@SpringBootApplication`.
+- Hacer clean package otra vez (`./mvnw clean package`).
