@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppStore, BIRD_CATALOG } from '../../store/useAppStore';
 import GlassPanel from '../../components/ui/GlassPanel';
 import { translations } from '../../i18n/translations';
@@ -8,11 +8,16 @@ import { Capacitor } from '@capacitor/core';
 const ElSocial: React.FC = () => {
     const {
         currentUser, posts, availableGuilds,
+        syncSocialData,
         addPost, reactToPost, contributeToMission,
         joinGuild, sendGuildMessage, guildChats, addNotification,
         playerBirds,
         language
     } = useAppStore();
+
+    useEffect(() => {
+        syncSocialData();
+    }, [syncSocialData]);
 
     const t = translations[language].social;
     const commonT = translations[language].common;

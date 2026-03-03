@@ -1152,7 +1152,7 @@ export const useAppStore = create<CombinedState>()(
                     const state = get();
                     if (!state.currentUser) return;
                     try {
-                        await api.post(`/social/guilds/${guildId}/join?playerId=${state.currentUser.id}`);
+                        await api.post(`/social/guilds/${guildId}/join`, { playerId: state.currentUser.id });
                         await get().syncSocialData();
                     } catch (err) {
                         console.error('Error joining guild', err);
