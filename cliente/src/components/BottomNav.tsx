@@ -19,43 +19,25 @@ const BottomNav: React.FC = () => {
             style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 0.75rem)' }}
             className="fixed bottom-0 left-0 right-0 z-50 glass-card border-t-0 rounded-t-2xl px-1 sm:px-2 pt-3 flex justify-between items-center h-16"
         >
-            {navItems.slice(0, 2).map((item) => {
+            {navItems.map((item) => {
                 const isActive = item.id === currentScreen;
                 return (
                     <button
                         key={item.id}
                         onClick={() => setCurrentScreen(item.id)}
-                        className={`flex-1 flex flex-col items-center justify-center transition-all ${isActive ? 'text-primary' : 'text-slate-500'}`}
+                        className={`group relative flex-1 flex flex-col items-center justify-center transition-all duration-300 ${isActive ? 'text-primary' : 'text-slate-500'}`}
                         aria-label={item.label}
                     >
-                        <span className={`material-symbols-outlined text-2xl ${isActive ? 'fill-1' : ''}`}>
+                        <span
+                            className={`material-symbols-outlined text-2xl transition-all duration-300 ${isActive ? 'fill-1 scale-110 drop-shadow-[0_0_8px_rgba(94,232,48,0.4)]' : 'group-hover:scale-110 group-hover:text-slate-400'}`}
+                        >
                             {item.icon}
                         </span>
-                    </button>
-                );
-            })}
 
-            <button
-                key="arena"
-                onClick={() => setCurrentScreen('arena')}
-                aria-label={t.nav.arena}
-                className={`flex-1 flex flex-col items-center justify-center transition-all ${currentScreen === 'arena' ? 'text-primary' : 'text-slate-500'}`}
-            >
-                <span className={`material-symbols-outlined text-2xl ${currentScreen === 'arena' ? 'fill-1' : ''}`}>swords</span>
-            </button>
-
-            {navItems.slice(3).map((item) => {
-                const isActive = item.id === currentScreen;
-                return (
-                    <button
-                        key={item.id}
-                        onClick={() => setCurrentScreen(item.id)}
-                        className={`flex-1 flex flex-col items-center justify-center transition-all ${isActive ? 'text-primary' : 'text-slate-500'}`}
-                        aria-label={item.label}
-                    >
-                        <span className={`material-symbols-outlined text-2xl ${isActive ? 'fill-1' : ''}`}>
-                            {item.icon}
-                        </span>
+                        {/* Indicador visual activo */}
+                        <div
+                            className={`absolute -bottom-1 w-1 h-1 rounded-full bg-primary transition-all duration-500 transform ${isActive ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}
+                        />
                     </button>
                 );
             })}

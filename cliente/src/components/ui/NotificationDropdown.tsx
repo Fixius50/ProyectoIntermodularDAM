@@ -81,7 +81,7 @@ const NotificationDropdown: React.FC<Props> = ({ isOpen, onClose }) => {
     return (
         <>
             <div className="fixed inset-0 z-40" onClick={onClose} />
-            <div className="absolute right-0 top-16 w-80 md:w-96 max-w-[calc(100vw-1rem)] max-h-[80vh] overflow-y-auto bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl shadow-2xl z-50 animate-fade-in-up origin-top-right flex flex-col">
+            <div className="absolute right-0 top-16 w-[22rem] md:w-[26rem] max-w-[calc(100vw-1rem)] max-h-[80vh] overflow-y-auto bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl shadow-2xl z-50 animate-fade-in-up origin-top-right flex flex-col">
                 <div className="p-4 flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 sticky top-0 z-10">
                     <h3 className="font-black text-lg text-sage-800 dark:text-sage-100 flex items-center gap-2">
                         {t.title}

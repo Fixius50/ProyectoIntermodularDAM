@@ -15,7 +15,8 @@ const ElTienda: React.FC = () => {
         sellItem,
         addItemToInventory,
         addBirdToSantuario,
-        language
+        language,
+        storeTab
     } = useAppStore();
 
     const t = translations[language as keyof typeof translations].store;
@@ -30,11 +31,16 @@ const ElTienda: React.FC = () => {
         return type;
     };
 
-    const [activeTab, setActiveTab] = useState<'comprar' | 'vender'>('comprar');
+    const [activeTab, setActiveTab] = useState<'comprar' | 'vender'>(storeTab);
     const [isOpeningPack, setIsOpeningPack] = useState(false);
     const [packResults, setPackResults] = useState<Bird[]>([]);
     const [showPassModal, setShowPassModal] = useState(false);
     const [dynamicOffer, setDynamicOffer] = useState<any>(null);
+
+    // Sync with global store tab if it changes externally
+    useEffect(() => {
+        setActiveTab(storeTab);
+    }, [storeTab]);
 
     // Dynamic offer based on weather
     useEffect(() => {
@@ -84,25 +90,36 @@ const ElTienda: React.FC = () => {
         setIsOpeningPack(true);
         setPackResults([]);
 
-        // Pick 3 random birds
-        const results: Bird[] = [];
+        // Pick 3 random birds and group them
+        const counts: Record<string, { bird: Bird, count: number }> = {};
+
         for (let i = 0; i < 3; i++) {
             const randomBirdIndex = Math.floor(Math.random() * BIRD_CATALOG.length);
             const catalogBird = BIRD_CATALOG[randomBirdIndex];
 
-            // Generate full Bird object as done in addBirdToSantuario
-            const newBird: Bird = {
-                ...catalogBird,
-                id: `${catalogBird.id}-${Date.now()}-${i}`,
-                status: 'Santuario'
-            };
-            results.push(newBird);
+            if (counts[catalogBird.id]) {
+                counts[catalogBird.id].count++;
+            } else {
+                counts[catalogBird.id] = {
+                    bird: {
+                        ...catalogBird,
+                        id: `${catalogBird.id}-${Date.now()}-${i}`,
+                        status: 'Santuario'
+                    },
+                    count: 1
+                };
+            }
             addBirdToSantuario(catalogBird.id);
         }
 
+        const results = Object.values(counts);
+
         // Simulate animation delay before showing results
         setTimeout(() => {
-            setPackResults(results);
+            // We'll store the grouped results in a custom state or just use packResults differently
+            // Since packResults is Bird[], let's add a 'count' property temporarily if possible 
+            // Better: update the rendering logic to handle (Bird & {count: number})
+            setPackResults(results.map(r => ({ ...r.bird, count: r.count } as any)));
         }, PACK_ANIMATION_DURATION);
     };
 
@@ -275,24 +292,69 @@ const ElTienda: React.FC = () => {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 animate-scale-in w-full max-w-5xl mx-auto px-4 overflow-y-auto max-h-[75vh] custom-scrollbar py-4">
-                            {packResults.map((bird: Bird, idx: number) => {
+                            {packResults.map((bird: any, idx: number) => {
                                 const translatedName = commonT.birds[bird.name as keyof typeof commonT.birds] || bird.name;
-                                return (
-                                    <div key={idx} className="w-full bg-slate-50 dark:bg-slate-900 rounded-[2rem] overflow-hidden shadow-2xl border border-white dark:border-slate-800 transform hover:scale-105 transition-transform delay-100 flex flex-col" style={{ animationDelay: `${idx * 200}ms` }}>
-                                        <div className="h-48 bg-cover bg-center relative" style={{ backgroundImage: `url('${bird.image}')` }}>
-                                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
-                                            <div className="absolute bottom-3 left-3">
-                                                <p className="font-primary text-[10px] text-white/80 uppercase tracking-widest">{bird.type}</p>
-                                            </div>
-                                        </div>
-                                        <div className="p-5 text-center flex-col flex flex-1">
-                                            <h3 className="text-xl font-black text-slate-900 dark:text-white leading-tight mb-1">{translatedName}</h3>
-                                            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-primary mb-4 italic">{bird.scientificName}</p>
+                                const isMultiple = bird.count > 1;
 
-                                            <div className="flex justify-center gap-3 text-xs font-black text-slate-500 mt-auto bg-slate-100 dark:bg-slate-800 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
-                                                <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm text-rose-500">favorite</span> {bird.hp}</span>
-                                                <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm text-cyan-500">air</span> {bird.vuelo}</span>
-                                                <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm text-amber-500">music_note</span> {bird.canto}</span>
+                                return (
+                                    <div
+                                        key={idx}
+                                        className="w-full aspect-[3/4] rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white/20 dark:border-slate-800 transform hover:scale-105 transition-all duration-500 delay-100 relative group flex flex-col"
+                                        style={{ animationDelay: `${idx * 200}ms` }}
+                                    >
+                                        {/* Background Layer - Image + Gradient */}
+                                        <div className="absolute inset-0 z-0 bg-slate-900">
+                                            <img
+                                                src={bird.image}
+                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80"
+                                                alt={translatedName}
+                                                onError={(e) => {
+                                                    (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/110812/pexels-photo-110812.jpeg?auto=compress&cs=tinysrgb&w=400';
+                                                }}
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent" />
+                                        </div>
+
+                                        {/* Multipicator Badge */}
+                                        {isMultiple && (
+                                            <div className="absolute top-6 right-6 z-20 bg-primary text-slate-900 size-12 rounded-full flex items-center justify-center font-black text-xl shadow-[0_0_20px_rgba(94,232,48,0.6)] animate-bounce-slow border-2 border-white/20">
+                                                x{bird.count}
+                                            </div>
+                                        )}
+
+                                        {/* Content Layer - Positioned Over Image */}
+                                        <div className="relative z-10 flex flex-col h-full p-6">
+                                            {/* Type Tag at Top Left */}
+                                            <div className="self-start px-3 py-1 bg-black/50 backdrop-blur-md rounded-full border border-white/10 mb-4">
+                                                <p className="text-[9px] font-black text-white/90 uppercase tracking-widest">{bird.type}</p>
+                                            </div>
+
+                                            {/* Info pushed to Bottom */}
+                                            <div className="mt-auto text-center flex flex-col items-center">
+                                                <h3 className="text-2xl md:text-3xl font-black text-white leading-tight mb-1 drop-shadow-2xl">
+                                                    {translatedName}
+                                                </h3>
+                                                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-5 italic drop-shadow-xl">
+                                                    {bird.scientificName}
+                                                </p>
+
+                                                {/* Stats with Premium Glassmorphism */}
+                                                <div className="w-full flex justify-center gap-4 py-3 px-2 rounded-2xl bg-white/10 dark:bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl">
+                                                    <div className="flex flex-col items-center">
+                                                        <span className="material-symbols-outlined text-rose-400 text-lg">favorite</span>
+                                                        <span className="text-[11px] font-black text-white">{bird.hp}</span>
+                                                    </div>
+                                                    <div className="w-[1px] h-6 bg-white/20 self-center" />
+                                                    <div className="flex flex-col items-center">
+                                                        <span className="material-symbols-outlined text-cyan-400 text-lg">air</span>
+                                                        <span className="text-[11px] font-black text-white">{bird.vuelo}</span>
+                                                    </div>
+                                                    <div className="w-[1px] h-6 bg-white/20 self-center" />
+                                                    <div className="flex flex-col items-center">
+                                                        <span className="material-symbols-outlined text-amber-400 text-lg">music_note</span>
+                                                        <span className="text-[11px] font-black text-white">{bird.canto}</span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -304,9 +366,9 @@ const ElTienda: React.FC = () => {
                     {packResults.length > 0 && (
                         <button
                             onClick={() => setIsOpeningPack(false)}
-                            className="mt-12 px-8 py-3 bg-white text-slate-900 rounded-full font-black uppercase tracking-widest shadow-xl hover:scale-105 transition-transform"
+                            className="mt-12 px-12 py-4 bg-primary text-slate-900 rounded-2xl font-black uppercase tracking-[0.2em] text-sm shadow-[0_10px_30px_rgba(94,232,48,0.4)] hover:scale-105 active:scale-95 transition-all"
                         >
-                            {t.goSantuario}
+                            {(t as any).collect || "Recoger"}
                         </button>
                     )}
                 </div>
