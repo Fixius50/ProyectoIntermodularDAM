@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -24,5 +24,5 @@ public class BandadaMember {
     private UUID playerId;
 
     @Column("joined_at")
-    private ZonedDateTime joinedAt;
+    private LocalDateTime joinedAt;
 }

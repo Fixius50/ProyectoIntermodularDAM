@@ -1,4 +1,5 @@
 package com.intermodular.server.controller;
+import lombok.RequiredArgsConstructor;
 
 import com.intermodular.server.model.Bandada;
 import com.intermodular.server.model.Post;

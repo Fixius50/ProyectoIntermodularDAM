@@ -10,7 +10,7 @@ import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Controller
@@ -24,7 +24,7 @@ public class ChatController {
                 .doOnNext(msg -> log.info("[ChatController] (Global) Mensaje recibido de {}: {}", msg.getUserName(),
                         msg.getText()))
                 .map(msg -> {
-                    msg.setTimestamp(ZonedDateTime.now());
+                    msg.setTimestamp(LocalDateTime.now());
                     return msg;
                 })
                 .doOnError(e -> log.error("[ChatController] Error en stream global: {}", e.getMessage()));
@@ -38,7 +38,7 @@ public class ChatController {
                 .doOnNext(msg -> log.info("[ChatController] (Bandada {}) Mensaje recibido de {}: {}", guildId,
                         msg.getUserName(), msg.getText()))
                 .map(msg -> {
-                    msg.setTimestamp(ZonedDateTime.now());
+                    msg.setTimestamp(LocalDateTime.now());
                     return msg;
                 })
                 .doOnError(
@@ -54,6 +54,6 @@ public class ChatController {
         private String userName;
         private String avatar;
         private String text;
-        private ZonedDateTime timestamp;
+        private LocalDateTime timestamp;
     }
 }
