@@ -10,6 +10,8 @@ public class SightingEntity {
     @NonNull
     public String id; // UUID string
 
+    public String userId; // UUID of the observer
+
     public String birdCardId;
     public double lat;
     public double lon;

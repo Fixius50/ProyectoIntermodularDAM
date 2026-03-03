@@ -4,11 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "birds")
+@Entity(tableName = "birds", primaryKeys = {"id", "userId"})
 public class BirdEntity {
-    @PrimaryKey(autoGenerate = false)
     @NonNull
     public String id; // UUID string
+
+    @NonNull
+    public String userId; // UUID of the owner
 
     public String name;
     public String scientificName;

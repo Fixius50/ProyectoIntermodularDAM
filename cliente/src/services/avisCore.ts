@@ -64,30 +64,30 @@ const avisCoreWebMock: AvisCorePlugin = {
     async executeBattleAttack(options) {
         return { result: 'Ataque ejecutado', log: `Ataque web mock`, damage: 10 };
     },
-    async fetchInventory() {
+    async fetchInventory(options: { userId: string }) {
         return { items: [] };
     },
     async syncLocation() {
         return { lat: 40.2430, lng: -3.7005, timestamp: Date.now() };
     },
-    async getPlayerBirds() {
+    async getPlayerBirds(options: { userId: string }) {
         return { birds: [] };
     },
-    async storeSecureToken(options) {
+    async storeSecureToken(options: { token: string }) {
         localStorage.setItem('secureToken', options.token);
     },
     async getSecureToken() {
         return { token: localStorage.getItem('secureToken') };
     },
-    async saveSighting(options) {
+    async saveSighting(options: { userId: string; birdId: string; lat: number; lon: number; audioPath?: string; photoPath?: string; notes?: string }) {
         console.log('[Web Mock] saveSighting', options);
         return { id: Math.random().toString() };
     },
-    async saveBirds(options) {
-        console.log('[Web Mock] saveBirds', options.birds.length);
+    async saveBirds(options: { userId: string; birds: Bird[] }) {
+        console.log('[Web Mock] saveBirds', options.birds.length, 'for user', options.userId);
     },
-    async saveInventory(options) {
-        console.log('[Web Mock] saveInventory', options.items.length);
+    async saveInventory(options: { userId: string; items: InventoryItem[] }) {
+        console.log('[Web Mock] saveInventory', options.items.length, 'for user', options.userId);
     },
     async ensurePermissions() {
         return { status: 'granted' };

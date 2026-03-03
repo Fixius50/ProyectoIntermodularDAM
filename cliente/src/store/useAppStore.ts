@@ -713,29 +713,34 @@ export const useAppStore = create<CombinedState>()(
                 })),
 
                 syncInventory: async () => {
+                    const user = get().currentUser;
+                    if (!user) return;
+
                     try {
                         // 1. Fetch from server
                         const items = await api.get('/inventory');
                         // 2. Save to local Room
-                        await AvisCore.saveInventory({ items });
+                        await AvisCore.saveInventory({ userId: user.id, items });
                         // 3. Update store state
                         set({ inventory: items });
                     } catch (err) {
                         console.error('Error syncing inventory:', err);
                         // Fallback to local Room if server fails
-                        const { items } = await AvisCore.fetchInventory();
+                        const { items } = await AvisCore.fetchInventory({ userId: user.id });
                         set({ inventory: items });
                     }
                 },
 
                 syncPlayerBirds: async () => {
+                    const user = get().currentUser;
+                    if (!user) return;
+
                     try {
                         // 1. Fetch from server (owned birds)
-                        // Currently backend CollectionController doesn't exist, this will throw.
                         const birds = await api.get('/collection');
 
                         // 2. Save to local Room
-                        await AvisCore.saveBirds({ birds });
+                        await AvisCore.saveBirds({ userId: user.id, birds });
                         // 3. Update store state
                         set({
                             playerBirds: birds,
@@ -745,16 +750,13 @@ export const useAppStore = create<CombinedState>()(
                     } catch (err) {
                         // Fallback to local
                         try {
-                            const { birds } = await AvisCore.getPlayerBirds();
+                            const { birds } = await AvisCore.getPlayerBirds({ userId: user.id });
                             if (birds && birds.length > 0) {
                                 set({
                                     playerBirds: birds,
                                     activeBirdsCount: birds.filter(b => b.status === 'Santuario').length
                                 });
                             }
-                            // We do not override playerBirds with empty if the catch block fails
-                            // to get native birds (e.g. in web mockup) unless it's strictly necessary,
-                            // to preserve birds added organically during the session.
                         } catch (e) {
                             console.warn("Could not fetch native birds fallback.");
                         }
@@ -1134,6 +1136,7 @@ export const useAppStore = create<CombinedState>()(
 
                         // 2. Save to Local SQLite (for offline audio/upload tracking)
                         await AvisCore.saveSighting({
+                            userId: currentUser.id,
                             birdId,
                             lat,
                             lon: lng,
@@ -1160,6 +1163,7 @@ export const useAppStore = create<CombinedState>()(
                         // Offline fallback: save only locally
                         const { lat, lng } = await AvisCore.syncLocation();
                         await AvisCore.saveSighting({
+                            userId: currentUser.id,
                             birdId,
                             lat,
                             lon: lng,

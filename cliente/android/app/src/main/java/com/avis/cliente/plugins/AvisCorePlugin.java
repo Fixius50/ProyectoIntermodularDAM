@@ -129,8 +129,14 @@ public class AvisCorePlugin extends Plugin {
 
     @PluginMethod
     public void fetchInventory(PluginCall call) {
+        String userId = call.getString("userId");
+        if (userId == null) {
+            call.reject("Must provide userId");
+            return;
+        }
+
         disposables.add(
-            getBirdDao().getAllInventory()
+            getBirdDao().getAllInventory(userId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -156,8 +162,14 @@ public class AvisCorePlugin extends Plugin {
 
     @PluginMethod
     public void getPlayerBirds(PluginCall call) {
+        String userId = call.getString("userId");
+        if (userId == null) {
+            call.reject("Must provide userId");
+            return;
+        }
+
         disposables.add(
-            getBirdDao().getAllBirds()
+            getBirdDao().getAllBirds(userId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -192,6 +204,12 @@ public class AvisCorePlugin extends Plugin {
 
     @PluginMethod
     public void saveSighting(PluginCall call) {
+        String userId = call.getString("userId");
+        if (userId == null) {
+            call.reject("Must provide userId");
+            return;
+        }
+
         String birdId = call.getString("birdId");
         Double lat = call.getDouble("lat");
         Double lon = call.getDouble("lon");
@@ -201,6 +219,7 @@ public class AvisCorePlugin extends Plugin {
 
         SightingEntity sighting = new SightingEntity();
         sighting.id = UUID.randomUUID().toString();
+        sighting.userId = userId;
         sighting.birdCardId = birdId;
         sighting.lat = lat != null ? lat : 0.0;
         sighting.lon = lon != null ? lon : 0.0;
@@ -244,9 +263,10 @@ public class AvisCorePlugin extends Plugin {
 
     @PluginMethod
     public void saveBirds(PluginCall call) {
+        String userId = call.getString("userId");
         JSArray birdsArray = call.getArray("birds");
-        if (birdsArray == null) {
-            call.reject("Must provide birds array");
+        if (userId == null || birdsArray == null) {
+            call.reject("Must provide userId and birds array");
             return;
         }
 
@@ -255,6 +275,7 @@ public class AvisCorePlugin extends Plugin {
             for (int i = 0; i < birdsArray.length(); i++) {
                 JSObject obj = JSObject.fromJSONObject(birdsArray.getJSONObject(i));
                 BirdEntity b = new BirdEntity();
+                b.userId = userId;
                 b.id = obj.getString("id");
                 b.name = obj.getString("name");
                 b.scientificName = obj.getString("scientificName");
@@ -294,9 +315,10 @@ public class AvisCorePlugin extends Plugin {
 
     @PluginMethod
     public void saveInventory(PluginCall call) {
+        String userId = call.getString("userId");
         JSArray itemsArray = call.getArray("items");
-        if (itemsArray == null) {
-            call.reject("Must provide items array");
+        if (userId == null || itemsArray == null) {
+            call.reject("Must provide userId and items array");
             return;
         }
 
@@ -305,6 +327,7 @@ public class AvisCorePlugin extends Plugin {
             for (int i = 0; i < itemsArray.length(); i++) {
                 JSObject obj = JSObject.fromJSONObject(itemsArray.getJSONObject(i));
                 InventoryEntity item = new InventoryEntity();
+                item.userId = userId;
                 item.id = obj.getString("id");
                 item.name = obj.getString("name");
                 item.icon = obj.getString("icon");

@@ -188,9 +188,6 @@ src/
 - Estado serializado: `playerBirds`, `inventory`, `currentUser`, `notifications`, `posts`.
 - Acciones principales: `login`, `register`, `logout`, `syncInventory`, `syncPlayerBirds`, `executeAttack`.
 
-### Pantallas Pendientes de Implementar
-- `ElTaller` (Crafting): 3 slots drag-drop + animación acuarela.
-- `ElAlbum` (Colección): grid de aves con modal de detalle (Cara A stats / Cara B lore).
 
 ---
 

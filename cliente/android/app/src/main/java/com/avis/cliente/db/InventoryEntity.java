@@ -4,11 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "inventory")
+@Entity(tableName = "inventory", primaryKeys = {"id", "userId"})
 public class InventoryEntity {
-    @PrimaryKey(autoGenerate = false)
     @NonNull
     public String id; // UUID string
+
+    @NonNull
+    public String userId; // UUID of the owner
 
     public String name;
     public String icon;
