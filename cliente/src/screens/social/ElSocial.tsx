@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppStore, BIRD_CATALOG } from '../../store/useAppStore';
 import GlassPanel from '../../components/ui/GlassPanel';
 import { translations } from '../../i18n/translations';
@@ -8,11 +8,16 @@ import { Capacitor } from '@capacitor/core';
 const ElSocial: React.FC = () => {
     const {
         currentUser, posts, availableGuilds,
+        syncSocialData,
         addPost, reactToPost, contributeToMission,
         joinGuild, sendGuildMessage, guildChats, addNotification,
         playerBirds,
         language
     } = useAppStore();
+
+    useEffect(() => {
+        syncSocialData();
+    }, [syncSocialData]);
 
     const t = translations[language].social;
     const commonT = translations[language].common;
@@ -507,14 +512,14 @@ const ElSocial: React.FC = () => {
                                 </div>
                             ) : (
                                 currentChat.map((msg) => (
-                                    <div key={msg.id} className={`flex gap-4 ${msg.userId === currentUser?.id ? 'flex-row-reverse' : ''} animate-slide-up text-left`}>
+                                    <div key={msg.id} className={`flex gap-4 ${msg.userId === (currentUser ? currentUser.id : '') ? 'flex-row-reverse' : ''} animate-slide-up text-left`}>
                                         <img src={msg.avatar} className="size-10 rounded-xl shadow-sm border border-white" alt="Avatar" />
-                                        <div className={`max-w-[75%] ${msg.userId === currentUser?.id ? 'text-right' : 'text-left'}`}>
+                                        <div className={`max-w-[75%] ${msg.userId === (currentUser ? currentUser.id : '') ? 'text-right' : 'text-left'}`}>
                                             <div className="flex items-center gap-2 mb-1 justify-start">
                                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{msg.userName}</span>
                                                 <span className="text-[8px] font-bold text-slate-300">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                             </div>
-                                            <div className={`p-4 rounded-2xl shadow-sm text-sm font-medium ${msg.userId === currentUser?.id
+                                            <div className={`p-4 rounded-2xl shadow-sm text-sm font-medium ${msg.userId === (currentUser ? currentUser.id : '')
                                                 ? 'bg-primary text-slate-900 rounded-tr-none'
                                                 : 'bg-white dark:bg-slate-800 dark:text-slate-200 rounded-tl-none border border-amber-100/50'
                                                 }`}>
