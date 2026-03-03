@@ -9,7 +9,7 @@ const ElSantuario: React.FC = () => {
         currentUser, weather, time,
         syncInventory, syncPlayerBirds, activeBirdsCount, inventory,
         playerBirds, setCurrentScreen, levelUpBird, streak, language,
-        removeBirdFromSantuario, addNotification
+        removeBirdFromSantuario, addNotification, setStoreTab
     } = useAppStore();
 
     const t: any = (translations[language] as any).sanctuary;
@@ -260,7 +260,10 @@ const ElSantuario: React.FC = () => {
                                     <div
                                         key={item.id}
                                         className="aspect-square rounded-3xl bg-white/5 flex flex-col items-center justify-center border border-white/5 hover:border-primary/50 transition-all duration-500 cursor-pointer relative group scale-animation shadow-2xl"
-                                        onClick={() => setCurrentScreen('store')}
+                                        onClick={() => {
+                                            setStoreTab('vender');
+                                            setCurrentScreen('store');
+                                        }}
                                     >
                                         <span className="material-symbols-outlined text-white/40 group-hover:text-primary text-3xl transition-all duration-500 group-hover:scale-110">{item.icon}</span>
                                         <span className="absolute -top-1 -right-1 bg-primary text-zinc-950 text-[10px] font-black size-8 flex items-center justify-center rounded-xl border-4 border-[#121c12] shadow-lg">{item.count}</span>

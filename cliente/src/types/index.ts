@@ -164,4 +164,5 @@ export interface AppState {
     categories: string[];
     theme: 'light' | 'dark';
     activityHistory: Activity[];
+    storeTab: 'comprar' | 'vender';
 }

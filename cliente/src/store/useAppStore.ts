@@ -85,6 +85,7 @@ interface AppActions {
     setLanguage: (lang: 'es' | 'en') => void;
     setTheme: (theme: 'light' | 'dark') => void;
     toggleTheme: () => void;
+    setStoreTab: (tab: 'comprar' | 'vender') => void;
 }
 
 type CombinedState = AppState & AppActions & { currentScreen: string };
@@ -408,7 +409,8 @@ export const useAppStore = create<CombinedState>()(
                 activityHistory: [],
                 birds: BIRD_CATALOG,
                 language: 'es' as 'es' | 'en',
-                isTailscaleReady: false, // Nuevo estado para controlar el acceso inicial
+                isTailscaleReady: false,
+                storeTab: 'comprar' as 'comprar' | 'vender',
             };
 
             return {
@@ -1258,6 +1260,8 @@ export const useAppStore = create<CombinedState>()(
                         };
                     });
                 },
+
+                setStoreTab: (tab) => set({ storeTab: tab }),
             };
         },
         {

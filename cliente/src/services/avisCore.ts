@@ -26,6 +26,7 @@ export interface AvisCorePlugin {
 
     /** Save a local sighting (audio/photo) in SQLite. */
     saveSighting(options: {
+        userId: string;
         birdId: string;
         lat: number;
         lon: number;
