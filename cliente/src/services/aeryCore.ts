@@ -10,13 +10,13 @@ export interface AvisCorePlugin {
     executeBattleAttack(options: { move: string; birdId: string }): Promise<{ result: string; log: string; damage: number }>;
 
     /** Fetch inventory items from the native Room DB cache. */
-    fetchInventory(): Promise<{ items: InventoryItem[] }>;
+    fetchInventory(options: { userId: string }): Promise<{ items: InventoryItem[] }>;
 
     /** Sync device GPS location (FusedLocationProviderClient). */
     syncLocation(): Promise<{ lat: number; lng: number; timestamp: number }>;
 
     /** Get player birds from the native Room DB cache. */
-    getPlayerBirds(): Promise<{ birds: Bird[] }>;
+    getPlayerBirds(options: { userId: string }): Promise<{ birds: Bird[] }>;
 
     /** Store JWT securely in EncryptedSharedPreferences. */
     storeSecureToken(options: { token: string }): Promise<void>;
@@ -35,10 +35,10 @@ export interface AvisCorePlugin {
     }): Promise<{ id: string }>;
 
     /** Persist birds fetched from server into Room DB. */
-    saveBirds(options: { birds: Bird[] }): Promise<void>;
+    saveBirds(options: { userId: string; birds: Bird[] }): Promise<void>;
 
     /** Persist inventory items fetched from server into Room DB. */
-    saveInventory(options: { items: InventoryItem[] }): Promise<void>;
+    saveInventory(options: { userId: string; items: InventoryItem[] }): Promise<void>;
 
     /** Ensure all required native permissions are granted (Android side flow). */
     ensurePermissions(): Promise<{ status: 'granted' | 'denied' }>;
@@ -64,13 +64,13 @@ const aeryCoreWebMock: AvisCorePlugin = {
     async executeBattleAttack(options) {
         return { result: 'Ataque ejecutado', log: `Ataque web mock`, damage: 10 };
     },
-    async fetchInventory() {
+    async fetchInventory(options: { userId: string }) {
         return { items: [] };
     },
     async syncLocation() {
         return { lat: 40.2430, lng: -3.7005, timestamp: Date.now() };
     },
-    async getPlayerBirds() {
+    async getPlayerBirds(options: { userId: string }) {
         return { birds: [] };
     },
     async storeSecureToken(options) {
@@ -83,11 +83,11 @@ const aeryCoreWebMock: AvisCorePlugin = {
         console.log('[Web Mock] saveSighting', options);
         return { id: Math.random().toString() };
     },
-    async saveBirds(options) {
-        console.log('[Web Mock] saveBirds', options.birds.length);
+    async saveBirds(options: { userId: string; birds: Bird[] }) {
+        console.log('[Web Mock] saveBirds', options.birds.length, 'for user', options.userId);
     },
-    async saveInventory(options) {
-        console.log('[Web Mock] saveInventory', options.items.length);
+    async saveInventory(options: { userId: string; items: InventoryItem[] }) {
+        console.log('[Web Mock] saveInventory', options.items.length, 'for user', options.userId);
     },
     async ensurePermissions() {
         return { status: 'granted' };

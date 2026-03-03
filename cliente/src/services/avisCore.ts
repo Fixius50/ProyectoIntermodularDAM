@@ -10,13 +10,13 @@ export interface AvisCorePlugin {
     executeBattleAttack(options: { move: string; birdId: string }): Promise<{ result: string; log: string; damage: number }>;
 
     /** Fetch inventory items from the native Room DB cache. */
-    fetchInventory(): Promise<{ items: InventoryItem[] }>;
+    fetchInventory(options: { userId: string }): Promise<{ items: InventoryItem[] }>;
 
     /** Sync device GPS location (FusedLocationProviderClient). */
     syncLocation(): Promise<{ lat: number; lng: number; timestamp: number }>;
 
     /** Get player birds from the native Room DB cache. */
-    getPlayerBirds(): Promise<{ birds: Bird[] }>;
+    getPlayerBirds(options: { userId: string }): Promise<{ birds: Bird[] }>;
 
     /** Store JWT securely in EncryptedSharedPreferences. */
     storeSecureToken(options: { token: string }): Promise<void>;
@@ -35,10 +35,10 @@ export interface AvisCorePlugin {
     }): Promise<{ id: string }>;
 
     /** Persist birds fetched from server into Room DB. */
-    saveBirds(options: { birds: Bird[] }): Promise<void>;
+    saveBirds(options: { userId: string; birds: Bird[] }): Promise<void>;
 
     /** Persist inventory items fetched from server into Room DB. */
-    saveInventory(options: { items: InventoryItem[] }): Promise<void>;
+    saveInventory(options: { userId: string; items: InventoryItem[] }): Promise<void>;
 
     /** Ensure all required native permissions are granted (Android side flow). */
     ensurePermissions(): Promise<{ status: 'granted' | 'denied' }>;
