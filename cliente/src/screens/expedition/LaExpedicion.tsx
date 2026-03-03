@@ -58,8 +58,6 @@ const LaExpedicion: React.FC = () => {
         tiles.addTo(map);
 
         // Landmarks
-        L.marker([40.245, -3.698]).addTo(map).bindPopup('Parque Cabeza de Hierro');
-        L.marker([40.242, -3.700]).addTo(map).bindPopup('Torre de Éboli');
 
         // Dynamic markers layer
         const markers = L.layerGroup().addTo(map);

@@ -49,8 +49,8 @@ const Navbar: React.FC = () => {
                 className="flex items-center gap-2 md:gap-3 cursor-pointer group z-10 shrink-0"
                 onClick={() => setCurrentScreen('home')}
             >
-                <div className="size-9 md:size-11 rounded-2xl overflow-hidden border-2 border-white/50 dark:border-slate-800 shadow-sm transition-transform group-hover:scale-105 bg-white flex items-center justify-center p-1">
-                    <img src="/logo_aery.png" alt="Aery Logo" className="w-full h-full object-contain" />
+                <div className="size-9 md:size-11 rounded-2xl overflow-hidden border-2 border-white/50 dark:border-slate-800 shadow-sm transition-transform group-hover:scale-105 bg-white flex items-center justify-center">
+                    <img src="/logo_aery.png" alt="Aery Logo" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex flex-col justify-center">
                     <h2 className="text-sm md:text-lg font-black text-slate-900 dark:text-white leading-tight group-hover:text-primary transition-colors">Aery</h2>

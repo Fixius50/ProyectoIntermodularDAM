@@ -72,8 +72,8 @@ const Login: React.FC = () => {
                     </div>
 
                     <div className="mx-auto flex items-center justify-center mb-4 relative rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 shadow-xl shadow-black/5 dark:shadow-primary/5 border border-slate-100 dark:border-zinc-800 transition-all duration-500"
-                        style={{ width: '64px', height: '64px' }}>
-                        <img src="/assets/avis-logo.png" alt="Aery Logo" className="w-10 h-10 object-contain relative z-10" />
+                        style={{ width: '80px', height: '80px' }}>
+                        <img src="/logo_aery.png" alt="Aery Logo" className="w-full h-full object-cover relative z-10" />
                     </div>
                     <h1 className="text-4xl font-display text-slate-900 dark:text-white mb-0 tracking-tight">Aery<span className="text-primary">.</span></h1>
                     <p className="text-slate-500 dark:text-zinc-400 font-bold tracking-[0.3em] text-[10px] uppercase mt-1">The Naturalist's Hub</p>

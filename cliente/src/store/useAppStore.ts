@@ -839,25 +839,38 @@ export const useAppStore = create<CombinedState>()(
                     }
                 },
 
-<<<<<<< HEAD
-                addPost: async (post) => {
+                syncSocialData: async () => {
                     try {
-                        const newPostFromServer = await api.post('/posts', {
+                        const [posts, guilds] = await Promise.all([
+                            api.get('/social/posts'),
+                            api.get('/social/guilds')
+                        ]);
+                        set({ posts, availableGuilds: guilds });
+                    } catch (err) {
+                        console.error('Error syncing social data', err);
+                    }
+                },
+
+                addPost: async (post) => {
+                    const state = get();
+                    if (!state.currentUser) return;
+                    try {
+                        const newPostFromServer = await api.post('/social/posts', {
                             text: post.text,
                             imageUrl: post.imageUrl,
                             location: post.location,
                             birdId: post.birdId,
-                            userName: get().currentUser?.name || 'Explorador',
-                            userAvatar: get().currentUser?.avatar || '',
-                            userId: get().currentUser?.id
+                            userName: state.currentUser.name,
+                            userAvatar: state.currentUser.avatar,
+                            userId: state.currentUser.id
                         });
 
                         const fullPost: SocialPost = {
                             ...post,
                             id: newPostFromServer.id,
-                            userId: get().currentUser?.id || 'u1',
-                            userName: get().currentUser?.name || 'Explorador',
-                            userAvatar: get().currentUser?.avatar || '',
+                            userId: state.currentUser.id,
+                            userName: state.currentUser.name,
+                            userAvatar: state.currentUser.avatar,
                             time: 'Ahora mismo',
                             likes: 0,
                             reactions: { '🐦': 0, '🪶': 0, '📷': 0 },
@@ -865,7 +878,7 @@ export const useAppStore = create<CombinedState>()(
                             commentList: []
                         };
 
-                        set((state) => ({ posts: [fullPost, ...state.posts] }));
+                        set((s) => ({ posts: [fullPost, ...s.posts] }));
                     } catch (err) {
                         console.error('Error adding post:', err);
                     }
@@ -885,7 +898,7 @@ export const useAppStore = create<CombinedState>()(
                 addComment: async (postId: string, text: string) => {
                     try {
                         const currentUser = get().currentUser;
-                        const newCommentFromServer = await api.post(`/posts/${postId}/comment`, {
+                        const newCommentFromServer = await api.post(`/social/posts/${postId}/comment`, {
                             userId: currentUser?.id,
                             userName: currentUser?.name || 'Anónimo',
                             avatar: currentUser?.avatar || '',
@@ -912,9 +925,31 @@ export const useAppStore = create<CombinedState>()(
                     }
                 },
 
-                joinGuild: (guildId) => set((state) => ({
-                    currentUser: state.currentUser ? { ...state.currentUser, guildId } : null
-                })),
+                createGuild: async (name, description) => {
+                    const state = get();
+                    if (!state.currentUser) return;
+                    try {
+                        await api.post('/social/guilds', {
+                            nombre: name,
+                            descripcion: description,
+                            liderId: state.currentUser.id
+                        });
+                        await get().syncSocialData();
+                    } catch (err) {
+                        console.error('Error creating guild', err);
+                    }
+                },
+
+                joinGuild: async (guildId) => {
+                    const state = get();
+                    if (!state.currentUser) return;
+                    try {
+                        await api.post(`/social/guilds/${guildId}/join`, { playerId: state.currentUser.id });
+                        await get().syncSocialData();
+                    } catch (err) {
+                        console.error('Error joining guild', err);
+                    }
+                },
 
                 leaveGuild: () => set((state) => ({
                     currentUser: state.currentUser ? { ...state.currentUser, guildId: undefined } : null
@@ -947,9 +982,6 @@ export const useAppStore = create<CombinedState>()(
                         )
                     };
                 }),
-=======
-
->>>>>>> 4477f183f50e28b09671b3977b4d570d18779691
 
                 startBattle: () => {
                     set({
@@ -1202,76 +1234,6 @@ export const useAppStore = create<CombinedState>()(
                         return { inventory: newInv };
                     });
                 },
-
-                syncSocialData: async () => {
-                    try {
-                        const [posts, guilds] = await Promise.all([
-                            api.get('/social/posts'),
-                            api.get('/social/guilds')
-                        ]);
-                        set({ posts, availableGuilds: guilds });
-                    } catch (err) {
-                        console.error('Error syncing social data', err);
-                    }
-                },
-
-                addPost: async (postData) => {
-                    const state = get();
-                    if (!state.currentUser) return;
-                    try {
-                        const newPost = await api.post('/social/posts', {
-                            playerId: state.currentUser.id,
-                            birdId: postData.birdId,
-                            text: postData.text,
-                            imageUrl: postData.imageUrl,
-                            location: postData.location
-                        });
-
-                        set((s) => ({
-                            posts: [{
-                                ...newPost,
-                                userName: state.currentUser!.name,
-                                userAvatar: state.currentUser!.avatar,
-                                replies: []
-                            }, ...s.posts]
-                        }));
-                    } catch (err) {
-                        console.error('Error adding post', err);
-                    }
-                },
-
-                reactToPost: (postId, reaction) => { },
-                addComment: (postId, text) => { },
-
-                createGuild: async (name, description) => {
-                    const state = get();
-                    if (!state.currentUser) return;
-                    try {
-                        const newGuild = await api.post('/social/guilds', {
-                            nombre: name,
-                            descripcion: description,
-                            liderId: state.currentUser.id
-                        });
-                        await get().syncSocialData();
-                    } catch (err) {
-                        console.error('Error creating guild', err);
-                    }
-                },
-
-                joinGuild: async (guildId) => {
-                    const state = get();
-                    if (!state.currentUser) return;
-                    try {
-                        await api.post(`/social/guilds/${guildId}/join`, { playerId: state.currentUser.id });
-                        await get().syncSocialData();
-                    } catch (err) {
-                        console.error('Error joining guild', err);
-                    }
-                },
-
-                leaveGuild: () => { },
-                sendGuildMessage: (guildId, text) => { },
-                contributeToMission: (amount) => { },
 
                 updateTime: () => {
                     const newTime = getCurrentTimeData();

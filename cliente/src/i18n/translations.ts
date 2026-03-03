@@ -83,7 +83,13 @@ export const translations = {
             },
             progress: "Progreso de Colección",
             badges: "Tus Insignias",
-            history: "Bitácora de Logros",
+            tabs: {
+                settings: "Ajustes",
+                companion: "Compañero",
+                log: "Bitácora",
+                history: "Historial"
+            },
+            history: "Historial de Actividad",
             viewFullHistory: "Ver historial completo",
             noActivity: "Aún no hay actividad registrada.",
             goExplore: "¡Sal a explorar!",
@@ -490,7 +496,13 @@ export const translations = {
             },
             progress: "Collection Progress",
             badges: "Your Badges",
-            history: "Achievement Log",
+            tabs: {
+                settings: "Settings",
+                companion: "Companion",
+                log: "Logbook",
+                history: "History"
+            },
+            history: "Activity History",
             viewFullHistory: "View full history",
             noActivity: "No activity recorded yet.",
             goExplore: "Go explore!",
