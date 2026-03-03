@@ -497,7 +497,7 @@ const ElSocial: React.FC = () => {
                             </button>
                         </header>
 
-                        <div className="flex-grow p-8 overflow-y-auto space-y-6 custom-scrollbar flex flex-col">
+                        <div className="flex-grow p-8 space-y-6 custom-scrollbar flex flex-col">
                             <p className="text-center text-[10px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-[0.3em] mb-4">Registro del {new Date().toLocaleDateString()}</p>
 
                             {currentChat.length === 0 ? (

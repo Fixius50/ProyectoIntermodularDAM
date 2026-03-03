@@ -611,7 +611,7 @@ const ElCertamen: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col flex-1 font-sans px-4 md:px-12 py-6 md:py-8 bg-cream dark:bg-slate-950 transition-colors duration-500 overflow-y-auto">
+        <div className="flex flex-col flex-1 font-sans px-4 md:px-12 py-6 md:py-8 bg-cream dark:bg-slate-950 transition-colors duration-500">
             <main className="flex-1 w-full max-w-7xl mx-auto flex flex-col gap-6">
                 {/* Main Content Area */}
                 <div className="flex-1 py-4">

@@ -86,7 +86,7 @@ function App() {
   return (
     <div className="flex flex-col min-h-[100dvh] flex-1 font-display bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       <Navbar />
-      <main className="flex-1 flex flex-col w-full" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 5rem)' }}>
+      <main className="flex-1 flex flex-col w-full overflow-y-auto scroll-smooth" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 5rem)' }}>
         {renderContent()}
       </main>
       <BottomNav />

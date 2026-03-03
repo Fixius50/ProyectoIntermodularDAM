@@ -2,14 +2,15 @@
 
 /* Tailwind v4 — all theme config lives here via @theme */
 @import "tailwindcss";
+@source "../src/**/*.{ts,tsx}";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* --- Corporate Palettes: White, Black, Green --- */
-  --color-primary: #336142;
-  --color-primary-dark: #274b33;
-  --color-primary-light: #4a8059;
+  /* --- Corporate Palettes: Lime Green, Black, Dark Green --- */
+  --color-primary: #5ee830;
+  --color-primary-dark: #4ac425;
+  --color-primary-light: #8ef771;
 
   --color-sage-50: #f4f7f4;
   --color-sage-100: #e3ebe3;
@@ -146,8 +147,8 @@
 
   color-scheme: light dark;
 
-  --primary: #336142;
-  --primary-dark: #274b33;
+  --primary: #5ee830;
+  --primary-dark: #4ac425;
   --sage-100: #e3ebe3;
   --sage-800: #1b3825;
   --background-light: #f4f7f4;
@@ -176,6 +177,9 @@ body {
 
 #root {
   min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ---- Base layer ---- */

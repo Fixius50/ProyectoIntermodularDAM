@@ -55,19 +55,24 @@ const Login: React.FC = () => {
     };
 
     return (
-        <div className="relative h-screen w-full flex items-center justify-center p-6 overflow-hidden bg-white dark:bg-zinc-950 font-sans transition-colors duration-500">
+        <div className="relative min-h-[100dvh] w-full flex items-center justify-center p-6 overflow-y-auto bg-white dark:bg-zinc-950 font-sans transition-colors duration-500"
+            style={{
+                paddingTop: 'calc(env(safe-area-inset-top, 0px) + 1.5rem)',
+                paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 1.5rem)'
+            }}>
             {/* Background enhancement */}
             <div className="absolute inset-0 bg-slate-50/50 dark:bg-zinc-900/20 z-0 pointer-events-none" />
             <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 dark:bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
             <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 dark:bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
 
-            <div className="relative z-10 w-full max-w-lg animate-fade-in-up">
+            <div className="relative z-10 w-full max-w-lg animate-fade-in-up py-4">
                 {/* Header Section */}
-                <header className="text-center mb-4 relative">
+                <header className="text-center mb-6 relative">
                     <div className="absolute -top-12 right-0 flex gap-2 z-20">
                     </div>
 
-                    <div className="mx-auto flex items-center justify-center w-16 h-16 mb-3 relative rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 shadow-xl shadow-black/5 dark:shadow-primary/5 border border-slate-100 dark:border-zinc-800 transition-all duration-500">
+                    <div className="mx-auto flex items-center justify-center mb-4 relative rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 shadow-xl shadow-black/5 dark:shadow-primary/5 border border-slate-100 dark:border-zinc-800 transition-all duration-500"
+                        style={{ width: '64px', height: '64px' }}>
                         <img src="/assets/avis-logo.png" alt="Aery Logo" className="w-10 h-10 object-contain relative z-10" />
                     </div>
                     <h1 className="text-4xl font-display text-slate-900 dark:text-white mb-0 tracking-tight">Aery<span className="text-primary">.</span></h1>

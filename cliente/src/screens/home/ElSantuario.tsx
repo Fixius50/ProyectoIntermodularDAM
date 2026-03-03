@@ -52,7 +52,7 @@ const ElSantuario: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col flex-1 font-display bg-[#5da671] dark:bg-zinc-950 transition-colors duration-500 overflow-y-auto overflow-x-hidden relative transform-gpu">
+        <div className="flex flex-col flex-1 font-display bg-[#5da671] dark:bg-zinc-950 transition-colors duration-500 relative transform-gpu">
             {/* Background Image Container */}
             <div
                 className="absolute top-0 left-0 w-full min-h-[150svh] h-full z-0 pointer-events-none bg-no-repeat transform-gpu"
