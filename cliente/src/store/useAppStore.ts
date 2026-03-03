@@ -675,9 +675,14 @@ export const useAppStore = create<CombinedState>()(
                         return false;
                     }
                 },
-
-                logout: () => set({ currentUser: null, currentScreen: 'login', activityHistory: [] }),
-
+                logout: () => set({
+                    currentUser: null,
+                    currentScreen: 'login',
+                    activityHistory: [],
+                    playerBirds: [],
+                    inventory: [],
+                    activeBirdsCount: 0
+                }),
                 setAvatar: (avatarUrl: string) => set((state) => ({
                     currentUser: state.currentUser ? { ...state.currentUser, avatar: avatarUrl } : null
                 })),
@@ -1138,6 +1143,7 @@ export const useAppStore = create<CombinedState>()(
 
                         // 2. Save to Local SQLite (for offline audio/upload tracking)
                         await AvisCore.saveSighting({
+                            userId: get().currentUser?.id || 'unknown',
                             birdId,
                             lat,
                             lon: lng,
@@ -1164,6 +1170,7 @@ export const useAppStore = create<CombinedState>()(
                         // Offline fallback: save only locally
                         const { lat, lng } = await AvisCore.syncLocation();
                         await AvisCore.saveSighting({
+                            userId: get().currentUser?.id || 'unknown',
                             birdId,
                             lat,
                             lon: lng,
