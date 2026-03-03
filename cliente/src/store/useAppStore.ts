@@ -37,7 +37,7 @@ interface AppActions {
     setCurrentScreen: (screen: string) => void;
     login: (email: string, pass: string) => Promise<boolean>;
     testLogin: () => void;
-    register: (name: string, email: string, pass: string) => Promise<boolean>;
+    register: (name: string, pass: string) => Promise<boolean>;
     logout: () => void;
     syncInventory: () => Promise<void>;
     syncPlayerBirds: () => Promise<void>;
@@ -482,8 +482,8 @@ export const useAppStore = create<CombinedState>()(
 
                     try {
                         // Try to log in first
-                        const { token, player } = await api.post('/auth/login', { username, password });
-                        await AvisCore.storeSecureToken({ token });
+                        const player = await api.post('/auth/login', { username, password });
+                        await AvisCore.storeSecureToken({ token: 'dummy-token' });
 
                         const userObj: User = {
                             id: player.id,
@@ -508,8 +508,8 @@ export const useAppStore = create<CombinedState>()(
                     } catch (err) {
                         // If login fails, try to register the test user
                         try {
-                            const { token, player } = await api.post('/auth/register', { username, password });
-                            await AvisCore.storeSecureToken({ token });
+                            const player = await api.post('/auth/register', { username, password });
+                            await AvisCore.storeSecureToken({ token: 'dummy-token-reg' });
 
                             const userObj: User = {
                                 id: player.id,
@@ -553,8 +553,8 @@ export const useAppStore = create<CombinedState>()(
 
                 login: async (username: string, pass: string) => {
                     try {
-                        const { token, player } = await api.post('/api/auth/login', { username, password: pass });
-                        await AvisCore.storeSecureToken({ token });
+                        const player = await api.post('/api/auth/login', { username, password: pass });
+                        await AvisCore.storeSecureToken({ token: 'dummy-token' });
 
                         const userObj: User = {
                             id: player.id,
@@ -616,11 +616,11 @@ export const useAppStore = create<CombinedState>()(
                     }
                 },
 
-                register: async (name: string, email: string, pass: string) => {
+                register: async (name: string, pass: string) => {
                     try {
                         // Nota: El backend espera username y password. Usamos name como username.
-                        const { token, player } = await api.post('/api/auth/register', { username: name, password: pass });
-                        await AvisCore.storeSecureToken({ token });
+                        const player = await api.post('/api/auth/register', { username: name, password: pass });
+                        await AvisCore.storeSecureToken({ token: 'dummy-token-reg' });
 
                         const userObj: User = {
                             id: player.id,
@@ -1136,7 +1136,6 @@ export const useAppStore = create<CombinedState>()(
 
                         // 2. Save to Local SQLite (for offline audio/upload tracking)
                         await AvisCore.saveSighting({
-                            userId: currentUser.id,
                             birdId,
                             lat,
                             lon: lng,
@@ -1163,7 +1162,6 @@ export const useAppStore = create<CombinedState>()(
                         // Offline fallback: save only locally
                         const { lat, lng } = await AvisCore.syncLocation();
                         await AvisCore.saveSighting({
-                            userId: currentUser.id,
                             birdId,
                             lat,
                             lon: lng,

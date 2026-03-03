@@ -8,9 +8,8 @@ const Login: React.FC = () => {
     const t = translations[language].auth;
 
     const [isLogin, setIsLogin] = useState(true);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [name, setName] = useState('');
+    const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
@@ -30,12 +29,12 @@ const Login: React.FC = () => {
         try {
             let success = false;
             if (isLogin) {
-                success = await login(email, password);
+                success = await login(name, password);
                 if (!success) {
                     setError(t.errorInvalid);
                 }
             } else {
-                success = await register(name, email, password);
+                success = await register(name, password);
                 if (!success) {
                     setError(t.errorConn);
                 } else {
@@ -109,24 +108,23 @@ const Login: React.FC = () => {
                                 </div>
                             )}
 
-                            {!isLogin && (
-                                <div className="flex gap-3">
-                                    <div className="flex-grow flex flex-col gap-1.5">
-                                        <label className="text-[10px] font-black text-slate-500 dark:text-zinc-500 uppercase tracking-[0.15em] ml-1">{t.nameLabel}</label>
-                                        <div className="relative group">
-                                            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-600 text-lg transition-colors group-focus-within:text-primary">person</span>
-                                            <input
-                                                type="text"
-                                                value={name}
-                                                onChange={(e) => setName(e.target.value)}
-                                                placeholder={t.namePlaceholder}
-                                                className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-700 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-semibold"
-                                                required={!isLogin}
-                                            />
-                                        </div>
+                            <div className="flex gap-3">
+                                <div className="flex-grow flex flex-col gap-1.5">
+                                    <label className="text-[10px] font-black text-slate-500 dark:text-zinc-500 uppercase tracking-[0.15em] ml-1">{t.nameLabel}</label>
+                                    <div className="relative group">
+                                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-600 text-lg transition-colors group-focus-within:text-primary">person</span>
+                                        <input
+                                            type="text"
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                            placeholder={t.namePlaceholder}
+                                            className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-700 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-semibold"
+                                            required
+                                        />
                                     </div>
+                                </div>
 
-                                    {/* Language selector in Register mode */}
+                                {!isLogin && (
                                     <div className="flex flex-col gap-1.5">
                                         <label className="text-[10px] font-black text-slate-500 dark:text-zinc-500 uppercase tracking-[0.15em] text-center">Lang</label>
                                         <div className="flex bg-slate-100 dark:bg-zinc-800 p-1 rounded-2xl border border-slate-200 dark:border-zinc-700 shadow-inner h-full items-center">
@@ -146,22 +144,7 @@ const Login: React.FC = () => {
                                             </button>
                                         </div>
                                     </div>
-                                </div>
-                            )}
-
-                            <div className="flex flex-col gap-1.5">
-                                <label className="text-[10px] font-black text-slate-500 dark:text-zinc-500 uppercase tracking-[0.15em] ml-1">{t.emailLabel}</label>
-                                <div className="relative group">
-                                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-600 text-lg transition-colors group-focus-within:text-primary">mail</span>
-                                    <input
-                                        type="email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        placeholder={t.emailPlaceholder}
-                                        className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-700 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-semibold"
-                                        required
-                                    />
-                                </div>
+                                )}
                             </div>
 
                             <div className="flex flex-col gap-1.5">
@@ -232,8 +215,8 @@ const Login: React.FC = () => {
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 
