@@ -1,4 +1,5 @@
 package com.intermodular.server.service;
+import lombok.RequiredArgsConstructor;
 
 import com.intermodular.server.model.Post;
 import com.intermodular.server.repository.PostRepository;
@@ -7,7 +8,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class PostService {
 
     public Mono<Post> createPost(Post post) {
         log.info("[PostService] Solicitud para crear un nuevo post por el usuario: {}", post.getUserId());
-        post.setCreatedAt(ZonedDateTime.now());
+        post.setCreatedAt(LocalDateTime.now());
         return postRepository.save(post)
                 .doOnSuccess(saved -> log.info("[PostService] Post creado exitosamente con ID: {}", saved.getId()))
                 .doOnError(e -> log.error("[PostService] Error al crear post: {}", e.getMessage()));
